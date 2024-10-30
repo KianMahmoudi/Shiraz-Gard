@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back4app_server_url">https://parseapi.back4app.com/</string>
+    <string name="back4app_app_id">UEPkqUSqnl3j2Viv9U66YA19Ml3FJgOAL0aK4lfF</string>
+    <string name="back4app_client_key">TLimsiLWlqXeA3AQycbUeUz9jlrrB2lL606Fnfbe</string>
+    <string name="app_name">شیراز گرد</string>
+    <string name="the_best_places_to_explore">بهترین مکان ها برای گردش</string>
+    <string name="login">ورود</string>
+    <string name="register">ثبت نام</string>
+    <string name="just_register_to_get_started">برای شروع فقط کافیه ثبت نام کنی!</string>
+    <string name="don_t_have_account_register">حساب کاربری ندارید؟ ثبت نام کنید</string>
+    <string name="email">ایمیل</string>
+    <string name="password">رمزعبور</string>
+    <string name="forget_password">فراموشی رمزعبور</string>
+    <string name="do_you_have_account_register">حساب کابربری دارید؟ وارد شوید</string>
+    <string name="firstName">نام\n</string>
+    <string name="lastName">نام خانوادگی</string>
+    <string name="fullname">نام و نام خانوادگی</string>
+    <string name="username">نام کاربری</string>
+    <string name="home">خانه</string>
+    <string name="favorite">موردعلاقه ها</string>
+    <string name="search">جستجو</string>
+    <string name="map">نقشه</string>
+    <string name="setting">تنظیمات</string>
+    <string name="welcome">خوش امدی</string>
+    <string name="click_start_to_begin">برای شروع رو دکمه شروع کلیک کنید</string>
+    <string name="start">شروع</string>
+    <string name="shiraz_weather_now">-اب و هوای شیراز اکنون</string>
+    <string name="categories">دسته بندی ها</string>
+    <string name="see_all">دیدن همه</string>
+    <string name="atm">خودپرداز</string>
+    <string name="hotel">هتل</string>
+    <string name="hospital">بیمارستان</string>
+    <string name="restaurant">رستوران</string>
+    <string name="wc">سرویس بهداشتی</string>
+    <string name="parking">پارکینگ</string>
+</resources>
