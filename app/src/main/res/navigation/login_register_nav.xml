@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_register_nav"
+    app:startDestination="@id/fragmentIntroduction">
+
+    <!-- Fragment Login -->
+    <fragment
+        android:id="@+id/fragmentLogin"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.auth.FragmentLogin"
+        android:label="FragmentLogin"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_fragmentLogin_to_fragmentRegister"
+            app:destination="@id/fragmentRegister"
+            app:popUpTo="@id/fragmentLogin"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <!-- Fragment Register -->
+    <fragment
+        android:id="@+id/fragmentRegister"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.auth.FragmentRegister"
+        android:label="FragmentRegister"
+        tools:layout="@layout/fragment_register" >
+        <action
+            android:id="@+id/action_fragmentRegister_to_fragmentLogin"
+            app:destination="@id/fragmentLogin"
+            app:popUpTo="@id/fragmentAccountOption"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <!-- Fragment Account Option -->
+    <fragment
+        android:id="@+id/fragmentAccountOption"
+        tools:layout="@layout/fragment_account_options"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.start.FragmentAccountOption"
+        android:label="FragmentAccountOption" >
+        <action
+            android:id="@+id/action_fragmentAccountOption_to_fragmentLogin"
+            app:destination="@id/fragmentLogin"
+            app:popUpTo="@id/fragmentAccountOption"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_fragmentAccountOption_to_fragmentRegister"
+            app:destination="@id/fragmentRegister"
+            app:popUpTo="@id/fragmentAccountOption"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragmentIntroduction"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.start.FragmentIntroduction"
+        tools:layout="@layout/fragment_introduction"
+        android:label="FragmentIntroduction" >
+        <action
+            android:id="@+id/action_fragmentIntroduction_to_fragmentAccountOption"
+            app:destination="@id/fragmentAccountOption" />
+    </fragment>
+</navigation>

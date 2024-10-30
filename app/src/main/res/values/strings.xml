@@ -1,0 +1,36 @@
+<resources>
+    <string name="back4app_server_url">***REMOVED***/</string>
+    <string name="back4app_app_id">***REMOVED***</string>
+    <string name="back4app_client_key">***REMOVED***</string>
+    <string name="app_name">ShirazGard</string>
+    <string name="the_best_places_to_explore">The Best Places to Explore</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="just_register_to_get_started">Just register to get started!</string>
+    <string name="don_t_have_account_register">Don\'t have account? Register</string>
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="forget_password">forget password</string>
+    <string name="do_you_have_account_register">Do you have an account? Login</string>
+    <string name="firstName">ّFirst Name</string>
+    <string name="lastName">Last Name</string>
+    <string name="fullname">Full name</string>
+    <string name="username">username</string>
+    <string name="home">Home</string>
+    <string name="favorite">Favorite</string>
+    <string name="search">Search</string>
+    <string name="map">Map</string>
+    <string name="setting">Setting</string>
+    <string name="welcome">Welcome</string>
+    <string name="click_start_to_begin">Click start to begin</string>
+    <string name="start">Start</string>
+    <string name="shiraz_weather_now">-Shiraz weather now</string>
+    <string name="categories">Categories</string>
+    <string name="see_all">See all</string>
+    <string name="atm">Atm</string>
+    <string name="hotel">Hotel</string>
+    <string name="hospital">Hospital</string>
+    <string name="restaurant">Restaurant</string>
+    <string name="wc">Wc</string>
+    <string name="parking">Parking</string>
+</resources>
