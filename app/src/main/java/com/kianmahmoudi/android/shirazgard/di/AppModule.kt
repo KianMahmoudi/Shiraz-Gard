@@ -1,6 +1,8 @@
 package com.kianmahmoudi.android.shirazgard.di
 
 import com.kianmahmoudi.android.shirazgard.api.WeatherApi
+import com.kianmahmoudi.android.shirazgard.repository.HotelRepository
+import com.kianmahmoudi.android.shirazgard.repository.ParseHotelRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -27,4 +29,11 @@ object AppModule {
     fun provideWeatherApi(retrofit: Retrofit): WeatherApi {
         return retrofit.create(WeatherApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideHotelRepository(): HotelRepository {
+        return ParseHotelRepository()
+    }
+
 }

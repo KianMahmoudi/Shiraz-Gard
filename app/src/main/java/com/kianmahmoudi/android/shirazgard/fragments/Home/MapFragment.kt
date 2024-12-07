@@ -6,17 +6,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.PlaceFeature
 import com.kianmahmoudi.android.shirazgard.R
-import com.kianmahmoudi.android.shirazgard.databinding.FragmentHomeBinding
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentMapBinding
+import com.parse.ParseObject
+import com.parse.ParseQuery
+import java.util.Arrays
+
 
 class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
 
@@ -38,8 +39,6 @@ class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
             childFragmentManager.findFragmentById(R.id.map_fragment) as? SupportMapFragment
 
         mapFragment?.getMapAsync(this)
-
-        
 
     }
 
