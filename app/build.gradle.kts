@@ -1,3 +1,5 @@
+import java.util.Properties
+
 @Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidApplication)
@@ -13,6 +15,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     defaultConfig {
@@ -21,8 +24,12 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField(
+            "String",
+            "MAPS_KEY",
+            "\"${project.findProperty("MAPS_KEY")}\""
+        )
     }
 
     buildTypes {
@@ -63,6 +70,7 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.0"))
+    implementation("com.google.android.libraries.places:places:3.5.0")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-
 }
