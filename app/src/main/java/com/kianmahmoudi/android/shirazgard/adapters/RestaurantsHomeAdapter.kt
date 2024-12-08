@@ -16,8 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale
 
-class HotelsHomeAdapter(private val homeRepository: HomeRepository) :
-    RecyclerView.Adapter<HotelsHomeAdapter.ViewHolder>() {
+class RestaurantsHomeAdapter(private val homeRepository: HomeRepository) : RecyclerView.Adapter<RestaurantsHomeAdapter.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, object : DiffUtil.ItemCallback<ParseObject>() {
         override fun areItemsTheSame(oldItem: ParseObject, newItem: ParseObject): Boolean {
@@ -30,16 +29,14 @@ class HotelsHomeAdapter(private val homeRepository: HomeRepository) :
         }
     })
 
-    inner class ViewHolder(val binding: ItemPlaceBinding) :
+    inner class ViewHolder(val binding:ItemPlaceBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ParseObject) {
-
+        fun bind(item : ParseObject) {
             binding.textPlaceName.text = when (Locale.getDefault().language) {
                 "en" -> item.getString("enName")
                 "fa" -> item.getString("faName")
                 else -> item.getString("enName")
             }
-
             CoroutineScope(Dispatchers.IO).launch {
                 val photoUrls = homeRepository.getPlaceImages(item.objectId)
                 withContext(Dispatchers.Main) {
@@ -50,7 +47,6 @@ class HotelsHomeAdapter(private val homeRepository: HomeRepository) :
                     }
                 }
             }
-
         }
     }
 
@@ -58,7 +54,10 @@ class HotelsHomeAdapter(private val homeRepository: HomeRepository) :
         differ.submitList(list)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): RestaurantsHomeAdapter.ViewHolder {
         return ViewHolder(
             ItemPlaceBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -68,13 +67,14 @@ class HotelsHomeAdapter(private val homeRepository: HomeRepository) :
         )
     }
 
-    override fun getItemCount(): Int {
-        return differ.currentList.size
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = differ.currentList[position]
         holder.bind(item)
     }
+
+    override fun getItemCount(): Int {
+     return differ.currentList.size
+    }
+
 
 }

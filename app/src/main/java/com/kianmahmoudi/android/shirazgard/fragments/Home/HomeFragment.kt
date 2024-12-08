@@ -1,49 +1,45 @@
 package com.kianmahmoudi.android.shirazgard.fragments.Home
 
 
-import android.content.res.Resources
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoriesHomeAdapter
 import com.kianmahmoudi.android.shirazgard.adapters.HotelsHomeAdapter
+import com.kianmahmoudi.android.shirazgard.adapters.RestaurantsHomeAdapter
 import com.kianmahmoudi.android.shirazgard.data.Category
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentHomeBinding
-import com.kianmahmoudi.android.shirazgard.repository.HotelRepository
-import com.kianmahmoudi.android.shirazgard.repository.ParseHotelRepository
-import com.kianmahmoudi.android.shirazgard.repository.WeatherRepository
+import com.kianmahmoudi.android.shirazgard.repository.HomeRepository
+import com.kianmahmoudi.android.shirazgard.repository.ParseHomeRepository
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.util.checkIcon
-import com.kianmahmoudi.android.shirazgard.viewmodel.HotelViewModel
-import com.kianmahmoudi.android.shirazgard.viewmodel.WeatherViewModel
-import com.parse.ParseObject
-import com.parse.ParseQuery
+import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(com.kianmahmoudi.android.shirazgard.R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var binding: FragmentHomeBinding
-    private val weatherViewModel by viewModels<WeatherViewModel>()
-    private val categoriesHomeAdapter: CategoriesHomeAdapter = CategoriesHomeAdapter()
-    private val hotelViewModel: HotelViewModel by viewModels()
-
+    private val homeViewModel: HomeViewModel by viewModels()
     private val hotelsHomeAdapter: HotelsHomeAdapter by lazy {
-        HotelsHomeAdapter(provideHotelRepository())
+        HotelsHomeAdapter(provideHomeRepository())
     }
-    private fun provideHotelRepository(): HotelRepository {
-        return ParseHotelRepository()
+    private val restaurantsHomeAdapter: RestaurantsHomeAdapter by lazy {
+        RestaurantsHomeAdapter(provideHomeRepository())
+    }
+    private val categoriesHomeAdapter: CategoriesHomeAdapter by lazy {
+        CategoriesHomeAdapter()
+    }
+
+    private fun provideHomeRepository(): HomeRepository {
+        return ParseHomeRepository()
     }
 
     override fun onCreateView(
@@ -60,6 +56,7 @@ class HomeFragment : Fragment(com.kianmahmoudi.android.shirazgard.R.layout.fragm
 
         fetchCategoriesRv()
         fetchHotelsRv()
+        fetchRestaurantsRv()
 
         categoriesHomeAdapter.submitData(
             mutableListOf(
@@ -68,7 +65,7 @@ class HomeFragment : Fragment(com.kianmahmoudi.android.shirazgard.R.layout.fragm
                     R.drawable.local_atm_24px, 0
                 ),
                 Category(
-                    getString(R.string.hotel),
+                    getString(R.string.hotels),
                     R.drawable.hotel_24px, 1
                 ),
                 Category(
@@ -90,24 +87,23 @@ class HomeFragment : Fragment(com.kianmahmoudi.android.shirazgard.R.layout.fragm
             )
         )
 
-        weatherViewModel.fetchWeather(
-            "شیراز",
-            "mfggRHJXqMCI1yyQxPEsByuQzulsskdrAnESXdpnXu1Bq3iWtUai"
-        )
-
-        weatherViewModel.weatherData.observe(viewLifecycleOwner) {
+        homeViewModel.weatherData.observe(viewLifecycleOwner) {
             binding.tvTemperatureHome.text = it.temperature.toString()
             binding.tvDescriptionHome.text = it.description
             binding.icWeatherHome.setImageResource(checkIcon(it.icon))
         }
 
-        weatherViewModel.weatherError.observe(viewLifecycleOwner) {
+        homeViewModel.weatherError.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
         }
 
-        hotelViewModel.hotels.observe(viewLifecycleOwner, Observer { hotels ->
+        homeViewModel.hotels.observe(viewLifecycleOwner) { hotels ->
             hotelsHomeAdapter.submitList(hotels)
-        })
+        }
+
+        homeViewModel.restaurants.observe(viewLifecycleOwner) {
+            restaurantsHomeAdapter.submitList(it)
+        }
 
     }
 
@@ -123,6 +119,14 @@ class HomeFragment : Fragment(com.kianmahmoudi.android.shirazgard.R.layout.fragm
         recyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = hotelsHomeAdapter
+        recyclerView.addItemDecoration(EqualSpacingItemDecoration(4))
+    }
+
+    private fun fetchRestaurantsRv() {
+        val recyclerView = binding.rvRestaurantsHome
+        recyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.adapter = restaurantsHomeAdapter
         recyclerView.addItemDecoration(EqualSpacingItemDecoration(4))
     }
 

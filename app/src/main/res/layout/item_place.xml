@@ -11,7 +11,7 @@
 
 
         <ImageView
-            android:id="@+id/imageHotel"
+            android:id="@+id/imagePlace"
             android:layout_width="120dp"
             android:layout_height="80dp"
             android:layout_marginStart="8dp"
@@ -23,7 +23,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textHotelName"
+            android:id="@+id/textPlaceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -38,7 +38,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageHotel" />
+            app:layout_constraintTop_toBottomOf="@+id/imagePlace" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
