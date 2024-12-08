@@ -54,7 +54,7 @@ class ParseHomeRepository : HomeRepository {
         query.whereEqualTo("type", "restaurant")
         return withContext(Dispatchers.IO) {
             suspendCancellableCoroutine{ continuation ->
-                query.findInBackground { objects, e ->
+                query.findInBackground{ objects, e ->
                     if (e == null) {
                         continuation.resume(objects)
                     } else {
