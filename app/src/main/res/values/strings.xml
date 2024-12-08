@@ -28,9 +28,10 @@
     <string name="categories">Categories</string>
     <string name="see_all">See all</string>
     <string name="atm">Atm</string>
-    <string name="hotel">Hotel</string>
+    <string name="hotels">Hotels</string>
     <string name="hospital">Hospital</string>
     <string name="restaurant">Restaurant</string>
+    <string name="restaurants">Restaurants</string>
     <string name="wc">Wc</string>
     <string name="parking">Parking</string>
 </resources>

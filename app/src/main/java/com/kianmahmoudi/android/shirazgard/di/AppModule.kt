@@ -1,8 +1,8 @@
 package com.kianmahmoudi.android.shirazgard.di
 
 import com.kianmahmoudi.android.shirazgard.api.WeatherApi
-import com.kianmahmoudi.android.shirazgard.repository.HotelRepository
-import com.kianmahmoudi.android.shirazgard.repository.ParseHotelRepository
+import com.kianmahmoudi.android.shirazgard.repository.HomeRepository
+import com.kianmahmoudi.android.shirazgard.repository.ParseHomeRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -32,8 +32,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideHotelRepository(): HotelRepository {
-        return ParseHotelRepository()
+    fun provideHotelRepository(): HomeRepository {
+        return ParseHomeRepository()
     }
 
 }
