@@ -37,6 +37,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val categoriesHomeAdapter: CategoriesHomeAdapter by lazy {
         CategoriesHomeAdapter()
     }
+    private var a = false
+    private var b = false
+    private var c = false
 
     private fun provideHomeRepository(): HomeRepository {
         return ParseHomeRepository()
@@ -57,6 +60,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         fetchCategoriesRv()
         fetchHotelsRv()
         fetchRestaurantsRv()
+
+        checkLoadedItems()
 
         categoriesHomeAdapter.submitData(
             mutableListOf(
@@ -91,20 +96,54 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             binding.tvTemperatureHome.text = it.temperature.toString()
             binding.tvDescriptionHome.text = it.description
             binding.icWeatherHome.setImageResource(checkIcon(it.icon))
+            c = true
+            checkLoadedItems()
         }
 
         homeViewModel.weatherError.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
+            c = true
+            checkLoadedItems()
         }
 
         homeViewModel.hotels.observe(viewLifecycleOwner) { hotels ->
             hotelsHomeAdapter.submitList(hotels)
+            a = true
+            checkLoadedItems()
         }
 
         homeViewModel.restaurants.observe(viewLifecycleOwner) {
             restaurantsHomeAdapter.submitList(it)
+            b = true
+            checkLoadedItems()
         }
 
+    }
+
+    private fun checkLoadedItems() {
+        if (a && b && c) {
+            binding.lottieAnimation.cancelAnimation()
+            binding.lottieAnimation.visibility = View.GONE
+            binding.rvCategoriesHome.visibility = View.VISIBLE
+            binding.rvHotelsHome.visibility = View.VISIBLE
+            binding.rvRestaurantsHome.visibility = View.VISIBLE
+            binding.cardView.visibility = View.VISIBLE
+            binding.textView3.visibility = View.VISIBLE
+            binding.textView4.visibility = View.VISIBLE
+            binding.textView5.visibility = View.VISIBLE
+            binding.textView6.visibility = View.VISIBLE
+        } else {
+            binding.lottieAnimation.playAnimation()
+            binding.lottieAnimation.visibility = View.VISIBLE
+            binding.rvCategoriesHome.visibility = View.GONE
+            binding.rvHotelsHome.visibility = View.GONE
+            binding.rvRestaurantsHome.visibility = View.GONE
+            binding.cardView.visibility = View.GONE
+            binding.textView3.visibility = View.GONE
+            binding.textView4.visibility = View.GONE
+            binding.textView5.visibility = View.GONE
+            binding.textView6.visibility = View.GONE
+        }
     }
 
     private fun fetchCategoriesRv() {
