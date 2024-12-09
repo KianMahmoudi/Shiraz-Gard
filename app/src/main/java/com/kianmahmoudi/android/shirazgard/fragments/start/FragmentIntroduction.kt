@@ -23,11 +23,6 @@ class FragmentIntroduction: Fragment(R.layout.fragment_introduction) {
             findNavController().navigate(R.id.action_fragmentIntroduction_to_fragmentAccountOption)
         }
 
-        if (ParseUser.getCurrentUser() != null) {
-            val intent = Intent(requireActivity(), HomeActivity::class.java)
-            startActivity(intent)
-        }
-
     }
 
     override fun onCreateView(
