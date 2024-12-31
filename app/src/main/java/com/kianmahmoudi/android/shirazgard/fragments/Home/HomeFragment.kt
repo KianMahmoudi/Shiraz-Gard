@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
@@ -16,12 +17,11 @@ import com.kianmahmoudi.android.shirazgard.adapters.HotelsHomeAdapter
 import com.kianmahmoudi.android.shirazgard.adapters.RestaurantsHomeAdapter
 import com.kianmahmoudi.android.shirazgard.data.Category
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentHomeBinding
-import com.kianmahmoudi.android.shirazgard.repository.HomeRepository
-import com.kianmahmoudi.android.shirazgard.repository.ParseHomeRepository
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.util.checkIcon
 import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -29,28 +29,25 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var binding: FragmentHomeBinding
     private val homeViewModel: HomeViewModel by viewModels()
     private val hotelsHomeAdapter: HotelsHomeAdapter by lazy {
-        HotelsHomeAdapter(provideHomeRepository())
+        HotelsHomeAdapter()
     }
     private val restaurantsHomeAdapter: RestaurantsHomeAdapter by lazy {
-        RestaurantsHomeAdapter(provideHomeRepository())
+        RestaurantsHomeAdapter()
     }
     private val categoriesHomeAdapter: CategoriesHomeAdapter by lazy {
         CategoriesHomeAdapter()
     }
+
     private var a = false
     private var b = false
     private var c = false
     private var d = false
 
-    private fun provideHomeRepository(): HomeRepository {
-        return ParseHomeRepository()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View{
         binding = FragmentHomeBinding.inflate(inflater)
         return binding.root
     }
@@ -93,37 +90,39 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             )
         )
 
-        homeViewModel.weatherData.observe(viewLifecycleOwner) {
-            binding.tvTemperatureHome.text = it.temperature.toString()
-            binding.tvDescriptionHome.text = it.description
-            binding.icWeatherHome.setImageResource(checkIcon(it.icon))
-            c = true
-            checkLoadedItems()
-        }
+        lifecycleScope.launch {
+            homeViewModel.weatherData.observe(viewLifecycleOwner) {
+                binding.tvTemperatureHome.text = it.temperature.toString()
+                binding.tvDescriptionHome.text = it.description
+                binding.icWeatherHome.setImageResource(checkIcon(it.icon))
+                c = true
+                checkLoadedItems()
+            }
 
-        homeViewModel.images.observe(viewLifecycleOwner){
-            restaurantsHomeAdapter.addImages(it)
-            hotelsHomeAdapter.addImages(it)
-            d = true
-            checkLoadedItems()
-        }
+            homeViewModel.images.observe(viewLifecycleOwner) {
+                restaurantsHomeAdapter.addImages(it)
+                hotelsHomeAdapter.addImages(it)
+                d = true
+                checkLoadedItems()
+            }
 
-        homeViewModel.weatherError.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
-            c = true
-            checkLoadedItems()
-        }
+            homeViewModel.weatherError.observe(viewLifecycleOwner) {
+                Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
+                c = true
+                checkLoadedItems()
+            }
 
-        homeViewModel.hotels.observe(viewLifecycleOwner) { hotels ->
-            hotelsHomeAdapter.submitList(hotels)
-            a = true
-            checkLoadedItems()
-        }
+            homeViewModel.hotels.observe(viewLifecycleOwner) { hotels ->
+                hotelsHomeAdapter.submitList(hotels)
+                a = true
+                checkLoadedItems()
+            }
 
-        homeViewModel.restaurants.observe(viewLifecycleOwner) {
-            restaurantsHomeAdapter.addRestaurants(it)
-            b = true
-            checkLoadedItems()
+            homeViewModel.restaurants.observe(viewLifecycleOwner) {
+                restaurantsHomeAdapter.addRestaurants(it)
+                b = true
+                checkLoadedItems()
+            }
         }
 
     }

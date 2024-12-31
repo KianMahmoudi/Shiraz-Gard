@@ -8,10 +8,8 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.activities.ItemPlaceDetailsActivity
 import com.kianmahmoudi.android.shirazgard.databinding.ItemPlaceBinding
-import com.kianmahmoudi.android.shirazgard.repository.HomeRepository
 import com.parse.ParseObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +17,7 @@ import kotlinx.coroutines.launch
 import java.util.ArrayList
 import java.util.Locale
 
-class RestaurantsHomeAdapter(private val homeRepository: HomeRepository) :
+class RestaurantsHomeAdapter() :
     RecyclerView.Adapter<RestaurantsHomeAdapter.ViewHolder>() {
 
     private val restaurants = AsyncListDiffer(this, object : DiffUtil.ItemCallback<ParseObject>() {

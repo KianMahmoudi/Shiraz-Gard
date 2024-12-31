@@ -8,19 +8,16 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.activities.ItemPlaceDetailsActivity
 import com.kianmahmoudi.android.shirazgard.databinding.ItemPlaceBinding
-import com.kianmahmoudi.android.shirazgard.repository.HomeRepository
 import com.parse.ParseObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.ArrayList
 import java.util.Locale
 
-class HotelsHomeAdapter(private val homeRepository: HomeRepository) :
+class HotelsHomeAdapter() :
     RecyclerView.Adapter<HotelsHomeAdapter.ViewHolder>() {
 
     private val differ = AsyncListDiffer(this, object : DiffUtil.ItemCallback<ParseObject>() {
