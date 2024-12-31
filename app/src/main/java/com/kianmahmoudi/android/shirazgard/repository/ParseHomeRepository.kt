@@ -13,16 +13,14 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 class ParseHomeRepository : HomeRepository {
-    override suspend fun getPlaceImages(placeId: String): List<String> {
+    override suspend fun getPlaceImages(): List<ParseObject> {
         val query = ParseQuery.getQuery<ParseObject>("photos")
-        query.whereEqualTo("placeId", placeId)
         return withContext(Dispatchers.IO) {
             suspendCancellableCoroutine { continuation ->
-                query.getFirstInBackground { photoObject, e ->
-                    if (e == null && photoObject != null) {
-                        val photoUrls = photoObject.getList<String>("photosUrl") ?: emptyList()
-                        Log.i("ParseHotelRepository", "Photos: $photoUrls")
-                        continuation.resume(photoUrls)
+                query.findInBackground { photoObjects, e ->
+                    if (e == null && photoObjects != null) {
+                        Log.i("ParseHotelRepository", "Photos: $photoObjects")
+                        continuation.resume(photoObjects)
                     } else {
                         Log.e("ParseHotelRepository", "Error fetching images", e)
                         continuation.resumeWithException(e ?: Exception("No results found"))
@@ -31,6 +29,7 @@ class ParseHomeRepository : HomeRepository {
             }
         }
     }
+
 
     override suspend fun getHotels(): List<ParseObject> {
         val query = ParseQuery.getQuery<ParseObject>("Place")

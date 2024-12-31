@@ -71,7 +71,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.0"))
-    implementation("com.google.android.libraries.places:places:3.5.0")
     implementation("com.airbnb.android:lottie:6.1.0")
+    implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 }

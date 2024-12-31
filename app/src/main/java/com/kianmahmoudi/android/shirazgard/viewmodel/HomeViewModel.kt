@@ -19,7 +19,10 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
     val hotels: LiveData<List<ParseObject>> get() = _hotels
 
     private val _restaurants = MutableLiveData<List<ParseObject>>()
-    val  restaurants:LiveData<List<ParseObject>> get() = _restaurants
+    val restaurants: LiveData<List<ParseObject>> get() = _restaurants
+
+    private val _images = MutableLiveData<List<ParseObject>>()
+    val images: LiveData<List<ParseObject>> get() = _images
 
     private val _weatherData = MutableLiveData<WeatherResult>()
     val weatherData: LiveData<WeatherResult> = _weatherData
@@ -31,6 +34,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         fetchHotels()
         fetchRestaurants()
         fetchWeather()
+        fetchImages()
     }
 
     private fun fetchHotels() {
@@ -54,6 +58,7 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
             }
         }
     }
+
     private fun fetchWeather() {
         viewModelScope.launch {
             try {
@@ -69,5 +74,15 @@ class HomeViewModel @Inject constructor(private val homeRepository: HomeReposito
         }
     }
 
+    private fun fetchImages() {
+        viewModelScope.launch {
+            try {
+                val imageList = homeRepository.getPlaceImages()
+                _images.value = imageList
+            } catch (e: Exception) {
+
+            }
+        }
+    }
 
 }

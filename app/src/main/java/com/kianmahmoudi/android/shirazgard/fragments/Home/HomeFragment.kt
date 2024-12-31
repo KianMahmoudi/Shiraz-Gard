@@ -40,6 +40,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private var a = false
     private var b = false
     private var c = false
+    private var d = false
 
     private fun provideHomeRepository(): HomeRepository {
         return ParseHomeRepository()
@@ -100,6 +101,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             checkLoadedItems()
         }
 
+        homeViewModel.images.observe(viewLifecycleOwner){
+            restaurantsHomeAdapter.addImages(it)
+            hotelsHomeAdapter.addImages(it)
+            d = true
+            checkLoadedItems()
+        }
+
         homeViewModel.weatherError.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
             c = true
@@ -113,7 +121,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         homeViewModel.restaurants.observe(viewLifecycleOwner) {
-            restaurantsHomeAdapter.submitList(it)
+            restaurantsHomeAdapter.addRestaurants(it)
             b = true
             checkLoadedItems()
         }
@@ -121,7 +129,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun checkLoadedItems() {
-        if (a && b && c) {
+        if (a && b && c && d) {
             binding.lottieAnimation.cancelAnimation()
             binding.lottieAnimation.visibility = View.GONE
             binding.rvCategoriesHome.visibility = View.VISIBLE

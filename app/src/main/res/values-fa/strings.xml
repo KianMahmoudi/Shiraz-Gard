@@ -35,4 +35,5 @@
     <string name="wc">سرویس بهداشتی</string>
     <string name="parking">پارکینگ</string>
     <string name="hotels">هتل ها</string>
+    <string name="show_on_map">روی نقشه نشان بده</string>
 </resources>
