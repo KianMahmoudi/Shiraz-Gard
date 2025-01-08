@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -20,7 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    var t = 0
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,11 +38,31 @@ class HomeActivity : AppCompatActivity() {
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.navHostFragmentHome) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
         binding.bottomNavHome.setupWithNavController(navController)
 
-        supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
-        supportActionBar?.setCustomView(R.layout.action_bar)
+        handleIncomingIntent()
 
+        supportActionBar?.apply {
+            setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
+            setCustomView(R.layout.action_bar)
+        }
     }
+
+    private fun handleIncomingIntent() {
+        val destination = intent.getStringExtra("destination")
+        if (destination == "mapFragment") {
+            val bundle = Bundle().apply {
+                intent.extras?.getDouble("latitude")?.let {
+                    putDouble("latitude", it)
+                }
+                intent.extras?.getDouble("longitude")?.let {
+                    putDouble("longitude", it)
+                }
+            }
+            binding.bottomNavHome.selectedItemId = R.id.mapFragment
+            navController.navigate(R.id.mapFragment, bundle)
+        }
+    }
+
 }

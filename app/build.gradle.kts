@@ -73,5 +73,6 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.0"))
     implementation("com.airbnb.android:lottie:6.1.0")
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
+    implementation("com.orhanobut:logger:2.2.0")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 }

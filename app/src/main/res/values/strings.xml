@@ -35,4 +35,5 @@
     <string name="wc">Wc</string>
     <string name="parking">Parking</string>
     <string name="show_on_map">Show on map</string>
+    <string name="showOnApp">Show on app</string>
 </resources>

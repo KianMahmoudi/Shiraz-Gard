@@ -1,16 +1,23 @@
 package com.kianmahmoudi.android.shirazgard.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBar
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.denzcoskun.imageslider.ImageSlider
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
-import com.google.android.material.appbar.MaterialToolbar
 import com.kianmahmoudi.android.shirazgard.R
-import com.kianmahmoudi.android.shirazgard.databinding.ActivityMainBinding
 import com.kianmahmoudi.android.shirazgard.databinding.ItemPlaceDetailsBinding
+import com.kianmahmoudi.android.shirazgard.fragments.Home.MapFragment
 import java.util.Locale
 
 class ItemPlaceDetailsActivity : AppCompatActivity() {
@@ -23,7 +30,7 @@ class ItemPlaceDetailsActivity : AppCompatActivity() {
 
         val imageList = ArrayList<SlideModel>()
 
-        if (intent.extras != null){
+        if (intent.extras != null) {
             when (Locale.getDefault().language) {
                 "en" -> {
                     binding.placeTitle.setText(intent.extras?.getString("enName"))
@@ -40,13 +47,27 @@ class ItemPlaceDetailsActivity : AppCompatActivity() {
 
             val imageUrls = intent.extras?.getStringArrayList("images")
 
-            if (imageUrls!= null) {
+            if (imageUrls != null) {
                 for (url in imageUrls) {
-                    imageList.add(SlideModel(url,ScaleTypes.FIT))
+                    imageList.add(SlideModel(url, ScaleTypes.FIT))
+                }
+            }
+
+            binding.fabShowOnMap.setOnClickListener {
+                try {
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.putExtra("destination","mapFragment")
+                    intent.putExtra("latitude",this.intent.extras?.getDouble("latitude"))
+                    intent.putExtra("longitude", this.intent.extras?.getDouble("longitude"))
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    Log.e("detailsActivity", e.message.toString())
                 }
             }
 
         }
+
+
 
         val imageSlider = findViewById<ImageSlider>(R.id.image_slider)
         imageSlider.setImageList(imageList)

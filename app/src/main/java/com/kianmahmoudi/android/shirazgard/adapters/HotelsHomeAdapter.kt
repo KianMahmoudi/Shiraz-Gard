@@ -58,6 +58,8 @@ class HotelsHomeAdapter() :
                         intent.putExtra("address", item.getString("address"))
                         intent.putExtra("description", item.getString("description"))
                         intent.putExtra("type", item.getString("type"))
+                        intent.putExtra("latitude",item.getParseGeoPoint("location")?.latitude)
+                        intent.putExtra("longitude",item.getParseGeoPoint("location")?.longitude)
                         itemView.context.startActivity(intent)
                     } else {
                         Log.d("HotelAdapter", "No hotel images found for hotel ID")
