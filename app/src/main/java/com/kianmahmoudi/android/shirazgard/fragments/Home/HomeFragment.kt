@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
@@ -35,7 +36,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         RestaurantsHomeAdapter()
     }
     private val categoriesHomeAdapter: CategoriesHomeAdapter by lazy {
-        CategoriesHomeAdapter()
+        CategoriesHomeAdapter(findNavController())
     }
 
     private var a = false
@@ -47,7 +48,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View{
+    ): View {
         binding = FragmentHomeBinding.inflate(inflater)
         return binding.root
     }
@@ -65,26 +66,32 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             mutableListOf(
                 Category(
                     getString(R.string.atm),
+                    "atm",
                     R.drawable.local_atm_24px, 0
                 ),
                 Category(
                     getString(R.string.hotels),
+                    "hotel",
                     R.drawable.hotel_24px, 1
                 ),
                 Category(
                     getString(R.string.hospital),
+                    "hospital",
                     R.drawable.home_health_24px, 2
                 ),
                 Category(
                     getString(R.string.restaurant),
+                    "restaurant",
                     R.drawable.restaurant_24px, 3
                 ),
                 Category(
                     getString(R.string.wc),
+                    "wc",
                     R.drawable.wc_24px, 4
                 ),
                 Category(
                     getString(R.string.parking),
+                    "parking",
                     R.drawable.local_parking_24px, 5
                 ),
             )

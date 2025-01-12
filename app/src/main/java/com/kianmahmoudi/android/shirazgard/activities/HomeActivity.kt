@@ -2,6 +2,7 @@ package com.kianmahmoudi.android.shirazgard.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -40,6 +41,13 @@ class HomeActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.navHostFragmentHome) as NavHostFragment
         navController = navHostFragment.navController
         binding.bottomNavHome.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.categoryPlacesFragment -> binding.bottomNavHome.visibility= View.GONE
+                else -> binding.bottomNavHome.visibility= View.VISIBLE
+            }
+        }
 
         handleIncomingIntent()
 

@@ -35,7 +35,7 @@ class ParseHomeRepository : HomeRepository {
         val query = ParseQuery.getQuery<ParseObject>("Place")
         query.whereEqualTo("type", "hotel")
         return withContext(Dispatchers.IO) {
-            suspendCancellableCoroutine{ continuation ->
+            suspendCancellableCoroutine { continuation ->
                 query.findInBackground { objects, e ->
                     if (e == null) {
                         continuation.resume(objects)
@@ -52,8 +52,8 @@ class ParseHomeRepository : HomeRepository {
         val query = ParseQuery.getQuery<ParseObject>("Place")
         query.whereEqualTo("type", "restaurant")
         return withContext(Dispatchers.IO) {
-            suspendCancellableCoroutine{ continuation ->
-                query.findInBackground{ objects, e ->
+            suspendCancellableCoroutine { continuation ->
+                query.findInBackground { objects, e ->
                     if (e == null) {
                         continuation.resume(objects)
                     } else {
@@ -66,7 +66,10 @@ class ParseHomeRepository : HomeRepository {
     }
 
     override suspend fun getWeather(): WeatherResult? {
-        val response = RetrofitInstance.api.getWeather("شیراز", "mfggRHJXqMCI1yyQxPEsByuQzulsskdrAnESXdpnXu1Bq3iWtUai")
+        val response = RetrofitInstance.api.getWeather(
+            "شیراز",
+            "mfggRHJXqMCI1yyQxPEsByuQzulsskdrAnESXdpnXu1Bq3iWtUai"
+        )
 
         if (response.isSuccessful) {
             response.body()?.let {
@@ -80,10 +83,11 @@ class ParseHomeRepository : HomeRepository {
                         val temperature = main.getDouble("temp")
 
                         val weatherArray = result.getJSONArray("weather")
-                        val weatherDescription = weatherArray.getJSONObject(0).getString("description")
+                        val weatherDescription =
+                            weatherArray.getJSONObject(0).getString("description")
                         val weatherIc = weatherArray.getJSONObject(0).getString("icon")
 
-                        return WeatherResult(temperature, weatherDescription,weatherIc)
+                        return WeatherResult(temperature, weatherDescription, weatherIc)
                     } else {
                         Log.e("WeatherRepository", "No 'result' field in JSON")
                     }
@@ -97,6 +101,22 @@ class ParseHomeRepository : HomeRepository {
         }
 
         return null
+    }
+
+    override suspend fun getPlaces(): List<ParseObject> {
+        val query = ParseQuery.getQuery<ParseObject>("Place")
+        return withContext(Dispatchers.IO) {
+            suspendCancellableCoroutine { continuation ->
+                query.findInBackground { objects, e ->
+                    if (e == null) {
+                        continuation.resume(objects)
+                    } else {
+                        Log.i("HomeFragment", e.message.toString())
+                        continuation.resumeWithException(e)
+                    }
+                }
+            }
+        }
     }
 
 }

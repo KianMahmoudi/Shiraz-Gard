@@ -1,8 +1,11 @@
 package com.kianmahmoudi.android.shirazgard.adapters
 
 import android.content.res.Resources
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -10,7 +13,8 @@ import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.data.Category
 import com.kianmahmoudi.android.shirazgard.databinding.ItemCategoryHomeBinding
 
-class CategoriesHomeAdapter : RecyclerView.Adapter<CategoriesHomeAdapter.ViewHolder>() {
+class CategoriesHomeAdapter(private val navController: NavController) :
+    RecyclerView.Adapter<CategoriesHomeAdapter.ViewHolder>() {
 
 
     private val diffCallback = AsyncListDiffer(this, object : DiffUtil.ItemCallback<Category>() {
@@ -32,6 +36,15 @@ class CategoriesHomeAdapter : RecyclerView.Adapter<CategoriesHomeAdapter.ViewHol
         fun bind(category: Category) {
             binding.itemCategoryHomeIc.setImageResource(category.image)
             binding.itemCategoryHomeTitle.setText(category.name)
+
+            itemView.setOnClickListener {
+                val bundle = bundleOf(
+                    "categoryName" to category.name,
+                    "categoryType" to category.type
+                )
+                navController.navigate(R.id.categoryPlacesFragment,bundle)
+            }
+
         }
     }
 

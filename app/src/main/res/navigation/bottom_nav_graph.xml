@@ -8,7 +8,11 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragment"
-        android:label="HomeFragment" />
+        android:label="HomeFragment">
+        <action
+            android:id="@+id/action_homeFragment_to_categoryPlacesFragment"
+            app:destination="@id/categoryPlacesFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.FavoriteFragment"
@@ -25,12 +29,12 @@
         android:id="@+id/settingFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.SettingFragment"
         android:label="SettingFragment" />
-    <activity
-        android:id="@+id/homeActivity"
-        android:name="com.kianmahmoudi.android.shirazgard.activities.HomeActivity"
-        android:label="item_place_details"
-        tools:layout="@layout/item_place_details">
-
-
-    </activity>
+    <fragment
+        android:id="@+id/categoryPlacesFragment"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.CategoryPlacesFragment"
+        android:label="CategoryPlacesFragment" >
+        <argument
+            android:name="categoryName"
+            app:argType="string" />
+    </fragment>
 </navigation>
