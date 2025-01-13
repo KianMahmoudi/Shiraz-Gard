@@ -146,7 +146,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottieAnimation"
+            android:id="@+id/progressBarHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

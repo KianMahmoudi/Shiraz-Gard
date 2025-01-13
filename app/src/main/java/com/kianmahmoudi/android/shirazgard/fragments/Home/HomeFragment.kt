@@ -38,11 +38,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val categoriesHomeAdapter: CategoriesHomeAdapter by lazy {
         CategoriesHomeAdapter(findNavController())
     }
-
-    private var a = false
-    private var b = false
-    private var c = false
-    private var d = false
+    private var isWeatherLoaded = false
+    private var areHotelsLoaded = false
+    private var areRestaurantsLoaded = false
+    private var areImagesLoaded = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,103 +59,87 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         fetchHotelsRv()
         fetchRestaurantsRv()
 
-        checkLoadedItems()
+        loadCategories()
 
-        categoriesHomeAdapter.submitData(
-            mutableListOf(
-                Category(
-                    getString(R.string.atm),
-                    "atm",
-                    R.drawable.local_atm_24px, 0
-                ),
-                Category(
-                    getString(R.string.hotels),
-                    "hotel",
-                    R.drawable.hotel_24px, 1
-                ),
-                Category(
-                    getString(R.string.hospital),
-                    "hospital",
-                    R.drawable.home_health_24px, 2
-                ),
-                Category(
-                    getString(R.string.restaurant),
-                    "restaurant",
-                    R.drawable.restaurant_24px, 3
-                ),
-                Category(
-                    getString(R.string.wc),
-                    "wc",
-                    R.drawable.wc_24px, 4
-                ),
-                Category(
-                    getString(R.string.parking),
-                    "parking",
-                    R.drawable.local_parking_24px, 5
-                ),
-            )
-        )
+        updateUIState(UIState.LOADING)
 
         lifecycleScope.launch {
-            homeViewModel.weatherData.observe(viewLifecycleOwner) {
-                binding.tvTemperatureHome.text = it.temperature.toString()
-                binding.tvDescriptionHome.text = it.description
-                binding.icWeatherHome.setImageResource(checkIcon(it.icon))
-                c = true
-                checkLoadedItems()
-            }
-
-            homeViewModel.images.observe(viewLifecycleOwner) {
-                restaurantsHomeAdapter.addImages(it)
-                hotelsHomeAdapter.addImages(it)
-                d = true
-                checkLoadedItems()
-            }
-
-            homeViewModel.weatherError.observe(viewLifecycleOwner) {
-                Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
-                c = true
-                checkLoadedItems()
-            }
-
-            homeViewModel.hotels.observe(viewLifecycleOwner) { hotels ->
-                hotelsHomeAdapter.submitList(hotels)
-                a = true
-                checkLoadedItems()
-            }
-
-            homeViewModel.restaurants.observe(viewLifecycleOwner) {
-                restaurantsHomeAdapter.addRestaurants(it)
-                b = true
-                checkLoadedItems()
-            }
+            observeData()
         }
 
     }
 
-    private fun checkLoadedItems() {
-        if (a && b && c && d) {
-            binding.lottieAnimation.cancelAnimation()
-            binding.lottieAnimation.visibility = View.GONE
-            binding.rvCategoriesHome.visibility = View.VISIBLE
-            binding.rvHotelsHome.visibility = View.VISIBLE
-            binding.rvRestaurantsHome.visibility = View.VISIBLE
-            binding.cardView.visibility = View.VISIBLE
-            binding.textView3.visibility = View.VISIBLE
-            binding.textView4.visibility = View.VISIBLE
-            binding.textView5.visibility = View.VISIBLE
-            binding.textView6.visibility = View.VISIBLE
-        } else {
-            binding.lottieAnimation.playAnimation()
-            binding.lottieAnimation.visibility = View.VISIBLE
-            binding.rvCategoriesHome.visibility = View.GONE
-            binding.rvHotelsHome.visibility = View.GONE
-            binding.rvRestaurantsHome.visibility = View.GONE
-            binding.cardView.visibility = View.GONE
-            binding.textView3.visibility = View.GONE
-            binding.textView4.visibility = View.GONE
-            binding.textView5.visibility = View.GONE
-            binding.textView6.visibility = View.GONE
+    private fun loadCategories() {
+        categoriesHomeAdapter.submitData(
+            mutableListOf(
+                Category(getString(R.string.atm), "atm", R.drawable.local_atm_24px, 0),
+                Category(getString(R.string.hotels), "hotel", R.drawable.hotel_24px, 1),
+                Category(getString(R.string.hospital), "hospital", R.drawable.home_health_24px, 2),
+                Category(getString(R.string.restaurant), "restaurant", R.drawable.restaurant_24px, 3),
+                Category(getString(R.string.wc), "wc", R.drawable.wc_24px, 4),
+                Category(getString(R.string.parking), "parking", R.drawable.local_parking_24px, 5)
+            )
+        )
+    }
+
+    private fun observeData() {
+        homeViewModel.weatherData.observe(viewLifecycleOwner) {
+            binding.tvTemperatureHome.text = it.temperature.toString()
+            binding.tvDescriptionHome.text = it.description
+            binding.icWeatherHome.setImageResource(checkIcon(it.icon))
+            isWeatherLoaded = true
+            checkState()
+        }
+
+        homeViewModel.images.observe(viewLifecycleOwner) {
+            restaurantsHomeAdapter.addImages(it)
+            hotelsHomeAdapter.addImages(it)
+            areImagesLoaded = true
+            checkState()
+        }
+
+        homeViewModel.weatherError.observe(viewLifecycleOwner) {
+            Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
+            isWeatherLoaded = true
+            checkState()
+        }
+
+        homeViewModel.hotels.observe(viewLifecycleOwner) { hotels ->
+            hotelsHomeAdapter.submitList(hotels)
+            areHotelsLoaded = true
+            checkState()
+        }
+
+        homeViewModel.restaurants.observe(viewLifecycleOwner) {
+            restaurantsHomeAdapter.addRestaurants(it)
+            areRestaurantsLoaded = true
+            checkState()
+        }
+    }
+
+    private fun checkState() {
+        if (isWeatherLoaded && areHotelsLoaded && areRestaurantsLoaded && areImagesLoaded) {
+            updateUIState(UIState.LOADED)
+        }
+    }
+
+    private fun updateUIState(state: UIState) {
+        val isLoading = state == UIState.LOADING
+        binding.apply {
+            progressBarHome.apply {
+                if (isLoading) playAnimation() else cancelAnimation()
+                visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+            listOf(
+                rvCategoriesHome,
+                rvHotelsHome,
+                rvRestaurantsHome,
+                cardView,
+                textView3,
+                textView4,
+                textView5,
+                textView6
+            ).forEach { it.visibility = if (isLoading) View.GONE else View.VISIBLE }
         }
     }
 
@@ -181,6 +164,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = restaurantsHomeAdapter
         recyclerView.addItemDecoration(EqualSpacingItemDecoration(4))
+    }
+
+    enum class UIState {
+        LOADING,
+        LOADED
     }
 
 }
