@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoryPlacesAdapter
@@ -24,6 +26,7 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
 
     private lateinit var binding: CategoryPlacesBinding
     private val homeViewModel: HomeViewModel by viewModels()
+    private val args: CategoryPlacesFragmentArgs by navArgs()
     private val categoryPlacesAdapter: CategoryPlacesAdapter by lazy {
         CategoryPlacesAdapter()
     }
@@ -65,7 +68,7 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
         lifecycleScope.launch {
             homeViewModel.places.observe(viewLifecycleOwner) { places ->
                 val filteredPlaces = places.filter {
-                    it.getString("type") == arguments?.getString("categoryType")
+                    it.getString("type") == args.categoryType
                 }
 
                 homeViewModel.images.observe(viewLifecycleOwner) { images ->
@@ -84,10 +87,9 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
     }
 
     private fun setupToolbar() {
-        binding.categoryName.text = arguments?.getString("categoryName")
+        binding.categoryName.text = args.categoryName
         (requireActivity() as AppCompatActivity).supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
         }
     }
 
@@ -134,10 +136,21 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
+
                 findNavController().navigateUp()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
+    override fun onStop() {
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        super.onStop()
+    }
+
+    override fun onResume() {
+        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        super.onResume()
+    }
+
 }

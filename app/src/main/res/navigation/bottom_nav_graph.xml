@@ -5,13 +5,40 @@
     android:id="@+id/bottom_nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <activity
+        android:id="@+id/homeActivity"
+        android:name="com.kianmahmoudi.android.shirazgard.activities.HomeActivity"
+        android:label="HomeActivity">
+        <argument
+            android:name="destination"
+            app:argType="string" />
+        <argument
+            android:name="latitude"
+            app:argType="float" />
+        <argument
+            android:name="longitude"
+            app:argType="float" />
+    </activity>
+
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragment"
         android:label="HomeFragment">
         <action
             android:id="@+id/action_homeFragment_to_categoryPlacesFragment"
-            app:destination="@id/categoryPlacesFragment" />
+            app:destination="@id/categoryPlacesFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
+        <action
+            android:id="@+id/action_homeFragment_to_placeDetailsFragment"
+            app:destination="@id/placeDetailsFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
@@ -32,9 +59,56 @@
     <fragment
         android:id="@+id/categoryPlacesFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.CategoryPlacesFragment"
-        android:label="CategoryPlacesFragment" >
+        android:label="CategoryPlacesFragment">
         <argument
             android:name="categoryName"
             app:argType="string" />
+        <argument
+            android:name="categoryType"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_categoryPlacesFragment_to_placeDetailsFragment"
+            app:destination="@id/placeDetailsFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
     </fragment>
+    <fragment
+        android:id="@+id/placeDetailsFragment"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.PlaceDetailsFragment"
+        android:label="PlaceDetailsFragment">
+        <argument
+            android:name="enName"
+            app:argType="string" />
+        <argument
+            android:name="faName"
+            app:argType="string" />
+        <argument
+            android:name="address"
+            app:argType="string" />
+        <argument
+            android:name="description"
+            app:argType="string" />
+        <argument
+            android:name="type"
+            app:argType="string" />
+        <argument
+            android:name="latitude"
+            app:argType="float" />
+        <argument
+            android:name="longitude"
+            app:argType="float" />
+        <argument
+            android:name="images"
+            app:argType="string[]" />
+        <action
+            android:id="@+id/action_placeDetailsFragment_to_homeActivity"
+            app:destination="@id/homeActivity"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
+    </fragment>
+
 </navigation>

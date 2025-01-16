@@ -1,21 +1,23 @@
 package com.kianmahmoudi.android.shirazgard.adapters
 
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.kianmahmoudi.android.shirazgard.activities.ItemPlaceDetailsActivity
 import com.kianmahmoudi.android.shirazgard.databinding.ItemPlaceBinding
+import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragmentDirections
 import com.parse.ParseObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.ArrayList
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.util.Locale
+import kotlin.collections.ArrayList
 
 class RestaurantsHomeAdapter() :
     RecyclerView.Adapter<RestaurantsHomeAdapter.ViewHolder>() {
@@ -51,20 +53,30 @@ class RestaurantsHomeAdapter() :
                 binding.imagePlace.setImageResource(com.denzcoskun.imageslider.R.drawable.default_placeholder)
             }
             itemView.setOnClickListener {
-                val intent = Intent(itemView.context, ItemPlaceDetailsActivity::class.java)
                 CoroutineScope(Dispatchers.IO).launch {
                     if (!images.isNullOrEmpty()) {
-                        intent.putStringArrayListExtra("images", images as ArrayList<String>)
-                        intent.putExtra("faName", item.getString("faName"))
-                        intent.putExtra("enName", item.getString("enName"))
-                        intent.putExtra("address", item.getString("address"))
-                        intent.putExtra("description", item.getString("description"))
-                        intent.putExtra("type", item.getString("type"))
-                        intent.putExtra("latitude",item.getParseGeoPoint("location")?.latitude)
-                        intent.putExtra("longitude",item.getParseGeoPoint("location")?.longitude)
-                        itemView.context.startActivity(intent)
+                        val action =
+                            HomeFragmentDirections.actionHomeFragmentToPlaceDetailsFragment(
+                                faName = item.getString("faName") ?: "",
+                                enName = item.getString("enName") ?: "",
+                                address = item.getString("address") ?: "",
+                                description = item.getString("description") ?: "",
+                                type = item.getString("type") ?: "",
+                                latitude = item.getParseGeoPoint("location")?.latitude?.toFloat()
+                                    ?: 0f,
+                                longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
+                                    ?: 0f,
+                                images = images.toTypedArray()
+                            )
+                        try {
+                            withContext(Dispatchers.Main) {
+                                it.findNavController().navigate(action)
+                            }
+                        } catch (e: Exception) {
+                            Timber.e(e.message)
+                        }
                     } else {
-                        Log.d("HotelAdapter", "No hotel images found for hotel ID")
+                        Log.d("RestaurantAdapter", "No restaurant images found")
                     }
                 }
             }

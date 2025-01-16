@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.maps.secret)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs.kotlin")
 }
 
 android {
@@ -74,5 +75,6 @@ dependencies {
     implementation("com.airbnb.android:lottie:6.1.0")
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
     implementation("com.orhanobut:logger:2.2.0")
+    implementation("com.jakewharton.timber:timber:5.0.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 }

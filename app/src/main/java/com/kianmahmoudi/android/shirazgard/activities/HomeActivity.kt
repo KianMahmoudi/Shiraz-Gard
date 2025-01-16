@@ -9,6 +9,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navArgs
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.kianmahmoudi.android.shirazgard.R
@@ -34,6 +35,7 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -44,8 +46,9 @@ class HomeActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.categoryPlacesFragment -> binding.bottomNavHome.visibility= View.GONE
-                else -> binding.bottomNavHome.visibility= View.VISIBLE
+                R.id.categoryPlacesFragment -> binding.bottomNavHome.visibility = View.GONE
+                R.id.placeDetailsFragment -> binding.bottomNavHome.visibility = View.GONE
+                else -> binding.bottomNavHome.visibility = View.VISIBLE
             }
         }
 
@@ -61,12 +64,8 @@ class HomeActivity : AppCompatActivity() {
         val destination = intent.getStringExtra("destination")
         if (destination == "mapFragment") {
             val bundle = Bundle().apply {
-                intent.extras?.getDouble("latitude")?.let {
-                    putDouble("latitude", it)
-                }
-                intent.extras?.getDouble("longitude")?.let {
-                    putDouble("longitude", it)
-                }
+                putDouble("latitude", intent.getFloatExtra("latitude", 0.0F).toDouble())
+                putDouble("longitude", intent.getFloatExtra("longitude", 0.0F).toDouble())
             }
             binding.bottomNavHome.selectedItemId = R.id.mapFragment
             navController.navigate(R.id.mapFragment, bundle)

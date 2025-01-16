@@ -99,7 +99,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         homeViewModel.weatherError.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), it.toString(), Toast.LENGTH_SHORT).show()
             isWeatherLoaded = true
             checkState()
         }

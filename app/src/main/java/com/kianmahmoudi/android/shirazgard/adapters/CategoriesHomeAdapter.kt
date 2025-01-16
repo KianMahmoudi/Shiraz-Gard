@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.data.Category
 import com.kianmahmoudi.android.shirazgard.databinding.ItemCategoryHomeBinding
+import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragmentDirections
 
 class CategoriesHomeAdapter(private val navController: NavController) :
     RecyclerView.Adapter<CategoriesHomeAdapter.ViewHolder>() {
@@ -38,11 +39,11 @@ class CategoriesHomeAdapter(private val navController: NavController) :
             binding.itemCategoryHomeTitle.setText(category.name)
 
             itemView.setOnClickListener {
-                val bundle = bundleOf(
-                    "categoryName" to category.name,
-                    "categoryType" to category.type
+                val action = HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment(
+                    categoryName = category.name,
+                    categoryType = category.type
                 )
-                navController.navigate(R.id.categoryPlacesFragment,bundle)
+                navController.navigate(action)
             }
 
         }

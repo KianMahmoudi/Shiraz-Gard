@@ -4,6 +4,7 @@ package com.kianmahmoudi.android.shirazgard
 import android.app.Application
 import com.parse.Parse
 import dagger.hilt.android.HiltAndroidApp
+import timber.log.Timber
 
 @HiltAndroidApp
 class App : Application() {
@@ -16,5 +17,8 @@ class App : Application() {
                 .server(getString(R.string.back4app_server_url))
                 .build()
         );
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
     }
 }
