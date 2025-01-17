@@ -76,5 +76,6 @@ dependencies {
     implementation("com.github.denzcoskun:ImageSlideshow:0.1.2")
     implementation("com.orhanobut:logger:2.2.0")
     implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 }

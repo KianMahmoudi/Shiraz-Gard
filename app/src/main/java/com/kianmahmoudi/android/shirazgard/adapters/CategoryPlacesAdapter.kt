@@ -35,7 +35,6 @@ class CategoryPlacesAdapter : RecyclerView.Adapter<CategoryPlacesAdapter.ViewHol
 
     private val images = ArrayList<ParseObject>()
 
-
     inner class ViewHolder(val binding: ItemCategoryPlacesBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ParseObject, images: List<String>?) {
@@ -75,7 +74,7 @@ class CategoryPlacesAdapter : RecyclerView.Adapter<CategoryPlacesAdapter.ViewHol
                             Timber.e(e.message)
                         }
                     } else {
-                        Log.d("HotelAdapter", "No hotel images found for hotel ID")
+                        Log.d("CategoryPlacesAdapter", "No images found for place")
                     }
                 }
             }
@@ -97,10 +96,16 @@ class CategoryPlacesAdapter : RecyclerView.Adapter<CategoryPlacesAdapter.ViewHol
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val place = places.currentList.get(position)
+        val place = places.currentList[position]
         val filteredImage =
             images.find { it.getString("placeId") == place.objectId }?.getList<String>("photosUrl")
-        holder.bind(place,filteredImage)
+        holder.bind(place, filteredImage)
+    }
+
+    fun clearData() {
+        places.submitList(emptyList())
+        images.clear()
+        notifyDataSetChanged()
     }
 
     fun addPlaces(list: List<ParseObject>) {
@@ -108,7 +113,8 @@ class CategoryPlacesAdapter : RecyclerView.Adapter<CategoryPlacesAdapter.ViewHol
     }
 
     fun addImages(list: List<ParseObject>) {
+        images.clear()
         images.addAll(list)
+        notifyDataSetChanged()
     }
-
 }

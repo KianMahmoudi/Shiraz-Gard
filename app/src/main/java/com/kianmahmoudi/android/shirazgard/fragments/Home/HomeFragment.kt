@@ -55,18 +55,34 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        fetchCategoriesRv()
-        fetchHotelsRv()
-        fetchRestaurantsRv()
-
+        setupRecyclerViews()
         loadCategories()
-
+        setupSwipeRefresh()
+        observeData()
         updateUIState(UIState.LOADING)
+    }
 
-        lifecycleScope.launch {
-            observeData()
+    private fun setupRecyclerViews() {
+        // Categories RecyclerView
+        binding.rvCategoriesHome.apply {
+            layoutManager = GridLayoutManager(context, 3)
+            adapter = categoriesHomeAdapter
+            addItemDecoration(EqualSpacingItemDecoration(4))
         }
 
+        // Hotels RecyclerView
+        binding.rvHotelsHome.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = hotelsHomeAdapter
+            addItemDecoration(EqualSpacingItemDecoration(4))
+        }
+
+        // Restaurants RecyclerView
+        binding.rvRestaurantsHome.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = restaurantsHomeAdapter
+            addItemDecoration(EqualSpacingItemDecoration(4))
+        }
     }
 
     private fun loadCategories() {
@@ -82,43 +98,66 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         )
     }
 
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshAllData()
+        }
+    }
+
+    private fun refreshAllData() {
+        updateUIState(UIState.LOADING)
+        homeViewModel.fetchAllData()
+    }
+
     private fun observeData() {
-        homeViewModel.weatherData.observe(viewLifecycleOwner) {
-            binding.tvTemperatureHome.text = it.temperature.toString()
-            binding.tvDescriptionHome.text = it.description
-            binding.icWeatherHome.setImageResource(checkIcon(it.icon))
-            isWeatherLoaded = true
-            checkState()
-        }
+        // Reset flags
+        isWeatherLoaded = false
+        areHotelsLoaded = false
+        areRestaurantsLoaded = false
+        areImagesLoaded = false
 
-        homeViewModel.images.observe(viewLifecycleOwner) {
-            restaurantsHomeAdapter.addImages(it)
-            hotelsHomeAdapter.addImages(it)
-            areImagesLoaded = true
-            checkState()
-        }
+        homeViewModel.apply {
+            weatherData.observe(viewLifecycleOwner) { weather ->
+                binding.apply {
+                    tvTemperatureHome.text = weather.temperature.toString()
+                    tvDescriptionHome.text = weather.description
+                    icWeatherHome.setImageResource(checkIcon(weather.icon))
+                }
+                isWeatherLoaded = true
+                checkState()
+            }
 
-        homeViewModel.weatherError.observe(viewLifecycleOwner) {
-            isWeatherLoaded = true
-            checkState()
-        }
+            weatherError.observe(viewLifecycleOwner) {
+                isWeatherLoaded = true
+                checkState()
+                Toast.makeText(requireContext(), "Weather Load Error", Toast.LENGTH_SHORT).show()
+            }
 
-        homeViewModel.hotels.observe(viewLifecycleOwner) { hotels ->
-            hotelsHomeAdapter.submitList(hotels)
-            areHotelsLoaded = true
-            checkState()
-        }
+            images.observe(viewLifecycleOwner) { images ->
+                restaurantsHomeAdapter.addImages(images)
+                hotelsHomeAdapter.addImages(images)
+                areImagesLoaded = true
+                checkState()
+            }
 
-        homeViewModel.restaurants.observe(viewLifecycleOwner) {
-            restaurantsHomeAdapter.addRestaurants(it)
-            areRestaurantsLoaded = true
-            checkState()
+            hotels.observe(viewLifecycleOwner) { hotels ->
+                hotelsHomeAdapter.submitList(hotels)
+                areHotelsLoaded = true
+                checkState()
+            }
+
+            restaurants.observe(viewLifecycleOwner) { restaurants ->
+                restaurantsHomeAdapter.addRestaurants(restaurants)
+                areRestaurantsLoaded = true
+                checkState()
+            }
         }
     }
 
     private fun checkState() {
         if (isWeatherLoaded && areHotelsLoaded && areRestaurantsLoaded && areImagesLoaded) {
             updateUIState(UIState.LOADED)
+            binding.swipeRefresh.isRefreshing = false
         }
     }
 
@@ -142,32 +181,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    private fun fetchCategoriesRv() {
-        val recyclerView = binding.rvCategoriesHome
-        recyclerView.layoutManager = GridLayoutManager(context, 3)
-        recyclerView.adapter = categoriesHomeAdapter
-        recyclerView.addItemDecoration(EqualSpacingItemDecoration(4))
-    }
-
-    private fun fetchHotelsRv() {
-        val recyclerView = binding.rvHotelsHome
-        recyclerView.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = hotelsHomeAdapter
-        recyclerView.addItemDecoration(EqualSpacingItemDecoration(4))
-    }
-
-    private fun fetchRestaurantsRv() {
-        val recyclerView = binding.rvRestaurantsHome
-        recyclerView.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = restaurantsHomeAdapter
-        recyclerView.addItemDecoration(EqualSpacingItemDecoration(4))
-    }
-
     enum class UIState {
         LOADING,
         LOADED
     }
-
 }

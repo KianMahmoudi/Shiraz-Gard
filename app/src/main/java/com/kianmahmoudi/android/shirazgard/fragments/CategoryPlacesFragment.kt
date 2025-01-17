@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoryPlacesAdapter
 import com.kianmahmoudi.android.shirazgard.databinding.CategoryPlacesBinding
+import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragment
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,6 +50,7 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
+        setupSwipeRefresh()
         setupObservers()
         setupToolbar()
     }
@@ -61,8 +63,18 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
         }
     }
 
-    private fun setupObservers() {
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshData()
+        }
+    }
 
+    private fun refreshData() {
+        updateUIState(UIState.LOADING)
+        homeViewModel.fetchAllData()
+    }
+
+    private fun setupObservers() {
         updateUIState(UIState.LOADING)
 
         lifecycleScope.launch {
@@ -72,15 +84,19 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
                 }
 
                 homeViewModel.images.observe(viewLifecycleOwner) { images ->
-
-                    categoryPlacesAdapter.addPlaces(filteredPlaces)
-                    categoryPlacesAdapter.addImages(images)
+                    categoryPlacesAdapter.apply {
+                        clearData()
+                        addPlaces(filteredPlaces)
+                        addImages(images)
+                    }
 
                     if (filteredPlaces.isEmpty()) {
                         updateUIState(UIState.EMPTY)
                     } else {
                         updateUIState(UIState.LOADED)
                     }
+
+                    binding.swipeRefresh.isRefreshing = false
                 }
             }
         }
@@ -127,22 +143,17 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
             }
         }
     }
-    enum class UIState {
-        LOADING,
-        LOADED,
-        EMPTY
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-
                 findNavController().navigateUp()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
+
     override fun onStop() {
         (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
         super.onStop()
@@ -153,4 +164,9 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
         super.onResume()
     }
 
+    enum class UIState {
+        LOADING,
+        LOADED,
+        EMPTY
+    }
 }
