@@ -121,6 +121,7 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
                     emptyView.cancelAnimation()
                 }
             }
+
             UIState.LOADED -> {
                 binding.apply {
                     progressBar.visibility = View.GONE
@@ -131,6 +132,7 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
                     emptyView.cancelAnimation()
                 }
             }
+
             UIState.EMPTY -> {
                 binding.apply {
                     progressBar.visibility = View.GONE
@@ -150,6 +152,7 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
                 findNavController().navigateUp()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

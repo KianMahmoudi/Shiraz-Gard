@@ -1,6 +1,5 @@
 package com.kianmahmoudi.android.shirazgard.adapters
 
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -82,7 +81,7 @@ class HotelsHomeAdapter() :
         }
     }
 
-    fun submitList(list: List<ParseObject>) {
+    fun addHotels(list: List<ParseObject>) {
         differ.submitList(list)
     }
 

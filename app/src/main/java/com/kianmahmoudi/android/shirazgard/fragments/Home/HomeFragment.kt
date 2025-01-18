@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,7 +21,6 @@ import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.util.checkIcon
 import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -91,7 +89,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 Category(getString(R.string.atm), "atm", R.drawable.local_atm_24px, 0),
                 Category(getString(R.string.hotels), "hotel", R.drawable.hotel_24px, 1),
                 Category(getString(R.string.hospital), "hospital", R.drawable.home_health_24px, 2),
-                Category(getString(R.string.restaurant), "restaurant", R.drawable.restaurant_24px, 3),
+                Category(
+                    getString(R.string.restaurant),
+                    "restaurant",
+                    R.drawable.restaurant_24px,
+                    3
+                ),
                 Category(getString(R.string.wc), "wc", R.drawable.wc_24px, 4),
                 Category(getString(R.string.parking), "parking", R.drawable.local_parking_24px, 5)
             )
@@ -140,17 +143,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 checkState()
             }
 
-            hotels.observe(viewLifecycleOwner) { hotels ->
-                hotelsHomeAdapter.submitList(hotels)
+            places.observe(viewLifecycleOwner) { places ->
+                val restaurants = places.filter { it.getString("type") == "restaurant" }
+                val hotels = places.filter { it.getString("type") == "hotel" }
+                hotelsHomeAdapter.addHotels(hotels)
+                restaurantsHomeAdapter.addRestaurants(restaurants)
+                areRestaurantsLoaded = true
                 areHotelsLoaded = true
                 checkState()
             }
 
-            restaurants.observe(viewLifecycleOwner) { restaurants ->
-                restaurantsHomeAdapter.addRestaurants(restaurants)
-                areRestaurantsLoaded = true
-                checkState()
-            }
         }
     }
 

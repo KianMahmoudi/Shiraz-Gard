@@ -30,41 +30,6 @@ class ParseHomeRepository : HomeRepository {
         }
     }
 
-
-    override suspend fun getHotels(): List<ParseObject> {
-        val query = ParseQuery.getQuery<ParseObject>("Place")
-        query.whereEqualTo("type", "hotel")
-        return withContext(Dispatchers.IO) {
-            suspendCancellableCoroutine { continuation ->
-                query.findInBackground { objects, e ->
-                    if (e == null) {
-                        continuation.resume(objects)
-                    } else {
-                        Log.i("HomeFragment", e.message.toString())
-                        continuation.resumeWithException(e)
-                    }
-                }
-            }
-        }
-    }
-
-    override suspend fun getRestaurants(): List<ParseObject> {
-        val query = ParseQuery.getQuery<ParseObject>("Place")
-        query.whereEqualTo("type", "restaurant")
-        return withContext(Dispatchers.IO) {
-            suspendCancellableCoroutine { continuation ->
-                query.findInBackground { objects, e ->
-                    if (e == null) {
-                        continuation.resume(objects)
-                    } else {
-                        Log.i("HomeFragment", e.message.toString())
-                        continuation.resumeWithException(e)
-                    }
-                }
-            }
-        }
-    }
-
     override suspend fun getWeather(): WeatherResult? {
         val response = RetrofitInstance.api.getWeather(
             "شیراز",
