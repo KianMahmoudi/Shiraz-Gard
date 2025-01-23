@@ -28,13 +28,19 @@
     <string name="shiraz_weather_now">-اب و هوای شیراز اکنون</string>
     <string name="categories">دسته بندی ها</string>
     <string name="see_all">دیدن همه</string>
-    <string name="atm">خودپرداز</string>
-    <string name="hospital">بیمارستان</string>
+    <string name="atms">خودپرداز ها</string>
+    <string name="hospitals">بیمارستان ها</string>
     <string name="restaurant">رستوران</string>
     <string name="restaurants">رستوران ها</string>
-    <string name="wc">سرویس بهداشتی</string>
-    <string name="parking">پارکینگ</string>
+    <string name="wcs">سرویس بهداشتی ها</string>
+    <string name="parkings">پارکینگ ها</string>
     <string name="hotels">هتل ها</string>
     <string name="show_on_map">روی نقشه نشان بده</string>
     <string name="showOnApp">در برنامه نشان بده</string>
+    <string name="mosques">مساجد</string>
+    <string name="museums">موزه ها</string>
+    <string name="gas_stations">پمپ بنزین ها</string>
+    <string name="car_washes">کارواش ها</string>
+    <string name="cultural_sites">جاهای فرهنگی</string>
+    <string name="historical_sites">جاهای تاریخی</string>
 </resources>

@@ -39,19 +39,30 @@
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
             app:popExitAnim="@anim/slide_out_down" />
+        <action
+            android:id="@+id/action_homeFragment_to_categoriesFragment"
+            app:destination="@id/categoriesFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.FavoriteFragment"
         android:label="FavoriteFragment" />
     <fragment
-        android:id="@+id/searchFragment"
-        android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.SearchFragment"
-        android:label="SearchFragment" />
-    <fragment
         android:id="@+id/mapFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.MapFragment"
         android:label="MapFragment" />
+    <fragment
+        android:id="@+id/categoriesFragment"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.CategoriesFragment"
+        android:label="CategoriesFragment" >
+        <action
+            android:id="@+id/action_categoriesFragment_to_categoryPlacesFragment"
+            app:destination="@id/categoryPlacesFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down"/>
+    </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.SettingFragment"

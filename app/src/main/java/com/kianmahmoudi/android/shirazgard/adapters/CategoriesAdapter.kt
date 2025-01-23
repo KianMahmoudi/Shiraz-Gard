@@ -1,21 +1,18 @@
 package com.kianmahmoudi.android.shirazgard.adapters
 
-import android.content.res.Resources
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.data.Category
-import com.kianmahmoudi.android.shirazgard.databinding.ItemCategoryHomeBinding
+import com.kianmahmoudi.android.shirazgard.databinding.ItemCategoryBinding
+import com.kianmahmoudi.android.shirazgard.fragments.CategoriesFragmentDirections
 import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragmentDirections
 
-class CategoriesHomeAdapter(private val navController: NavController) :
-    RecyclerView.Adapter<CategoriesHomeAdapter.ViewHolder>() {
+class CategoriesAdapter(private val navController: NavController, private val fragment: String) :
+    RecyclerView.Adapter<CategoriesAdapter.ViewHolder>() {
 
 
     private val diffCallback = AsyncListDiffer(this, object : DiffUtil.ItemCallback<Category>() {
@@ -32,18 +29,26 @@ class CategoriesHomeAdapter(private val navController: NavController) :
         diffCallback.submitList(list)
     }
 
-    inner class ViewHolder(val binding: ItemCategoryHomeBinding) :
+    inner class ViewHolder(val binding: ItemCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(category: Category) {
-            binding.itemCategoryHomeIc.setImageResource(category.image)
-            binding.itemCategoryHomeTitle.setText(category.name)
+            binding.itemCategoryIc.setImageResource(category.image)
+            binding.itemCategoryTitle.setText(category.name)
 
             itemView.setOnClickListener {
-                val action = HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment(
-                    categoryName = category.name,
-                    categoryType = category.type
-                )
-                navController.navigate(action)
+                if (fragment.equals("home")){
+                    val action = HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment(
+                        categoryName = category.name,
+                        categoryType = category.type
+                    )
+                    navController.navigate(action)
+                }else if (fragment.equals("categories")){
+                    val action = CategoriesFragmentDirections.actionCategoriesFragmentToCategoryPlacesFragment(
+                        categoryName = category.name,
+                        categoryType = category.type
+                    )
+                    navController.navigate(action)
+                }
             }
 
         }
@@ -51,7 +56,7 @@ class CategoriesHomeAdapter(private val navController: NavController) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
-            ItemCategoryHomeBinding.inflate(
+            ItemCategoryBinding.inflate(
                 LayoutInflater.from(parent.context)
             )
         )

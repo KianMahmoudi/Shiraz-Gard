@@ -27,13 +27,19 @@
     <string name="shiraz_weather_now">-Shiraz weather now</string>
     <string name="categories">Categories</string>
     <string name="see_all">See all</string>
-    <string name="atm">Atm</string>
+    <string name="atms">ATMs</string>
     <string name="hotels">Hotels</string>
-    <string name="hospital">Hospital</string>
+    <string name="hospitals">Hospitals</string>
     <string name="restaurant">Restaurant</string>
     <string name="restaurants">Restaurants</string>
-    <string name="wc">Wc</string>
-    <string name="parking">Parking</string>
+    <string name="wcs">WCs</string>
+    <string name="parkings">Parking lots</string>
     <string name="show_on_map">Show on map</string>
     <string name="showOnApp">Show on app</string>
+    <string name="mosques">Mosques</string>
+    <string name="museums">Museums</string>
+    <string name="gas_stations">Gas stations</string>
+    <string name="car_washes">Car washes</string>
+    <string name="cultural_sites">Cultural Sites</string>
+    <string name="historical_sites">Historical Sites</string>
 </resources>

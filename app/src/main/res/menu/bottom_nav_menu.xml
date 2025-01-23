@@ -10,9 +10,9 @@
         android:icon="@drawable/favorite_24px"
         android:title="@string/favorite" />
     <item
-        android:id="@+id/searchFragment"
-        android:icon="@drawable/search_24px"
-        android:title="@string/search" />
+        android:id="@+id/categoriesFragment"
+        android:icon="@drawable/category_24px"
+        android:title="@string/categories" />
     <item
         android:id="@+id/mapFragment"
         android:icon="@drawable/map_24px"

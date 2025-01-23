@@ -82,7 +82,6 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
                 val filteredPlaces = places.filter {
                     it.getString("type") == args.categoryType
                 }
-
                 homeViewModel.images.observe(viewLifecycleOwner) { images ->
                     categoryPlacesAdapter.apply {
                         clearData()

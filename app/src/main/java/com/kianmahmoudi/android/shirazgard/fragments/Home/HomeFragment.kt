@@ -12,7 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
-import com.kianmahmoudi.android.shirazgard.adapters.CategoriesHomeAdapter
+import com.kianmahmoudi.android.shirazgard.adapters.CategoriesAdapter
 import com.kianmahmoudi.android.shirazgard.adapters.HotelsHomeAdapter
 import com.kianmahmoudi.android.shirazgard.adapters.RestaurantsHomeAdapter
 import com.kianmahmoudi.android.shirazgard.data.Category
@@ -33,8 +33,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val restaurantsHomeAdapter: RestaurantsHomeAdapter by lazy {
         RestaurantsHomeAdapter()
     }
-    private val categoriesHomeAdapter: CategoriesHomeAdapter by lazy {
-        CategoriesHomeAdapter(findNavController())
+    private val categoriesAdapter: CategoriesAdapter by lazy {
+        CategoriesAdapter(findNavController(), "home")
     }
     private var isWeatherLoaded = false
     private var areHotelsLoaded = false
@@ -58,13 +58,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         setupSwipeRefresh()
         observeData()
         updateUIState(UIState.LOADING)
+
+        binding.btnSeeAllHome.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_categoriesFragment)
+        }
+
     }
 
     private fun setupRecyclerViews() {
         // Categories RecyclerView
         binding.rvCategoriesHome.apply {
             layoutManager = GridLayoutManager(context, 3)
-            adapter = categoriesHomeAdapter
+            adapter = categoriesAdapter
             addItemDecoration(EqualSpacingItemDecoration(4))
         }
 
@@ -84,19 +89,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun loadCategories() {
-        categoriesHomeAdapter.submitData(
+        categoriesAdapter.submitData(
             mutableListOf(
-                Category(getString(R.string.atm), "atm", R.drawable.local_atm_24px, 0),
+                Category(getString(R.string.atms), "atm", R.drawable.local_atm_24px, 0),
                 Category(getString(R.string.hotels), "hotel", R.drawable.hotel_24px, 1),
-                Category(getString(R.string.hospital), "hospital", R.drawable.home_health_24px, 2),
+                Category(getString(R.string.hospitals), "hospital", R.drawable.home_health_24px, 2),
                 Category(
                     getString(R.string.restaurant),
                     "restaurant",
                     R.drawable.restaurant_24px,
                     3
                 ),
-                Category(getString(R.string.wc), "wc", R.drawable.wc_24px, 4),
-                Category(getString(R.string.parking), "parking", R.drawable.local_parking_24px, 5)
+                Category(getString(R.string.wcs), "wc", R.drawable.wc_24px, 4),
+                Category(getString(R.string.parkings), "parking", R.drawable.local_parking_24px, 5)
             )
         )
     }
@@ -176,7 +181,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 rvRestaurantsHome,
                 cardView,
                 textView3,
-                textView4,
+                btnSeeAllHome,
                 textView5,
                 textView6
             ).forEach { it.visibility = if (isLoading) View.GONE else View.VISIBLE }

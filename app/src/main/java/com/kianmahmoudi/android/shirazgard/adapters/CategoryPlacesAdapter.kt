@@ -62,7 +62,7 @@ class CategoryPlacesAdapter : RecyclerView.Adapter<CategoryPlacesAdapter.ViewHol
                                 type = item.getString("type") ?: "",
                                 latitude = item.getParseGeoPoint("location")?.latitude?.toFloat()
                                     ?: 0f,
-                                longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
+                                 longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
                                     ?: 0f,
                                 images = images.toTypedArray()
                             )
@@ -74,7 +74,7 @@ class CategoryPlacesAdapter : RecyclerView.Adapter<CategoryPlacesAdapter.ViewHol
                             Timber.e(e.message)
                         }
                     } else {
-                        Log.d("CategoryPlacesAdapter", "No images found for place")
+                        Timber.tag("CategoryPlacesAdapter").d("No images found for place")
                     }
                 }
             }
