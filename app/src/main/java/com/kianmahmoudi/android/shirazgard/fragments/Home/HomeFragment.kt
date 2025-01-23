@@ -13,26 +13,26 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoriesAdapter
-import com.kianmahmoudi.android.shirazgard.adapters.HotelsHomeAdapter
-import com.kianmahmoudi.android.shirazgard.adapters.RestaurantsHomeAdapter
+import com.kianmahmoudi.android.shirazgard.adapters.PlacesHomeAdapter
 import com.kianmahmoudi.android.shirazgard.data.Category
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentHomeBinding
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.util.checkIcon
 import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var binding: FragmentHomeBinding
     private val homeViewModel: HomeViewModel by viewModels()
-    private val hotelsHomeAdapter: HotelsHomeAdapter by lazy {
-        HotelsHomeAdapter()
-    }
-    private val restaurantsHomeAdapter: RestaurantsHomeAdapter by lazy {
-        RestaurantsHomeAdapter()
-    }
+    private val hotelsHomeAdapter: PlacesHomeAdapter by lazy { createPlaceAdapter() }
+    private val restaurantsHomeAdapter: PlacesHomeAdapter by lazy { createPlaceAdapter() }
     private val categoriesAdapter: CategoriesAdapter by lazy {
         CategoriesAdapter(findNavController(), "home")
     }
@@ -40,6 +40,30 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private var areHotelsLoaded = false
     private var areRestaurantsLoaded = false
     private var areImagesLoaded = false
+
+    private fun createPlaceAdapter() = PlacesHomeAdapter { item, images ->
+        CoroutineScope(Dispatchers.IO).launch {
+            if (!images.isNullOrEmpty()) {
+                val action = HomeFragmentDirections.actionHomeFragmentToPlaceDetailsFragment(
+                    faName = item.getString("faName") ?: "",
+                    enName = item.getString("enName") ?: "",
+                    address = item.getString("address") ?: "",
+                    description = item.getString("description") ?: "",
+                    type = item.getString("type") ?: "",
+                    latitude = item.getParseGeoPoint("location")?.latitude?.toFloat() ?: 0f,
+                    longitude = item.getParseGeoPoint("location")?.longitude?.toFloat() ?: 0f,
+                    images = images.toTypedArray()
+                )
+                try {
+                    withContext(Dispatchers.Main) {
+                        findNavController().navigate(action)
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e.message)
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -118,7 +142,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun observeData() {
-        // Reset flags
         isWeatherLoaded = false
         areHotelsLoaded = false
         areRestaurantsLoaded = false
@@ -151,8 +174,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             places.observe(viewLifecycleOwner) { places ->
                 val restaurants = places.filter { it.getString("type") == "restaurant" }
                 val hotels = places.filter { it.getString("type") == "hotel" }
-                hotelsHomeAdapter.addHotels(hotels)
-                restaurantsHomeAdapter.addRestaurants(restaurants)
+                hotelsHomeAdapter.addPlaces(hotels)
+                restaurantsHomeAdapter.addPlaces(restaurants)
                 areRestaurantsLoaded = true
                 areHotelsLoaded = true
                 checkState()

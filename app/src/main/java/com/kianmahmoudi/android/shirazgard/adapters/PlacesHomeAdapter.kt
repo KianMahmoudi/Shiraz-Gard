@@ -1,6 +1,5 @@
 package com.kianmahmoudi.android.shirazgard.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.findNavController
@@ -17,12 +16,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.Locale
-import kotlin.collections.ArrayList
+import com.denzcoskun.imageslider.R as ImageSliderR
 
-class RestaurantsHomeAdapter() :
-    RecyclerView.Adapter<RestaurantsHomeAdapter.ViewHolder>() {
+class PlacesHomeAdapter(
+    private val onItemClick: (ParseObject, List<String>?) -> Unit
+) : RecyclerView.Adapter<PlacesHomeAdapter.ViewHolder>() {
 
-    private val restaurants = AsyncListDiffer(this, object : DiffUtil.ItemCallback<ParseObject>() {
+    private val places = AsyncListDiffer(this, object : DiffUtil.ItemCallback<ParseObject>() {
         override fun areItemsTheSame(oldItem: ParseObject, newItem: ParseObject): Boolean {
             return oldItem.objectId == newItem.objectId
         }
@@ -35,67 +35,38 @@ class RestaurantsHomeAdapter() :
 
     private val images = ArrayList<ParseObject>()
 
-
     inner class ViewHolder(val binding: ItemPlaceBinding) :
         RecyclerView.ViewHolder(binding.root) {
-
         fun bind(item: ParseObject, images: List<String>?) {
             binding.textPlaceName.text = when (Locale.getDefault().language) {
                 "en" -> item.getString("enName")
                 "fa" -> item.getString("faName")
                 else -> item.getString("enName")
             }
+
             if (!images.isNullOrEmpty()) {
                 Glide.with(binding.root.context)
                     .load(images.firstOrNull())
                     .into(binding.imagePlace)
             } else {
-                binding.imagePlace.setImageResource(com.denzcoskun.imageslider.R.drawable.default_placeholder)
+                binding.imagePlace.setImageResource(ImageSliderR.drawable.default_placeholder)
             }
             itemView.setOnClickListener {
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (!images.isNullOrEmpty()) {
-                        val action =
-                            HomeFragmentDirections.actionHomeFragmentToPlaceDetailsFragment(
-                                faName = item.getString("faName") ?: "",
-                                enName = item.getString("enName") ?: "",
-                                address = item.getString("address") ?: "",
-                                description = item.getString("description") ?: "",
-                                type = item.getString("type") ?: "",
-                                latitude = item.getParseGeoPoint("location")?.latitude?.toFloat()
-                                    ?: 0f,
-                                longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
-                                    ?: 0f,
-                                images = images.toTypedArray()
-                            )
-                        try {
-                            withContext(Dispatchers.Main) {
-                                it.findNavController().navigate(action)
-                            }
-                        } catch (e: Exception) {
-                            Timber.e(e.message)
-                        }
-                    } else {
-                        Log.d("RestaurantAdapter", "No restaurant images found")
-                    }
-                }
+                onItemClick(item, images)
             }
         }
-
     }
 
-    fun addRestaurants(list: List<ParseObject>) {
-        restaurants.submitList(list)
+    fun addPlaces(list: List<ParseObject>) {
+        places.submitList(list)
     }
 
     fun addImages(list: List<ParseObject>) {
+        images.clear()
         images.addAll(list)
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): RestaurantsHomeAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             ItemPlaceBinding.inflate(
                 LayoutInflater.from(parent.context),
@@ -105,16 +76,12 @@ class RestaurantsHomeAdapter() :
         )
     }
 
+    override fun getItemCount(): Int = places.currentList.size
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = restaurants.currentList[position]
+        val item = places.currentList[position]
         val filteredImage =
             images.find { it.getString("placeId") == item.objectId }?.getList<String>("photosUrl")
         holder.bind(item, filteredImage)
     }
-
-    override fun getItemCount(): Int {
-        return restaurants.currentList.size
-    }
-
-
 }
