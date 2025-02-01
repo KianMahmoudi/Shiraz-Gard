@@ -46,8 +46,8 @@ class HomeActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.categoryPlacesFragment -> binding.bottomNavHome.visibility = View.GONE
-                R.id.placeDetailsFragment -> binding.bottomNavHome.visibility = View.GONE
+                R.id.categoryPlacesFragment -> binding.bottomNavHome.visibility = View.INVISIBLE
+                R.id.placeDetailsFragment -> binding.bottomNavHome.visibility = View.INVISIBLE
                 else -> binding.bottomNavHome.visibility = View.VISIBLE
             }
         }

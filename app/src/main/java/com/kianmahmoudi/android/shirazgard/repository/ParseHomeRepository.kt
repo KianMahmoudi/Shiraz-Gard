@@ -3,12 +3,14 @@ package com.kianmahmoudi.android.shirazgard.repository
 import android.util.Log
 import com.kianmahmoudi.android.shirazgard.api.RetrofitInstance
 import com.kianmahmoudi.android.shirazgard.data.WeatherResult
+import com.parse.BuildConfig
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -19,10 +21,10 @@ class ParseHomeRepository : HomeRepository {
             suspendCancellableCoroutine { continuation ->
                 query.findInBackground { photoObjects, e ->
                     if (e == null && photoObjects != null) {
-                        Log.i("ParseHotelRepository", "Photos: $photoObjects")
+                        Timber.tag("ParseHotelRepository").i("Photos: $photoObjects")
                         continuation.resume(photoObjects)
                     } else {
-                        Log.e("ParseHotelRepository", "Error fetching images", e)
+                        Timber.tag("ParseHotelRepository").e(e, "Error fetching images")
                         continuation.resumeWithException(e ?: Exception("No results found"))
                     }
                 }
@@ -33,7 +35,7 @@ class ParseHomeRepository : HomeRepository {
     override suspend fun getWeather(): WeatherResult? {
         val response = RetrofitInstance.api.getWeather(
             "شیراز",
-            "mfggRHJXqMCI1yyQxPEsByuQzulsskdrAnESXdpnXu1Bq3iWtUai"
+            com.kianmahmoudi.android.shirazgard.BuildConfig.WEATHER_KEY
         )
 
         if (response.isSuccessful) {
@@ -54,15 +56,15 @@ class ParseHomeRepository : HomeRepository {
 
                         return WeatherResult(temperature, weatherDescription, weatherIc)
                     } else {
-                        Log.e("WeatherRepository", "No 'result' field in JSON")
+                        Timber.tag("WeatherRepository").e("No 'result' field in JSON")
                     }
                 } catch (e: Exception) {
-                    Log.e("WeatherRepository", "Error parsing JSON: ${e.message}")
+                    Timber.tag("WeatherRepository").e("Error parsing JSON: %s", e.message)
                     return null
                 }
             }
         } else {
-            Log.e("WeatherRepository", "Response failed: ${response.code()}")
+            Timber.tag("WeatherRepository").e("Response failed: %s", response.code())
         }
 
         return null
@@ -76,7 +78,7 @@ class ParseHomeRepository : HomeRepository {
                     if (e == null) {
                         continuation.resume(objects)
                     } else {
-                        Log.i("HomeFragment", e.message.toString())
+                        Timber.tag("HomeFragment").i(e.message.toString())
                         continuation.resumeWithException(e)
                     }
                 }

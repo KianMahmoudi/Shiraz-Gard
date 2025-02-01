@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,7 +14,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoryPlacesAdapter
-import com.kianmahmoudi.android.shirazgard.databinding.CategoryPlacesBinding
+import com.kianmahmoudi.android.shirazgard.databinding.FragmentCategoryPlacesBinding
 import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragment
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
@@ -23,9 +22,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategoryPlacesFragment : Fragment(R.layout.category_places) {
+class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
 
-    private lateinit var binding: CategoryPlacesBinding
+    private lateinit var binding: com.kianmahmoudi.android.shirazgard.databinding.FragmentCategoryPlacesBinding
     private val homeViewModel: HomeViewModel by viewModels()
     private val args: CategoryPlacesFragmentArgs by navArgs()
     private val categoryPlacesAdapter: CategoryPlacesAdapter by lazy {
@@ -37,7 +36,7 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = CategoryPlacesBinding.inflate(layoutInflater)
+        binding = FragmentCategoryPlacesBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -48,7 +47,6 @@ class CategoryPlacesFragment : Fragment(R.layout.category_places) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupRecyclerView()
         setupSwipeRefresh()
         setupObservers()

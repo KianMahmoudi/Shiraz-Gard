@@ -19,6 +19,7 @@ android {
         buildConfig = true
     }
 
+
     defaultConfig {
         applicationId = "com.kianmahmoudi.android.shirazgard"
         minSdk = 24
@@ -26,10 +27,30 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        manifestPlaceholders["MAPS_KEY"] = (project.properties["MAPS_KEY"] as? String ?: "")
+        manifestPlaceholders["BACK4APP_SERVER_URL"] = (project.properties["BACK4APP_SERVER_URL"] as? String ?: "")
+        manifestPlaceholders["BACK4APP_APP_ID"] = (project.properties["BACK4APP_APP_ID"] as? String ?: "")
+        manifestPlaceholders["BACK4APP_CLIENT_KEY"] = (project.properties["BACK4APP_CLIENT_KEY"] as? String ?: "")
+        buildConfigField(
+        "String",
+        "MAPS_KEY",
+        "\"${project.findProperty("MAPS_KEY")}\""
+    )
+        buildConfigField("String", "WEATHER_KEY", "\"${project.findProperty("WEATHER_KEY")}\"")
         buildConfigField(
             "String",
-            "MAPS_KEY",
-            "\"${project.findProperty("MAPS_KEY")}\""
+            "BACK4APP_SERVER_URL",
+            "\"${project.findProperty("BACK4APP_SERVER_URL")}\""
+        )
+        buildConfigField(
+            "String",
+            "BACK4APP_CLIENT_KEY",
+            "\"${project.findProperty("BACK4APP_CLIENT_KEY")}\""
+        )
+        buildConfigField(
+            "String",
+            "BACK4APP_APP_ID",
+            "\"${project.findProperty("BACK4APP_APP_ID")}\""
         )
     }
 

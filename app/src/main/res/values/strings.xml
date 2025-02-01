@@ -1,7 +1,4 @@
 <resources>
-    <string name="back4app_server_url">***REMOVED***/</string>
-    <string name="back4app_app_id">***REMOVED***</string>
-    <string name="back4app_client_key">***REMOVED***</string>
     <string name="app_name">ShirazGard</string>
     <string name="the_best_places_to_explore">The Best Places to Explore</string>
     <string name="login">Login</string>

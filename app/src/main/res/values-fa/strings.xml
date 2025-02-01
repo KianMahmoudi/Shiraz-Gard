@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="back4app_server_url">***REMOVED***/</string>
-    <string name="back4app_app_id">***REMOVED***</string>
-    <string name="back4app_client_key">***REMOVED***</string>
     <string name="app_name">شیراز گرد</string>
     <string name="the_best_places_to_explore">بهترین مکان ها برای گردش</string>
     <string name="login">ورود</string>
