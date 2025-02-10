@@ -74,6 +74,7 @@ android {
 
 dependencies {
 
+    implementation("org.jetbrains:annotations:15.0")
     val nav_version = "2.8.1"
 
     implementation(libs.core.ktx)

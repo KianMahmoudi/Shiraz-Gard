@@ -31,7 +31,8 @@
             app:enterAnim="@anim/slide_in_down"
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
-            app:popExitAnim="@anim/slide_out_down" />
+            app:popExitAnim="@anim/slide_out_down"
+            />
         <action
             android:id="@+id/action_homeFragment_to_placeDetailsFragment"
             app:destination="@id/placeDetailsFragment"
@@ -41,7 +42,11 @@
             app:popExitAnim="@anim/slide_out_down" />
         <action
             android:id="@+id/action_homeFragment_to_categoriesFragment"
-            app:destination="@id/categoriesFragment" />
+            app:destination="@id/categoriesFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
@@ -116,6 +121,18 @@
         <action
             android:id="@+id/action_placeDetailsFragment_to_homeActivity"
             app:destination="@id/homeActivity"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.SearchFragment"
+        android:label="SearchFragment" >
+        <action
+            android:id="@+id/action_searchFragment_to_placeDetailsFragment"
+            app:destination="@id/placeDetailsFragment"
             app:enterAnim="@anim/slide_in_down"
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"

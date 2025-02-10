@@ -47,12 +47,9 @@ class PlaceDetailsFragment : Fragment(R.layout.item_place_details) {
         when (Locale.getDefault().language) {
             "en" -> {
                 binding.placeTitle.text = args.enName
-                (activity as AppCompatActivity).supportActionBar?.title = args.enName
             }
-
             "fa" -> {
                 binding.placeTitle.text = args.faName
-                (activity as AppCompatActivity).supportActionBar?.title = args.faName
             }
         }
 
@@ -63,11 +60,6 @@ class PlaceDetailsFragment : Fragment(R.layout.item_place_details) {
 
         for (url in imageUrls) {
             imageList.add(SlideModel(url, ScaleTypes.FIT))
-        }
-
-        (activity as AppCompatActivity).supportActionBar?.apply {
-            setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE)
-            setDisplayHomeAsUpEnabled(true)
         }
 
         binding.fabShowOnMap.setOnClickListener {
@@ -97,18 +89,6 @@ class PlaceDetailsFragment : Fragment(R.layout.item_place_details) {
 
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onPause() {
-        (activity as AppCompatActivity).supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM)
-        (activity as AppCompatActivity).supportActionBar?.setCustomView(R.layout.action_bar)
-        super.onPause()
-    }
-
-    override fun onResume() {
-        (activity as AppCompatActivity).supportActionBar?.setDisplayOptions(ActionBar.DISPLAY_SHOW_TITLE)
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        super.onResume()
     }
 
 }

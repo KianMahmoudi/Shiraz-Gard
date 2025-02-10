@@ -20,7 +20,8 @@ import timber.log.Timber
 import java.util.ArrayList
 import java.util.Locale
 
-class CategoryPlacesAdapter : RecyclerView.Adapter<CategoryPlacesAdapter.ViewHolder>() {
+class CategoryPlacesAdapter(private val onItemClick: (ParseObject, List<String>?) -> Unit) :
+    RecyclerView.Adapter<CategoryPlacesAdapter.ViewHolder>() {
 
     private val places = AsyncListDiffer(this, object : DiffUtil.ItemCallback<ParseObject>() {
         override fun areItemsTheSame(oldItem: ParseObject, newItem: ParseObject): Boolean {
@@ -51,32 +52,7 @@ class CategoryPlacesAdapter : RecyclerView.Adapter<CategoryPlacesAdapter.ViewHol
                 binding.placeImage.setImageResource(com.denzcoskun.imageslider.R.drawable.default_placeholder)
             }
             itemView.setOnClickListener {
-                CoroutineScope(Dispatchers.IO).launch {
-                    if (!images.isNullOrEmpty()) {
-                        val action =
-                            CategoryPlacesFragmentDirections.actionCategoryPlacesFragmentToPlaceDetailsFragment(
-                                faName = item.getString("faName") ?: "",
-                                enName = item.getString("enName") ?: "",
-                                address = item.getString("address") ?: "",
-                                description = item.getString("description") ?: "",
-                                type = item.getString("type") ?: "",
-                                latitude = item.getParseGeoPoint("location")?.latitude?.toFloat()
-                                    ?: 0f,
-                                 longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
-                                    ?: 0f,
-                                images = images.toTypedArray()
-                            )
-                        try {
-                            withContext(Dispatchers.Main) {
-                                it.findNavController().navigate(action)
-                            }
-                        } catch (e: Exception) {
-                            Timber.e(e.message)
-                        }
-                    } else {
-                        Timber.tag("CategoryPlacesAdapter").d("No images found for place")
-                    }
-                }
+                onItemClick(item,images)
             }
         }
     }

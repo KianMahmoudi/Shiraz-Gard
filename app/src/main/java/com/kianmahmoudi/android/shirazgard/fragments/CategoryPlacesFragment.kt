@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,16 +20,47 @@ import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragment
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @AndroidEntryPoint
 class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
 
-    private lateinit var binding: com.kianmahmoudi.android.shirazgard.databinding.FragmentCategoryPlacesBinding
+    private lateinit var binding: FragmentCategoryPlacesBinding
     private val homeViewModel: HomeViewModel by viewModels()
     private val args: CategoryPlacesFragmentArgs by navArgs()
     private val categoryPlacesAdapter: CategoryPlacesAdapter by lazy {
-        CategoryPlacesAdapter()
+        CategoryPlacesAdapter { item, images ->
+            CoroutineScope(Dispatchers.IO).launch {
+                if (!images.isNullOrEmpty()) {
+                    val action =
+                        CategoryPlacesFragmentDirections.actionCategoryPlacesFragmentToPlaceDetailsFragment(
+                            faName = item.getString("faName") ?: "",
+                            enName = item.getString("enName") ?: "",
+                            address = item.getString("address") ?: "",
+                            description = item.getString("description") ?: "",
+                            type = item.getString("type") ?: "",
+                            latitude = item.getParseGeoPoint("location")?.latitude?.toFloat()
+                                ?: 0f,
+                            longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
+                                ?: 0f,
+                            images = images.toTypedArray()
+                        )
+                    try {
+                        withContext(Dispatchers.Main) {
+                            findNavController().navigate(action)
+                        }
+                    } catch (e: Exception) {
+                        Timber.e(e.message)
+                    }
+                } else {
+                    Timber.tag("CategoryPlacesAdapter").d("No images found for place")
+                }
+            }
+        }
     }
 
     override fun onCreateView(
@@ -38,11 +70,6 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
     ): View {
         binding = FragmentCategoryPlacesBinding.inflate(layoutInflater)
         return binding.root
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -74,7 +101,6 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
 
     private fun setupObservers() {
         updateUIState(UIState.LOADING)
-
         lifecycleScope.launch {
             homeViewModel.places.observe(viewLifecycleOwner) { places ->
                 val filteredPlaces = places.filter {
@@ -101,9 +127,6 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
 
     private fun setupToolbar() {
         binding.categoryName.text = args.categoryName
-        (requireActivity() as AppCompatActivity).supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-        }
     }
 
     private fun updateUIState(state: UIState) {
@@ -141,27 +164,6 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
                 }
             }
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                findNavController().navigateUp()
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onStop() {
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        super.onStop()
-    }
-
-    override fun onResume() {
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        super.onResume()
     }
 
     enum class UIState {
