@@ -14,67 +14,68 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_margin="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/md_theme_background"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="16dp">
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
 
                     <ImageView
                         android:id="@+id/icWeatherHome"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:layout_marginStart="16dp"
+                        android:layout_width="64dp"
+                        android:layout_height="64dp"
                         android:scaleType="centerCrop"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:tint="@color/md_theme_onSurface"
+                        tools:ignore="ContentDescription"
+                        app:tint="@color/md_theme_onBackground"
                         tools:src="@drawable/map_24px" />
 
-                    <TextView
-                        android:id="@+id/tvTemperatureHome"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:fontFamily="@font/font_regular"
-                        android:textSize="32sp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/tvDescriptionHome"
-                        app:layout_constraintStart_toEndOf="@+id/icWeatherHome"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="44°" />
-
-                    <TextView
-                        android:id="@+id/tvDescriptionHome"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:fontFamily="@font/font_regular"
-                        android:maxLines="1"
-                        android:textSize="32sp"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tvTemperatureHome"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="rainy with a chance of thunderstorms" />
+                        app:layout_constraintStart_toEndOf="@+id/icWeatherHome"
+                        app:layout_constraintTop_toTopOf="parent">
 
+                        <TextView
+                            android:id="@+id/tvTemperatureHome"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/font_regular"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            tools:text="44°" />
+
+                        <TextView
+                            android:id="@+id/tvDescriptionHome"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/font_regular"
+                            android:maxLines="1"
+                            android:textSize="16sp"
+                            tools:text="Rainy with a chance of thunderstorms" />
+                    </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
             </com.google.android.material.card.MaterialCardView>
+
 
             <TextView
                 android:id="@+id/textView3"
@@ -88,7 +89,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
             <Button
-                android:id="@+id/btnSeeAllHome"
+                android:id="@+id/btnSeeAllCategories"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,7 +108,7 @@
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btnSeeAllHome" />
+                app:layout_constraintTop_toBottomOf="@id/btnSeeAllCategories" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -119,6 +120,18 @@
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rvCategoriesHome" />
+
+            <Button
+                android:id="@+id/btnSeeAllHotels"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/see_all"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView5" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHotelsHome"
@@ -140,6 +153,18 @@
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rvHotelsHome" />
+
+            <Button
+                android:id="@+id/btnSeeAllRestaurants"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/see_all"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toBottomOf="@+id/textView6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/textView6" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvRestaurantsHome"

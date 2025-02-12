@@ -68,6 +68,7 @@ class HomeActivity : AppCompatActivity() {
                     R.id.placeDetailsFragment -> {
                         binding.bottomNavHome.visibility = View.INVISIBLE
                         icBack.visibility = View.VISIBLE
+                        icSearch.visibility = View.INVISIBLE
                         val isPersian = Locale.getDefault().language == "fa"
                         val title = if (isPersian) {
                             arguments?.getString("faName") ?: "جزئیات مکان"
@@ -80,19 +81,19 @@ class HomeActivity : AppCompatActivity() {
 
                     R.id.categoryPlacesFragment -> {
                         binding.bottomNavHome.visibility = View.INVISIBLE
+                        icSearch.visibility = View.INVISIBLE
                         icBack.visibility = View.VISIBLE
                         tvTitle.text = getString(R.string.app_name)
                         supportActionBar?.show()
                     }
-
                     R.id.searchFragment -> {
                         supportActionBar?.hide()
                         binding.bottomNavHome.visibility = View.INVISIBLE
                     }
-
                     else -> {
                         binding.bottomNavHome.visibility = View.VISIBLE
                         icBack.visibility = View.GONE
+                        icSearch.visibility = View.VISIBLE
                         tvTitle.text = getString(R.string.app_name)
                         supportActionBar?.show()
                     }

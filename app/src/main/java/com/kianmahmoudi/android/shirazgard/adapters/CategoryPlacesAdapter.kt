@@ -44,6 +44,7 @@ class CategoryPlacesAdapter(private val onItemClick: (ParseObject, List<String>?
                 "fa" -> item.getString("faName")
                 else -> item.getString("enName")
             }
+            binding.placeType.text = item.getString("type")
             if (!images.isNullOrEmpty()) {
                 Glide.with(binding.root.context)
                     .load(images.firstOrNull())

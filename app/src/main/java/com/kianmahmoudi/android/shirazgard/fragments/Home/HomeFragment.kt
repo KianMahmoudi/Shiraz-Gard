@@ -83,8 +83,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         observeData()
         updateUIState(UIState.LOADING)
 
-        binding.btnSeeAllHome.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_categoriesFragment)
+        binding.btnSeeAllCategories.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCategoriesFragment())
+        }
+
+        binding.btnSeeAllHotels.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment("Hotels","hotel"))
+        }
+
+        binding.btnSeeAllRestaurants.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment("Restaurants","restaurant"))
         }
 
     }
@@ -204,7 +212,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 rvRestaurantsHome,
                 cardView,
                 textView3,
-                btnSeeAllHome,
+                btnSeeAllHotels,
+                btnSeeAllCategories,
+                btnSeeAllRestaurants,
                 textView5,
                 textView6
             ).forEach { it.visibility = if (isLoading) View.GONE else View.VISIBLE }
