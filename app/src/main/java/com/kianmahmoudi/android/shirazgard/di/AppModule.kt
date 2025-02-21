@@ -1,19 +1,24 @@
 package com.kianmahmoudi.android.shirazgard.di
 
+import android.content.Context
+import com.kianmahmoudi.android.shirazgard.AppDatabase
 import com.kianmahmoudi.android.shirazgard.api.WeatherApi
-import com.kianmahmoudi.android.shirazgard.repository.HomeRepository
-import com.kianmahmoudi.android.shirazgard.repository.ParseHomeRepository
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Singleton
+import com.kianmahmoudi.android.shirazgard.db.FavoritePlacesDao
+import com.kianmahmoudi.android.shirazgard.repository.MainDataRepository
+import com.kianmahmoudi.android.shirazgard.repository.MainDataRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModule {
+class AppModule {
 
     @Provides
     @Singleton
@@ -32,8 +37,19 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideHotelRepository(): HomeRepository {
-        return ParseHomeRepository()
+    fun provideMainDataRepository(): MainDataRepository {
+        return MainDataRepositoryImpl()
     }
 
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return AppDatabase.getDatabase(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideFavoritePlacesDao(database: AppDatabase): FavoritePlacesDao {
+        return database.favoritePlacesDao()
+    }
 }

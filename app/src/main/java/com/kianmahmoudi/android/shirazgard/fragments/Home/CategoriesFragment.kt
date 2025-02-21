@@ -13,7 +13,9 @@ import com.kianmahmoudi.android.shirazgard.adapters.CategoriesAdapter
 import com.kianmahmoudi.android.shirazgard.data.Category
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentCategoriesBinding
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CategoriesFragment : Fragment(R.layout.fragment_categories) {
 
     private lateinit var binding: FragmentCategoriesBinding

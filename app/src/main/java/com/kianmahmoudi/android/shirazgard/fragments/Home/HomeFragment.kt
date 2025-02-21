@@ -18,7 +18,7 @@ import com.kianmahmoudi.android.shirazgard.data.Category
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentHomeBinding
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.util.checkIcon
-import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
+import com.kianmahmoudi.android.shirazgard.viewmodel.MainDataViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +30,7 @@ import timber.log.Timber
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var binding: FragmentHomeBinding
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val mainDataViewModel: MainDataViewModel by viewModels()
     private val hotelsHomeAdapter: PlacesHomeAdapter by lazy { createPlaceAdapter() }
     private val restaurantsHomeAdapter: PlacesHomeAdapter by lazy { createPlaceAdapter() }
     private val categoriesAdapter: CategoriesAdapter by lazy {
@@ -52,6 +52,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     type = item.getString("type") ?: "",
                     latitude = item.getParseGeoPoint("location")?.latitude?.toFloat() ?: 0f,
                     longitude = item.getParseGeoPoint("location")?.longitude?.toFloat() ?: 0f,
+                    objectId = item.objectId,
                     images = images.toTypedArray()
                 )
                 try {
@@ -146,7 +147,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun refreshAllData() {
         updateUIState(UIState.LOADING)
-        homeViewModel.fetchAllData()
+        mainDataViewModel.fetchAllData()
     }
 
     private fun observeData() {
@@ -155,7 +156,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         areRestaurantsLoaded = false
         areImagesLoaded = false
 
-        homeViewModel.apply {
+        mainDataViewModel.apply {
             weatherData.observe(viewLifecycleOwner) { weather ->
                 binding.apply {
                     tvTemperatureHome.text = weather.temperature.toString()

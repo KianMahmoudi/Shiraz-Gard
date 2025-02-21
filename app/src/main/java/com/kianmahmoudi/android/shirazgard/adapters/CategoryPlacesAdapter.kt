@@ -1,21 +1,13 @@
 package com.kianmahmoudi.android.shirazgard.adapters
 
-import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kianmahmoudi.android.shirazgard.databinding.ItemCategoryPlacesBinding
-import com.kianmahmoudi.android.shirazgard.fragments.CategoryPlacesFragmentDirections
 import com.parse.ParseObject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.ArrayList
 import java.util.Locale
@@ -25,11 +17,12 @@ class CategoryPlacesAdapter(private val onItemClick: (ParseObject, List<String>?
 
     private val places = AsyncListDiffer(this, object : DiffUtil.ItemCallback<ParseObject>() {
         override fun areItemsTheSame(oldItem: ParseObject, newItem: ParseObject): Boolean {
-            return oldItem.objectId == newItem.objectId
+            return oldItem.get("objectId") == newItem.get("objectId") // Use placeId for comparison
         }
 
         override fun areContentsTheSame(oldItem: ParseObject, newItem: ParseObject): Boolean {
             return oldItem.getString("faName") == newItem.getString("faName") &&
+                    oldItem.getString("enName") == newItem.getString("enName") &&
                     oldItem.getString("address") == newItem.getString("address")
         }
     })
@@ -45,6 +38,7 @@ class CategoryPlacesAdapter(private val onItemClick: (ParseObject, List<String>?
                 else -> item.getString("enName")
             }
             binding.placeType.text = item.getString("type")
+            Timber.i(images.toString())
             if (!images.isNullOrEmpty()) {
                 Glide.with(binding.root.context)
                     .load(images.firstOrNull())

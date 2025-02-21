@@ -1,12 +1,11 @@
 package com.kianmahmoudi.android.shirazgard.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kianmahmoudi.android.shirazgard.data.WeatherResult
-import com.kianmahmoudi.android.shirazgard.repository.HomeRepository
+import com.kianmahmoudi.android.shirazgard.repository.MainDataRepository
 import kotlinx.coroutines.launch
 import com.parse.ParseObject
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +14,8 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+class MainDataViewModel @Inject constructor(
+    private val mainDataRepository: MainDataRepository
 ) : ViewModel() {
 
     private val _places = MutableLiveData<List<ParseObject>>()
@@ -38,9 +37,9 @@ class HomeViewModel @Inject constructor(
     fun fetchAllData() {
         viewModelScope.launch {
             try {
-                val weatherDeferred = async { homeRepository.getWeather() }
-                val imagesDeferred = async { homeRepository.getPlaceImages() }
-                val placesDeferred = async { homeRepository.getPlaces() }
+                val weatherDeferred = async { mainDataRepository.getWeather() }
+                val imagesDeferred = async { mainDataRepository.getPlaceImages() }
+                val placesDeferred = async { mainDataRepository.getPlaces() }
 
                 _images.value = imagesDeferred.await()
                 _places.value = placesDeferred.await()

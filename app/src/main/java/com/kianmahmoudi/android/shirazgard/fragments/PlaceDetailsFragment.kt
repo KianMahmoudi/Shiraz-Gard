@@ -6,12 +6,17 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.kianmahmoudi.android.shirazgard.R
+import com.kianmahmoudi.android.shirazgard.data.Place
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentPlaceDetailsBinding
+import com.kianmahmoudi.android.shirazgard.util.observeOnce
+import com.kianmahmoudi.android.shirazgard.viewmodel.FavoritePlacesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.util.Locale
@@ -19,16 +24,17 @@ import java.util.Locale
 @AndroidEntryPoint
 class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
 
-    private var binding: FragmentPlaceDetailsBinding? = null // Important: Make binding nullable
+    private lateinit var binding: FragmentPlaceDetailsBinding
     private val args: PlaceDetailsFragmentArgs by navArgs()
+    private val favoritePlacesViewModel: FavoritePlacesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? { // Return View?
+    ): View {
         binding = FragmentPlaceDetailsBinding.inflate(inflater, container, false)
-        return binding?.root // Use binding?.root
+        return binding.root
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,30 +45,28 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding?.apply { // Use binding?.apply
+        binding.apply {
 
             val imageList = ArrayList<SlideModel>()
 
             when (Locale.getDefault().language) {
-                "en" -> {
-                    placeTitle.text = args.enName ?: "" // Handle null arguments
-                }
-                "fa" -> {
-                    placeTitle.text = args.faName ?: "" // Handle null arguments
-                }
+                "en" -> placeTitle.text = args.enName ?: ""
+                "fa" -> placeTitle.text = args.faName ?: ""
             }
 
-            placeAddress.text = args.address ?: "" // Handle null arguments
-            placeDescription.text = args.description ?: "" // Handle null arguments
+            placeAddress.text = args.address ?: ""
+            placeDescription.text = args.description ?: ""
 
-            val imageUrls = args.images ?: emptyArray() // Handle null arguments, provide a default value
+            val imageUrls = args.images ?: emptyArray()
 
             for (url in imageUrls) {
                 imageList.add(SlideModel(url, ScaleTypes.FIT))
             }
 
+            imageSlider.setImageList(imageList) // No need for ScaleTypes here, set in SlideModel
+
             fabShowOnMap.setOnClickListener {
-                if (findNavController() != null) {
+                findNavController()?.let {
                     try {
                         val action =
                             PlaceDetailsFragmentDirections.actionPlaceDetailsFragmentToHomeActivity(
@@ -70,16 +74,40 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                                 latitude = args.latitude,
                                 longitude = args.longitude
                             )
-                        findNavController()!!.navigate(action)
+                        it.navigate(action)
                     } catch (e: Exception) {
                         Timber.tag("detailsActivity").e(e.message.toString())
                     }
                 }
             }
 
-            imageSlider.setImageList(imageList)
+            favoritePlacesViewModel.getPlaceById(args.objectId).observe(viewLifecycleOwner) {
+                if (it?.isFavorite == true)
+                    binding.favoriteIcon.setImageResource(R.drawable.favorite_red_24)
+                else if (it?.isFavorite == false)
+                    binding.favoriteIcon.setImageResource(R.drawable.favorite_24px)
+            }
+            favoriteIcon.setOnClickListener {
+                Timber.i("click")
+                favoritePlacesViewModel.getPlaceById(args.objectId).observeOnce(viewLifecycleOwner) { place ->
+                    place?.let {
+                        Timber.i("click inside observer")
+                        val newFavoriteState = !it.isFavorite
+                        favoritePlacesViewModel.setFavorite(args.objectId, newFavoriteState)
+
+                        binding.favoriteIcon.setImageResource(
+                            if (newFavoriteState) R.drawable.favorite_red_24 else R.drawable.favorite_24px
+                        )
+                    }
+                }
+            }
+
+
+
+
         }
     }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
@@ -87,12 +115,8 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 findNavController().navigateUp()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null // Important: Set binding to null to avoid memory leaks
     }
 }

@@ -2,23 +2,19 @@ package com.kianmahmoudi.android.shirazgard.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoryPlacesAdapter
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentCategoryPlacesBinding
-import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragment
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
-import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
+import com.kianmahmoudi.android.shirazgard.viewmodel.MainDataViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +26,7 @@ import timber.log.Timber
 class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
 
     private lateinit var binding: FragmentCategoryPlacesBinding
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val mainDataViewModel: MainDataViewModel by viewModels()
     private val args: CategoryPlacesFragmentArgs by navArgs()
     private val categoryPlacesAdapter: CategoryPlacesAdapter by lazy {
         CategoryPlacesAdapter { item, images ->
@@ -47,6 +43,7 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
                                 ?: 0f,
                             longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
                                 ?: 0f,
+                            objectId = item.objectId,
                             images = images.toTypedArray()
                         )
                     try {
@@ -96,17 +93,17 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
 
     private fun refreshData() {
         updateUIState(UIState.LOADING)
-        homeViewModel.fetchAllData()
+        mainDataViewModel.fetchAllData()
     }
 
     private fun setupObservers() {
         updateUIState(UIState.LOADING)
         lifecycleScope.launch {
-            homeViewModel.places.observe(viewLifecycleOwner) { places ->
+            mainDataViewModel.places.observe(viewLifecycleOwner) { places ->
                 val filteredPlaces = places.filter {
                     it.getString("type") == args.categoryType
                 }
-                homeViewModel.images.observe(viewLifecycleOwner) { images ->
+                mainDataViewModel.images.observe(viewLifecycleOwner) { images ->
                     categoryPlacesAdapter.apply {
                         clearData()
                         addPlaces(filteredPlaces)

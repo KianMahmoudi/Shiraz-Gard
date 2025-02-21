@@ -19,7 +19,9 @@ import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentHomeBinding
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentMapBinding
 import com.orhanobut.logger.Logger
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
 
     private lateinit var binding: FragmentMapBinding

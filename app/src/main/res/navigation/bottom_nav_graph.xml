@@ -53,7 +53,11 @@
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.FavoriteFragment"
-        android:label="FavoriteFragment" />
+        android:label="FavoriteFragment" >
+        <action
+            android:id="@+id/action_favoriteFragment_to_placeDetailsFragment"
+            app:destination="@id/placeDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.MapFragment"
@@ -127,6 +131,9 @@
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
             app:popExitAnim="@anim/slide_out_down" />
+        <argument
+            android:name="objectId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"

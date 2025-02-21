@@ -7,8 +7,7 @@ plugins {
     alias(libs.plugins.maps.secret)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
-    id("androidx.navigation.safeargs.kotlin")
-}
+    id("androidx.navigation.safeargs.kotlin") }
 
 android {
     namespace = "com.kianmahmoudi.android.shirazgard"
@@ -76,7 +75,10 @@ dependencies {
 
     implementation("org.jetbrains:annotations:15.0")
     val nav_version = "2.8.1"
+    val room_version = "2.6.1"
 
+    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
     implementation(libs.core.ktx)
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -100,4 +102,5 @@ dependencies {
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    kapt("androidx.room:room-compiler:$room_version")
 }

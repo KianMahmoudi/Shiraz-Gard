@@ -14,7 +14,7 @@ import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoryPlacesAdapter
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentSearchBinding
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
-import com.kianmahmoudi.android.shirazgard.viewmodel.HomeViewModel
+import com.kianmahmoudi.android.shirazgard.viewmodel.MainDataViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +41,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                                 ?: 0f,
                             longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
                                 ?: 0f,
-                            images = images.toTypedArray()
+                            images = images.toTypedArray(),
+                            objectId = item.objectId
                         )
                     try {
                         withContext(Dispatchers.Main) {
@@ -56,7 +57,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             }
         }
     }
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val mainDataViewModel: MainDataViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,7 +94,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             if (query.isNullOrEmpty()) {
                 binding.textField.endIconDrawable = null // Hide the icon
             } else {
-                binding.textField.endIconDrawable = requireContext().getDrawable(R.drawable.baseline_clear_24) // Show the icon
+                binding.textField.endIconDrawable =
+                    requireContext().getDrawable(R.drawable.baseline_clear_24) // Show the icon
             }
             filterPlaces(query.toString())
         }
@@ -109,8 +111,8 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
     private fun filterPlaces(query: String) {
         lifecycleScope.launch {
-            homeViewModel.places.observe(viewLifecycleOwner) { places ->
-                homeViewModel.images.observe(viewLifecycleOwner) { images ->
+            mainDataViewModel.places.observe(viewLifecycleOwner) { places ->
+                mainDataViewModel.images.observe(viewLifecycleOwner) { images ->
 
                     if (query.isBlank()) {
                         categoryPlacesAdapter.clearData()
