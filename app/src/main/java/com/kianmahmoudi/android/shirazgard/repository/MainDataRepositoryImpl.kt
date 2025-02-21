@@ -1,9 +1,7 @@
 package com.kianmahmoudi.android.shirazgard.repository
 
-import android.util.Log
 import com.kianmahmoudi.android.shirazgard.api.RetrofitInstance
 import com.kianmahmoudi.android.shirazgard.data.WeatherResult
-import com.parse.BuildConfig
 import com.parse.ParseObject
 import com.parse.ParseQuery
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +12,7 @@ import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class ParseHomeRepository : HomeRepository {
+class MainDataRepositoryImpl : MainDataRepository {
     override suspend fun getPlaceImages(): List<ParseObject> {
         val query = ParseQuery.getQuery<ParseObject>("photos")
         return withContext(Dispatchers.IO) {
