@@ -7,17 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.kianmahmoudi.android.shirazgard.R
-import com.kianmahmoudi.android.shirazgard.data.Place
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentPlaceDetailsBinding
 import com.kianmahmoudi.android.shirazgard.util.observeOnce
 import com.kianmahmoudi.android.shirazgard.viewmodel.FavoritePlacesViewModel
+import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Locale
 
@@ -45,67 +47,74 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.apply {
+        val imageList = ArrayList<SlideModel>()
 
-            val imageList = ArrayList<SlideModel>()
+        when (Locale.getDefault().language) {
+            "en" -> binding.placeTitle.text = args.enName
+            "fa" -> binding.placeTitle.text = args.faName
+        }
 
-            when (Locale.getDefault().language) {
-                "en" -> placeTitle.text = args.enName ?: ""
-                "fa" -> placeTitle.text = args.faName ?: ""
-            }
-
-            placeAddress.text = args.address ?: ""
-            placeDescription.text = args.description ?: ""
-
-            val imageUrls = args.images ?: emptyArray()
-
-            for (url in imageUrls) {
-                imageList.add(SlideModel(url, ScaleTypes.FIT))
-            }
-
-            imageSlider.setImageList(imageList) // No need for ScaleTypes here, set in SlideModel
-
-            fabShowOnMap.setOnClickListener {
-                findNavController()?.let {
-                    try {
-                        val action =
-                            PlaceDetailsFragmentDirections.actionPlaceDetailsFragmentToHomeActivity(
-                                destination = "mapFragment",
-                                latitude = args.latitude,
-                                longitude = args.longitude
-                            )
-                        it.navigate(action)
-                    } catch (e: Exception) {
-                        Timber.tag("detailsActivity").e(e.message.toString())
-                    }
-                }
-            }
-
-            favoritePlacesViewModel.getPlaceById(args.objectId).observe(viewLifecycleOwner) {
-                if (it?.isFavorite == true)
+        lifecycleScope.launch {
+            favoritePlacesViewModel.checkIfPlaceIsFavorite(
+                ParseUser.getCurrentUser().objectId,
+                args.objectId
+            )
+            favoritePlacesViewModel.isFavorite.observe(viewLifecycleOwner) {
+                if (it)
                     binding.favoriteIcon.setImageResource(R.drawable.favorite_red_24)
-                else if (it?.isFavorite == false)
+                else
                     binding.favoriteIcon.setImageResource(R.drawable.favorite_24px)
             }
-            favoriteIcon.setOnClickListener {
-                Timber.i("click")
-                favoritePlacesViewModel.getPlaceById(args.objectId).observeOnce(viewLifecycleOwner) { place ->
-                    place?.let {
-                        Timber.i("click inside observer")
-                        val newFavoriteState = !it.isFavorite
-                        favoritePlacesViewModel.setFavorite(args.objectId, newFavoriteState)
+        }
 
-                        binding.favoriteIcon.setImageResource(
-                            if (newFavoriteState) R.drawable.favorite_red_24 else R.drawable.favorite_24px
+        binding.placeAddress.text = args.address
+        binding.placeDescription.text = args.description
+
+        val imageUrls = args.images
+
+        for (url in imageUrls) {
+            imageList.add(SlideModel(url, ScaleTypes.FIT))
+        }
+
+        binding.imageSlider.setImageList(imageList)
+
+        binding.fabShowOnMap.setOnClickListener {
+            findNavController()?.let {
+                try {
+                    val action =
+                        PlaceDetailsFragmentDirections.actionPlaceDetailsFragmentToHomeActivity(
+                            destination = "mapFragment",
+                            latitude = args.latitude,
+                            longitude = args.longitude
                         )
-                    }
+                    it.navigate(action)
+                } catch (e: Exception) {
+                    Timber.tag("detailsActivity").e(e.message.toString())
                 }
             }
-
-
-
-
         }
+
+        binding.favoriteIcon.setOnClickListener {
+            val isCurrentlyFavorite = favoritePlacesViewModel.isFavorite.value == true
+            if (isCurrentlyFavorite) {
+                lifecycleScope.launch {
+                    favoritePlacesViewModel.removePlace(
+                        ParseUser.getCurrentUser().objectId,
+                        args.objectId
+                    )
+                    binding.favoriteIcon.setImageResource(R.drawable.favorite_24px)
+                }
+            } else {
+                lifecycleScope.launch {
+                    favoritePlacesViewModel.addPlace(
+                        ParseUser.getCurrentUser().objectId,
+                        args.objectId
+                    )
+                    binding.favoriteIcon.setImageResource(R.drawable.favorite_red_24)
+                }
+            }
+        }
+
     }
 
 

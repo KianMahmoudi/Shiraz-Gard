@@ -1,9 +1,7 @@
 package com.kianmahmoudi.android.shirazgard.di
 
 import android.content.Context
-import com.kianmahmoudi.android.shirazgard.AppDatabase
 import com.kianmahmoudi.android.shirazgard.api.WeatherApi
-import com.kianmahmoudi.android.shirazgard.db.FavoritePlacesDao
 import com.kianmahmoudi.android.shirazgard.repository.MainDataRepository
 import com.kianmahmoudi.android.shirazgard.repository.MainDataRepositoryImpl
 import dagger.Module
@@ -41,15 +39,4 @@ class AppModule {
         return MainDataRepositoryImpl()
     }
 
-    @Provides
-    @Singleton
-    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
-        return AppDatabase.getDatabase(context)
-    }
-
-    @Provides
-    @Singleton
-    fun provideFavoritePlacesDao(database: AppDatabase): FavoritePlacesDao {
-        return database.favoritePlacesDao()
-    }
 }

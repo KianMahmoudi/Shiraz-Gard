@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.maps.secret)
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin") }
 
@@ -20,6 +20,7 @@ android {
 
 
     defaultConfig {
+        manifestPlaceholders += mapOf()
         applicationId = "com.kianmahmoudi.android.shirazgard"
         minSdk = 24
         targetSdk = 34
@@ -101,6 +102,6 @@ dependencies {
     implementation("com.orhanobut:logger:2.2.0")
     implementation("com.jakewharton.timber:timber:5.0.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0-alpha01")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-    kapt("androidx.room:room-compiler:$room_version")
+    ksp("com.google.dagger:hilt-android-compiler:2.51.1")
+    ksp("androidx.room:room-compiler:$room_version")
 }

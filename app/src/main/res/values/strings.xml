@@ -39,4 +39,5 @@
     <string name="car_washes">Car washes</string>
     <string name="cultural_sites">Cultural Sites</string>
     <string name="historical_sites">Historical Sites</string>
+    <string name="favoritePlacesText">Don\'t forget to visit these places!</string>
 </resources>

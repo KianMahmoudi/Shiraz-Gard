@@ -28,7 +28,9 @@ class HomeActivity : AppCompatActivity() {
 
         installSplashScreen()
 
-        if (ParseUser .getCurrentUser () == null) {
+
+
+        if (ParseUser.getCurrentUser () == null) {
             startActivity(Intent(this, LoginRegisterActivity::class.java))
             finish()
             return

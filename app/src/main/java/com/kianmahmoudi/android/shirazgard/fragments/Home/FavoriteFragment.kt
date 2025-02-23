@@ -12,11 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoryPlacesAdapter
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentFavoriteBinding
-import com.kianmahmoudi.android.shirazgard.fragments.CategoryPlacesFragmentDirections
+import com.kianmahmoudi.android.shirazgard.fragments.CategoryPlacesFragment
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.viewmodel.FavoritePlacesViewModel
 import com.kianmahmoudi.android.shirazgard.viewmodel.MainDataViewModel
 import com.parse.ParseObject
+import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -66,27 +67,32 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
         super.onViewCreated(view, savedInstanceState)
 
         setupRvFavoritePlaces()
+
         lifecycleScope.launch {
+            updateUIState(UIState.LOADING)
+            favoritePlacesViewModel.loadFavoritePlaces()
             favoritePlacesViewModel.favoritePlaces.observe(viewLifecycleOwner) { places ->
-                val parseObjects = places.map { place ->
-                    val parseObject = ParseObject("Place")
-                    parseObject.put("faName", place.faName)
-                    parseObject.put("enName", place.enName)
-                    parseObject.put("description", place.description)
-                    parseObject.put("address", place.address)
-                    parseObject.put("latitude", place.latitude)
-                    parseObject.put("longitude", place.longitude)
-                    parseObject.put("type", place.type)
-                    parseObject.objectId = place.objectId
-                    parseObject
-                }
-                mainDataViewModel.images.observe(viewLifecycleOwner) {
-                    adapter.addImages(it)
-                    Timber.i(it.toString())
-                    adapter.addPlaces(parseObjects)
+                val favoritePlaceIds = places.map { it.getString("placeId") }
+                mainDataViewModel.places.observe(viewLifecycleOwner) { allPlaces ->
+                    val filteredPlaces = allPlaces.filter { place ->
+                        favoritePlaceIds.contains(place.objectId)
+                    }
+                    mainDataViewModel.images.observe(viewLifecycleOwner) { allImages ->
+                        val filteredImages = allImages.filter { image ->
+                            favoritePlaceIds.contains(image.getString("placeId"))
+                        }
+                        adapter.addPlaces(filteredPlaces)
+                        adapter.addImages(filteredImages)
+
+                        if (filteredPlaces.isEmpty()) {
+                            updateUIState(UIState.EMPTY)
+                        } else {
+                            updateUIState(UIState.LOADED)
+                        }
+
+                    }
                 }
             }
-
         }
     }
 
@@ -104,6 +110,48 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
     ): View {
         binding = FragmentFavoriteBinding.inflate(inflater)
         return binding.root
+    }
+
+
+    private fun updateUIState(state: UIState) {
+        when (state) {
+            UIState.LOADING -> {
+                binding.apply {
+                    progressBarFavoritePlaces.visibility = View.VISIBLE
+                    progressBarFavoritePlaces.playAnimation()
+                    rvFavoritePlaces.visibility = View.GONE
+                    emptyViewFavoritePlaces.visibility = View.GONE
+                    emptyViewFavoritePlaces.cancelAnimation()
+                    DontForgotToVisit.visibility = View.GONE
+                }
+            }
+            UIState.LOADED -> {
+                binding.apply {
+                    progressBarFavoritePlaces.visibility = View.GONE
+                    progressBarFavoritePlaces.cancelAnimation()
+                    DontForgotToVisit.visibility = View.VISIBLE
+                    rvFavoritePlaces.visibility = View.VISIBLE
+                    emptyViewFavoritePlaces.visibility = View.GONE
+                    emptyViewFavoritePlaces.cancelAnimation()
+                }
+            }
+            UIState.EMPTY -> {
+                binding.apply {
+                    progressBarFavoritePlaces.visibility = View.GONE
+                    progressBarFavoritePlaces.cancelAnimation()
+                    rvFavoritePlaces.visibility = View.GONE
+                    DontForgotToVisit.visibility = View.GONE
+                    emptyViewFavoritePlaces.visibility = View.VISIBLE
+                    emptyViewFavoritePlaces.playAnimation()
+                }
+            }
+        }
+    }
+
+    enum class UIState {
+        LOADING,
+        LOADED,
+        EMPTY
     }
 
 }

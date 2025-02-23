@@ -168,4 +168,5 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
         LOADED,
         EMPTY
     }
+
 }
