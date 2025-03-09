@@ -15,7 +15,9 @@ import com.kianmahmoudi.android.shirazgard.databinding.FragmentLoginBinding
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentRegisterBinding
 import com.kianmahmoudi.android.shirazgard.util.isValidPassword
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FragmentRegister : Fragment(R.layout.fragment_register) {
 
     private lateinit var binding: FragmentRegisterBinding
@@ -64,13 +66,17 @@ class FragmentRegister : Fragment(R.layout.fragment_register) {
 
 
         userViewModel.registerError.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            it?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
         }
 
         userViewModel.registerUser.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), "Register was successful", Toast.LENGTH_SHORT).show()
-            val intent = Intent(requireActivity(), HomeActivity::class.java)
-            startActivity(intent)
+            it?.let {
+                Toast.makeText(requireContext(), "Register was successful", Toast.LENGTH_SHORT).show()
+                val intent = Intent(requireActivity(), HomeActivity::class.java)
+                startActivity(intent)
+            }
         }
 
     }

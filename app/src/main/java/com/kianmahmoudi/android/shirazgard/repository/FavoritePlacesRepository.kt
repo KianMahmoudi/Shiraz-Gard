@@ -8,4 +8,5 @@ interface FavoritePlacesRepository {
     fun isPlaceFavorite(userId: String, placeId: String): Boolean
     suspend fun addFavoritePlace(userId: String, placeId: String)
     suspend fun removeFavoritePlace(userId: String, placeId: String)
+
 }

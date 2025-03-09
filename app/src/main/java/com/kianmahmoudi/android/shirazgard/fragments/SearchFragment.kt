@@ -72,14 +72,18 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         super.onViewCreated(view, savedInstanceState)
         setupRv()
         setupSearchListener()
+
         binding.textField.endIconDrawable = null
+
         binding.textField.setStartIconOnClickListener {
             findNavController().navigateUp()
         }
+
         binding.textField.setEndIconOnClickListener {
             binding.etSearch.text?.clear()
             binding.textField.endIconDrawable = null
         }
+
         binding.textField.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus) {
                 binding.textField.hint = "test"
@@ -87,6 +91,9 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 binding.textField.hint = null
             }
         }
+
+
+
     }
 
     private fun setupSearchListener() {

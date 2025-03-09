@@ -14,7 +14,10 @@ import com.kianmahmoudi.android.shirazgard.activities.HomeActivity
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentLoginBinding
 import com.kianmahmoudi.android.shirazgard.util.isValidPassword
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
+@AndroidEntryPoint
 class FragmentLogin : Fragment(R.layout.fragment_login) {
 
     private lateinit var binding: FragmentLoginBinding
@@ -40,36 +43,38 @@ class FragmentLogin : Fragment(R.layout.fragment_login) {
         binding.loginButton.setOnClickListener {
             val userName = binding.editTextUserNameLogin.editText?.text.toString()
             val password = binding.editTextPasswordLogin.editText?.text.toString()
-
-            // چک کردن خالی نبودن نام کاربری و رمز عبور
             if (userName.isBlank()) {
-                Toast.makeText(requireContext(), "Username cannot be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Username cannot be empty", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
             if (password.isBlank()) {
-                Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
-            // چک کردن معتبر بودن رمز عبور
             if (!isValidPassword(password)) {
                 Toast.makeText(requireContext(), "Password is not valid", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            // اگر همه چیز درست بود، کاربر ثبت نام می‌شود
             userViewModel.loginUser(userName, password)
         }
 
-        userViewModel.loginUser.observe(viewLifecycleOwner){
-            Toast.makeText(requireContext(),"Login was successful", Toast.LENGTH_SHORT).show()
-            val intent = Intent(requireActivity(),HomeActivity::class.java)
-            startActivity(intent)
+        userViewModel.loginUser.observe(viewLifecycleOwner) {
+            Timber.i("user: ${it}")
+            it?.let {
+                Toast.makeText(requireContext(), "Login was successful", Toast.LENGTH_SHORT).show()
+                val intent = Intent(requireActivity(), HomeActivity::class.java)
+                startActivity(intent)
+            }
         }
 
-        userViewModel.loginError.observe(viewLifecycleOwner){
-            Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        userViewModel.loginError.observe(viewLifecycleOwner) {
+            it?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+            }
         }
 
     }

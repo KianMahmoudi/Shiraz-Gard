@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">شیراز گرد</string>
+    <string name="app_name">شیرازگرد</string>
     <string name="the_best_places_to_explore">بهترین مکان ها برای گردش</string>
     <string name="login">ورود</string>
     <string name="register">ثبت نام</string>
@@ -41,4 +41,42 @@
     <string name="cultural_sites">جاهای فرهنگی</string>
     <string name="historical_sites">جاهای تاریخی</string>
     <string name="favoritePlacesText">یادت نره به این مکان ها سر بزنی!</string>
+    <string name="edit_profile">ویرایش پروفایل</string>
+    <string name="general">عمومی</string>
+    <string name="account">اکانت</string>
+    <string name="about_us">درباره ما</string>
+    <string name="lang">زبان</string>
+    <string name="theme">زمینه</string>
+    <string name="change_password">ویرایش رمزعبور</string>
+    <string name="logout">خروج از حساب</string>
+    <string name="delete_account">حذف حساب</string>
+    <string name="version">نسخه</string>
+    <string name="contact_with_developer">ارتباط با توسعه دهنده</string>
+    <string name="choose_lang">زبانتان را انتخاب کنید</string>
+    <string name="choose_theme">زمینه تان را انتخاب کنید</string>
+    <string name="dark">تاریک</string>
+    <string name="light">روشن</string>
+    <string name="system">پیروی از گوشی</string>
+    <string name="at_least_one_special_char"><![CDATA[- حداقل یک کاراکتر خاص (!@#$%^&*)]]></string>
+    <string name="edit_password">تغییر رمز عبور</string>
+    <string name="password_rules">رمز عبور باید شامل موارد زیر باشد:</string>
+    <string name="at_least_eight_char">- حداقل 8 کاراکتر</string>
+    <string name="at_least_one_uppercase_char">- حداقل یک حرف بزرگ</string>
+    <string name="at_least_one_num">- حداقل یک عدد</string>
+    <string name="current_password">رمز عبور فعلی</string>
+    <string name="new_password">رمز عبور جدید</string>
+    <string name="repeat_new_password">تکرار رمز عبور جدید</string>
+    <string name="at_least_one_lowercase_char">- حداقل یک حرف کوچک</string>
+    <string name="current_password_incorrect">رمز عبور فعلی اشتباه است</string>
+    <string name="password_is_not_valid">رمزعبور معتبر نیست</string>
+    <string name="new_password_dont_match_repeated_password">رمز عبور جدید و تکرار آن مطابقت ندارند</string>
+    <string name="are_you_sure_logout">ایا مطمئنی که میخوای از حساب خارج شوی؟</string>
+    <string name="are_you_sure">ایا مطمئنی؟</string>
+    <string name="yes">بله</string>
+    <string name="no">خیر</string>
+    <string name="are_you_sure_delete_account">ایا مطمئنی که میخوای حساب خود را حذف کنی؟</string>
+    <string name="account_deleted_successfuly">حساب با موفقیت حذف شد</string>
+    <string name="upload_photo">آپلود عکس</string>
+    <string name="delete_photo">حذف عکس</string>
+    <string name="save_changes">ذخیره تغییرات</string>
 </resources>
