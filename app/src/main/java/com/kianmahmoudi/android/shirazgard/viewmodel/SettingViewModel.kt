@@ -25,8 +25,6 @@ class SettingViewModel @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) : ViewModel() {
 
-
-
     companion object {
         val LANGUAGE_KEY = stringPreferencesKey("lang")
         val THEME_KEY = stringPreferencesKey("theme")

@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.activities.HomeActivity
+import com.kianmahmoudi.android.shirazgard.data.Result
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentLoginBinding
 import com.kianmahmoudi.android.shirazgard.util.isValidPassword
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
@@ -62,18 +63,21 @@ class FragmentLogin : Fragment(R.layout.fragment_login) {
             userViewModel.loginUser(userName, password)
         }
 
-        userViewModel.loginUser.observe(viewLifecycleOwner) {
-            Timber.i("user: ${it}")
-            it?.let {
-                Toast.makeText(requireContext(), "Login was successful", Toast.LENGTH_SHORT).show()
-                val intent = Intent(requireActivity(), HomeActivity::class.java)
-                startActivity(intent)
-            }
-        }
+        userViewModel.loginState.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Loading -> {}
+                is Result.Success -> {
+                    Toast.makeText(requireContext(), "Login was successful", Toast.LENGTH_SHORT)
+                        .show()
+                    val intent = Intent(requireActivity(), HomeActivity::class.java)
+                    startActivity(intent)
+                }
 
-        userViewModel.loginError.observe(viewLifecycleOwner) {
-            it?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                is Result.Error -> {
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                }
+
+                null -> {}
             }
         }
 

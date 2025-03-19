@@ -74,6 +74,7 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.concurrent.futures.ktx)
     val nav_version = "2.8.1"
     val room_version = "2.6.1"
 

@@ -18,6 +18,7 @@ import com.parse.Parse
 import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import  com.kianmahmoudi.android.shirazgard.data.Result
 
 @AndroidEntryPoint
 class FragmentChangePassword : Fragment(R.layout.fragment_change_password) {
@@ -46,7 +47,7 @@ class FragmentChangePassword : Fragment(R.layout.fragment_change_password) {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
                     if (ParseUser.getCurrentUser() != null)
-                        userViewModel.isCurrentPasswordCorrect(
+                        userViewModel.verifyCurrentPassword(
                             it.toString()
                         )
                 }
@@ -55,12 +56,18 @@ class FragmentChangePassword : Fragment(R.layout.fragment_change_password) {
 
         Timber.i("user: ${ParseUser.getCurrentUser() == null}")
 
-        userViewModel.isCurrentPasswordCorrect.observe(viewLifecycleOwner) {
-            isCurrentPasswordValid = it == true
-        }
+        userViewModel.passwordVerificationState.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    isCurrentPasswordValid = result.data
+                }
+                is Result.Error -> {
+                    binding.currentPasswordEditText.error = result.message
+                }
+                is Result.Loading -> {
 
-        userViewModel.isCurrentPasswordError.observe(viewLifecycleOwner) {
-            binding.currentPasswordEditText.error = it
+                }
+            }
         }
 
         binding.btnSubmit.setOnClickListener {
@@ -73,19 +80,20 @@ class FragmentChangePassword : Fragment(R.layout.fragment_change_password) {
             }
         }
 
-        userViewModel.changePasswordResult.observe(viewLifecycleOwner) { success ->
-            if (success == true) {
-                Toast.makeText(requireContext(), "Password changed", Toast.LENGTH_SHORT).show()
-                findNavController().navigateUp()
-            } else {
-                Toast.makeText(requireContext(), "Password don't changed", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
+        userViewModel.passwordChangeState.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Success -> {
+                    Toast.makeText(requireContext(), "Password changed", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                }
 
-        userViewModel.changePasswordError.observe(viewLifecycleOwner) { error ->
-            error?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                is Result.Error -> {
+                    Toast.makeText(requireContext(), "Password don't changed", Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                is Result.Loading -> {
+                }
             }
         }
     }

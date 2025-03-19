@@ -16,6 +16,7 @@ import com.kianmahmoudi.android.shirazgard.databinding.FragmentRegisterBinding
 import com.kianmahmoudi.android.shirazgard.util.isValidPassword
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import com.kianmahmoudi.android.shirazgard.data.Result
 
 @AndroidEntryPoint
 class FragmentRegister : Fragment(R.layout.fragment_register) {
@@ -27,7 +28,7 @@ class FragmentRegister : Fragment(R.layout.fragment_register) {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentRegisterBinding.inflate(inflater)
         return binding.root
     }
@@ -45,12 +46,14 @@ class FragmentRegister : Fragment(R.layout.fragment_register) {
 
             // چک کردن خالی نبودن نام کاربری و رمز عبور
             if (userName.isBlank()) {
-                Toast.makeText(requireContext(), "Username cannot be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Username cannot be empty", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
             if (password.isBlank()) {
-                Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Password cannot be empty", Toast.LENGTH_SHORT)
+                    .show()
                 return@setOnClickListener
             }
 
@@ -60,25 +63,27 @@ class FragmentRegister : Fragment(R.layout.fragment_register) {
                 return@setOnClickListener
             }
 
-            // اگر همه چیز درست بود، کاربر ثبت نام می‌شود
             userViewModel.registerUser(userName, password)
         }
 
 
-        userViewModel.registerError.observe(viewLifecycleOwner) {
-            it?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+        userViewModel.registerState.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is Result.Loading -> {}
+                is Result.Success -> {
+                    Toast.makeText(requireContext(), "Register was successful", Toast.LENGTH_SHORT)
+                        .show()
+                    val intent = Intent(requireActivity(), HomeActivity::class.java)
+                    startActivity(intent)
+                }
+
+                is Result.Error -> {
+                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                }
+
+                null -> {}
             }
         }
-
-        userViewModel.registerUser.observe(viewLifecycleOwner) {
-            it?.let {
-                Toast.makeText(requireContext(), "Register was successful", Toast.LENGTH_SHORT).show()
-                val intent = Intent(requireActivity(), HomeActivity::class.java)
-                startActivity(intent)
-            }
-        }
-
     }
 
 }

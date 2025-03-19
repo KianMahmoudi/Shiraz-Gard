@@ -27,6 +27,7 @@ retrofit = "2.11.0"
 roomCompiler = "2.6.1"
 swiperefreshlayout = "1.2.0-alpha01"
 timber = "5.0.1"
+concurrentFuturesKtx = "1.2.0-alpha01"
 
 [libraries]
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -59,6 +60,7 @@ parse = { module = "com.github.parse-community.Parse-SDK-Android:parse", version
 process-phoenix = { module = "com.jakewharton:process-phoenix", version.ref = "processPhoenix" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+androidx-concurrent-futures-ktx = { group = "androidx.concurrent", name = "concurrent-futures-ktx", version.ref = "concurrentFuturesKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -27,6 +27,7 @@ import com.kianmahmoudi.android.shirazgard.BuildConfig
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.activities.HomeActivity
 import com.kianmahmoudi.android.shirazgard.activities.LoginRegisterActivity
+import com.kianmahmoudi.android.shirazgard.data.Result
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentSettingBinding
 import com.kianmahmoudi.android.shirazgard.viewmodel.SettingViewModel
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
@@ -57,19 +58,6 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
         }
 
         userViewModel.fetchProfileImageUrl()
-
-        userViewModel.profileImageUrl.observe(viewLifecycleOwner) { url ->
-            if (url != null) {
-                Glide.with(requireContext())
-                    .load(url)
-                    .placeholder(R.drawable.person_24px)
-                    .circleCrop()
-                    .into(binding.userImage)
-            } else {
-                binding.userImage.setImageResource(R.drawable.person_24px)
-            }
-        }
-
 
         lifecycleScope.launch {
             settingViewModel.languageFlow.collect { lang ->
@@ -118,6 +106,7 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
         binding.itemVersion.icon.visibility = View.GONE
         binding.itemVersion.arrow.visibility = View.GONE
 
+        observeUser()
 
     }
 
@@ -132,18 +121,46 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
 
     private fun observeUser() {
         lifecycleScope.launch {
-            userViewModel.deleteAccountResult.observe(viewLifecycleOwner) {
-                if (it == true) {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.account_deleted_successfuly),
-                        Toast.LENGTH_SHORT
-                    ).show()
+            userViewModel.deleteAccountState.observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is Result.Success -> {
+                        Toast.makeText(
+                            requireContext(),
+                            getString(R.string.account_deleted_successfuly),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    is Result.Error -> {
+                        Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                    is Result.Loading -> {}
                 }
+
             }
-            userViewModel.deleteAccountError.observe(viewLifecycleOwner) {
-                it?.let {
-                    Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+
+        }
+        lifecycleScope.launch {
+            userViewModel.profileImageState.observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is Result.Success -> {
+                        Glide.with(requireContext())
+                            .load(result.data)
+                            .placeholder(R.drawable.person_24px)
+                            .circleCrop()
+                            .into(binding.userImage)
+                    }
+
+                    is Result.Error -> {
+                        binding.userImage.setImageResource(R.drawable.person_24px)
+                    }
+
+                    is Result.Loading -> {
+
+                    }
+
+                    null -> {}
                 }
             }
         }

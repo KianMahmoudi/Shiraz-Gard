@@ -4,162 +4,186 @@ import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.parse.ParseUser
 import com.kianmahmoudi.android.shirazgard.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.kianmahmoudi.android.shirazgard.data.Result
+import kotlinx.coroutines.delay
 
 @HiltViewModel
-class UserViewModel @Inject constructor(private val userRepository: UserRepository) : ViewModel() {
+class UserViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
 
-    // Existing LiveData
-    private val _registerUser = MutableLiveData<ParseUser?>()
-    val registerUser: LiveData<ParseUser?> = _registerUser
+    private val _registerState = MutableLiveData<Result<ParseUser>?>()
+    val registerState: MutableLiveData<Result<ParseUser>?> = _registerState
 
-    private val _registerError = MutableLiveData<String?>()
-    val registerError: LiveData<String?> = _registerError
+    private val _loginState = MutableLiveData<Result<ParseUser>?>()
+    val loginState: MutableLiveData<Result<ParseUser>?> = _loginState
 
-    private val _loginUser = MutableLiveData<ParseUser?>()
-    val loginUser: LiveData<ParseUser?> = _loginUser
+    private val _logoutState = MutableLiveData<Result<Unit>>()
+    val logoutState: LiveData<Result<Unit>> = _logoutState
 
-    private val _loginError = MutableLiveData<String?>()
-    val loginError: LiveData<String?> = _loginError
+    private val _deleteAccountState = MutableLiveData<Result<Boolean>>()
+    val deleteAccountState: LiveData<Result<Boolean>> = _deleteAccountState
 
-    private val _changePasswordResult = MutableLiveData<Boolean>()
-    val changePasswordResult: LiveData<Boolean> = _changePasswordResult
+    private val _passwordChangeState = MutableLiveData<Result<Boolean>>()
+    val passwordChangeState: LiveData<Result<Boolean>> = _passwordChangeState
 
-    private val _changePasswordError = MutableLiveData<String?>()
-    val changePasswordError: LiveData<String?> = _changePasswordError
+    private val _passwordVerificationState = MutableLiveData<Result<Boolean>>()
+    val passwordVerificationState: LiveData<Result<Boolean>> = _passwordVerificationState
 
-    private val _isCurrentPasswordCorrect = MutableLiveData<Boolean>()
-    val isCurrentPasswordCorrect: LiveData<Boolean> = _isCurrentPasswordCorrect
+    private val _profileImageState = MutableLiveData<Result<String>?>()
+    val profileImageState: MutableLiveData<Result<String>?> = _profileImageState
 
-    private val _isCurrentPasswordError = MutableLiveData<String?>()
-    val isCurrentPasswordError: LiveData<String?> = _isCurrentPasswordError
+    private val _usernameState = MutableLiveData<Result<String>?>()
+    val usernameState: MutableLiveData<Result<String>?> = _usernameState
 
-    private val _deleteAccountResult = MutableLiveData<Boolean>()
-    val deleteAccountResult: LiveData<Boolean> = _deleteAccountResult
+    private val _profileImageDeletionState = MutableLiveData<Result<Boolean>?>()
+    val profileImageDeletionState: MutableLiveData<Result<Boolean>?> = _profileImageDeletionState
 
-    private val _deleteAccountError = MutableLiveData<String?>()
-    val deleteAccountError: LiveData<String?> = _deleteAccountError
+    private fun resetLoginAndRegisterState(){
+        _registerState.value = null
+        _loginState.value = null
+    }
 
-    // New LiveData for Profile Management
-    private val _uploadProfileImageResult = MutableLiveData<Boolean>()
-    val uploadProfileImageResult: LiveData<Boolean> = _uploadProfileImageResult
-
-    private val _uploadProfileImageError = MutableLiveData<String?>()
-    val uploadProfileImageError: LiveData<String?> = _uploadProfileImageError
-
-    private val _profileImageUrl = MutableLiveData<String?>()
-    val profileImageUrl: LiveData<String?> = _profileImageUrl
-
-    private val _updateUsernameResult = MutableLiveData<Boolean>()
-    val updateUsernameResult: LiveData<Boolean> = _updateUsernameResult
-
-    private val _updateUsernameError = MutableLiveData<String?>()
-    val updateUsernameError: LiveData<String?> = _updateUsernameError
-
-    private val _deleteProfileImageResult = MutableLiveData<Boolean>()
-    val deleteProfileImageResult: LiveData<Boolean> = _deleteProfileImageResult
-
-    private val _deleteProfileImageError = MutableLiveData<String?>()
-    val deleteProfileImageError: LiveData<String?> = _deleteProfileImageError
-
-    // Existing Methods
-    fun registerUser(userName: String, password: String) {
-        userRepository.registerUser(userName, password) { user, error ->
-            _registerUser.postValue(user)
-            _registerError.postValue(error)
+    fun registerUser(username: String, password: String) {
+        viewModelScope.launch {
+            _registerState.value = Result.Loading
+            try {
+                val user = userRepository.registerUser(username, password)
+                _registerState.postValue(Result.Success(user))
+            } catch (e: Exception) {
+                _registerState.postValue(Result.Error(e.parseErrorMessage()))
+            }
         }
     }
 
-    fun loginUser(userName: String, password: String) {
-        userRepository.loginUser(userName, password) { user, error ->
-            _loginUser.postValue(user)
-            _loginError.postValue(error)
-        }
-    }
-
-    fun changePassword(newPassword: String) {
-        userRepository.changePassword(newPassword) { success, error ->
-            _changePasswordResult.postValue(success)
-            _changePasswordError.postValue(error)
-        }
-    }
-
-    fun isCurrentPasswordCorrect(password: String) {
-        userRepository.isCurrentPasswordCorrect(password) { success, error ->
-            _isCurrentPasswordCorrect.postValue(success)
-            _isCurrentPasswordError.postValue(error)
+    fun loginUser(username: String, password: String) {
+        viewModelScope.launch {
+            _loginState.value = Result.Loading
+            try {
+                val user = userRepository.loginUser(username, password)
+                _loginState.postValue(Result.Success(user))
+            } catch (e: Exception) {
+                _loginState.postValue(Result.Error(e.parseErrorMessage()))
+            }
         }
     }
 
     fun logout() {
-        userRepository.logout()
-        resetUserData()
+        viewModelScope.launch {
+            _logoutState.value = Result.Loading
+            try {
+                userRepository.logout()
+                _logoutState.postValue(Result.Success(Unit))
+                resetLoginAndRegisterState()
+            } catch (e: Exception) {
+                _logoutState.postValue(Result.Error(e.parseErrorMessage()))
+            }
+        }
     }
 
     fun deleteAccount() {
-        userRepository.deleteAccount { success, error ->
-            if (success) {
-                _deleteAccountResult.postValue(true)
-                resetUserData()
-            } else {
-                _deleteAccountError.postValue(error)
+        viewModelScope.launch {
+            _deleteAccountState.value = Result.Loading
+            try {
+                val success = userRepository.deleteAccount()
+                _deleteAccountState.postValue(Result.Success(success))
+                resetLoginAndRegisterState()
+            } catch (e: Exception) {
+                _deleteAccountState.postValue(Result.Error(e.parseErrorMessage()))
+            }
+        }
+    }
+
+    fun changePassword(newPassword: String) {
+        viewModelScope.launch {
+            _passwordChangeState.value = Result.Loading
+            try {
+                val success = userRepository.changePassword(newPassword)
+                _passwordChangeState.postValue(Result.Success(success))
+            } catch (e: Exception) {
+                _passwordChangeState.postValue(Result.Error(e.parseErrorMessage()))
+            }
+        }
+    }
+
+    fun verifyCurrentPassword(password: String) {
+        viewModelScope.launch {
+            _passwordVerificationState.value = Result.Loading
+            try {
+                val isValid = userRepository.isCurrentPasswordCorrect(password)
+                _passwordVerificationState.postValue(Result.Success(isValid))
+            } catch (e: Exception) {
+                _passwordVerificationState.postValue(Result.Error(e.parseErrorMessage()))
             }
         }
     }
 
     fun uploadProfileImage(imageUri: Uri) {
-        userRepository.uploadProfileImage(imageUri) { success, error ->
-            if (success) {
-                _uploadProfileImageResult.postValue(true)
-                fetchProfileImageUrl()
-            } else {
-                _uploadProfileImageError.postValue(error)
+        viewModelScope.launch {
+            _profileImageState.value = Result.Loading
+            try {
+                userRepository.uploadProfileImage(imageUri)
+                val url = userRepository.getProfileImageUrl()
+                _profileImageState.postValue(Result.Success(url))
+            } catch (e: Exception) {
+                _profileImageState.postValue(Result.Error(e.parseErrorMessage()))
+            }
+        }
+    }
+
+    fun updateUsername(newUsername: String) {
+        viewModelScope.launch {
+            _usernameState.value = Result.Loading
+            try {
+                userRepository.updateUsername(newUsername)
+
+                _usernameState.postValue(Result.Success(newUsername))
+                _usernameState.postValue(null)
+
+            } catch (e: Exception) {
+                _usernameState.postValue(Result.Error(e.parseErrorMessage()))
+            }
+        }
+    }
+
+    fun deleteProfileImage() {
+        viewModelScope.launch {
+            _profileImageDeletionState.value = Result.Loading
+            try {
+                val success = userRepository.deleteProfileImage()
+                _profileImageDeletionState.postValue(Result.Success(success))
+                _profileImageState.value = null
+            } catch (e: Exception) {
+                _profileImageDeletionState.postValue(Result.Error(e.parseErrorMessage()))
             }
         }
     }
 
     fun fetchProfileImageUrl() {
-        userRepository.getProfileImageUrl { url ->
-            _profileImageUrl.postValue(url)
-        }
-    }
-
-    fun updateUsername(newUsername: String) {
-        userRepository.updateUsername(newUsername) { success, error ->
-            if (success) {
-                _updateUsernameResult.postValue(true)
-            } else {
-                _updateUsernameError.postValue(error)
+        viewModelScope.launch {
+            _profileImageState.value = Result.Loading
+            try {
+                val url = userRepository.getProfileImageUrl()
+                _profileImageState.postValue(Result.Success(url))
+            } catch (e: Exception) {
+                _profileImageState.postValue(Result.Error(e.parseErrorMessage()))
             }
         }
     }
 
-    fun resetUserNameAndProfileResults() {
-        _updateUsernameResult.value = false
-        _uploadProfileImageResult.value = false
-        _deleteProfileImageResult.value = false
+    private fun Exception.parseErrorMessage(): String {
+        return message?.substringAfterLast(":")?.trim()
+            ?: "خطای ناشناخته رخ داده است"
     }
 
-    fun deleteProfileImage() {
-        userRepository.deleteProfileImage { success, error ->
-            if (success) {
-                _deleteProfileImageResult.postValue(true)
-                fetchProfileImageUrl()
-            } else {
-                _deleteProfileImageError.postValue(error)
-            }
-        }
-    }
-
-    private fun resetUserData() {
-        _loginUser.postValue(null)
-        _registerUser.postValue(null)
-        _loginError.postValue(null)
-        _registerError.postValue(null)
-        _profileImageUrl.postValue(null)
+    fun resetProfileImgDeletionState(){
+        _profileImageDeletionState.value = null
     }
 
 }
