@@ -7,17 +7,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.kianmahmoudi.android.shirazgard.R
-import com.kianmahmoudi.android.shirazgard.data.Result
+import com.kianmahmoudi.android.shirazgard.data.UiState
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentEditProfileBinding
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -38,81 +44,86 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupUI()
-        observeViewModel()
-        loadCurrentUserData()
-    }
 
-    private fun setupUI() {
         binding.btnUpload.setOnClickListener { openImagePicker() }
         binding.btnDelete.setOnClickListener { deleteProfileImage() }
-        binding.btnSave.setOnClickListener { updateUsername() }
-    }
+        binding.btnSave.setOnClickListener {
+            updateUsername()
+        }
 
-    private fun observeViewModel() {
-        userViewModel.profileImageState.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is Result.Success -> {
-                    Glide.with(requireContext())
-                        .load(result.data)
-                        .placeholder(R.drawable.person_24px)
-                        .circleCrop()
-                        .into(binding.profileImage)
+        viewLifecycleOwner.lifecycleScope.launch {
+            userViewModel.profileImageState.observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is UiState.Success -> {
+                        Glide.with(requireContext())
+                            .load(result.data)
+                            .placeholder(R.drawable.person_24px)
+                            .circleCrop()
+                            .into(binding.profileImage)
+                    }
+
+                    is UiState.Error -> {
+                    }
+
+                    is UiState.Loading -> {
+
+                    }
+
+                    UiState.Idle -> {}
+
                 }
-
-                is Result.Error -> {
-                    showToast(result.message)
+                if (result != UiState.Idle) {
+                    userViewModel.resetProfileImageState()
                 }
-
-                is Result.Loading -> {
-
-                }
-
-                null -> {}
             }
-
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.profileImageDeletionState.observe(viewLifecycleOwner) { result ->
                 when (result) {
-                    is Result.Loading -> {
+                    is UiState.Loading -> {
 
                     }
 
-                    is Result.Success -> {
-                        showToast("تصویر پروفایل با موفقیت حذف شد")
+                    is UiState.Success -> {
                         binding.profileImage.setImageResource(R.drawable.person_24px)
-                        userViewModel.resetProfileImgDeletionState()
+
                     }
 
-                    is Result.Error -> {
-                        showToast(result.message)
-                        userViewModel.resetProfileImgDeletionState()
+                    is UiState.Error -> {
                     }
 
-                    null -> {}
+                    UiState.Idle -> {}
+                }
+                if (result != UiState.Idle) {
+                    userViewModel.resetProfileImageDeletionState()
                 }
             }
-
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            userViewModel.usernameState.observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is UiState.Success -> {
+                        findNavController().navigateUp()
+                    }
 
-        userViewModel.usernameState.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is Result.Success -> {
-                    showToast("نام کاربری با موفقیت به‌روزرسانی شد")
-                    findNavController().navigateUp()
+                    is UiState.Error -> {
+                    }
+
+                    UiState.Loading -> {
+                    }
+
+                    UiState.Idle -> {
+                    }
                 }
-
-                is Result.Error -> {
-                    showToast(result.message)
+                if (result != UiState.Idle) {
+                    userViewModel.resetUsernameState()
                 }
-
-                is Result.Loading -> {
-
-                }
-
-                null -> {}
             }
         }
 
+        val currentUser = ParseUser.getCurrentUser()
+        binding.etUsername.setText(currentUser?.username)
+        userViewModel.fetchProfileImageUrl()
 
     }
 
@@ -133,17 +144,18 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     private fun updateUsername() {
         val newUsername = binding.etUsername.text.toString().trim()
-        if (newUsername.isNotEmpty()) {
-            Timber.i("username: " + userViewModel.usernameState.value)
-            userViewModel.updateUsername(newUsername)
-            Timber.i("username: " + userViewModel.usernameState.value)
+        if (userViewModel.usernameState.value !is UiState.Loading) {
+            if (newUsername.isNotEmpty()) {
+                userViewModel.updateUsername(newUsername)
+            } else {
+                showToast("نام کاربری نمی‌تواند خالی باشد")
+            }
         } else {
-            showToast("نام کاربری نمی‌تواند خالی باشد")
         }
     }
 
     private fun showToast(message: String) {
-        android.widget.Toast.makeText(requireContext(), message, android.widget.Toast.LENGTH_SHORT)
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT)
             .show()
     }
 
@@ -156,17 +168,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadCurrentUserData()
-    }
-
-    private fun loadCurrentUserData() {
-        // دریافت داده‌های تازه از سرور
-        ParseUser.getCurrentUser()?.fetchInBackground<ParseUser> { _, _ ->
-            binding.etUsername.setText(ParseUser.getCurrentUser()?.username)
-            userViewModel.fetchProfileImageUrl()
-        }
-    }
-
 }
+
+

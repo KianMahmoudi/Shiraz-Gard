@@ -8,15 +8,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.activities.HomeActivity
-import com.kianmahmoudi.android.shirazgard.databinding.FragmentLoginBinding
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentRegisterBinding
 import com.kianmahmoudi.android.shirazgard.util.isValidPassword
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import com.kianmahmoudi.android.shirazgard.data.Result
+import com.kianmahmoudi.android.shirazgard.data.UiState
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FragmentRegister : Fragment(R.layout.fragment_register) {
@@ -66,24 +67,33 @@ class FragmentRegister : Fragment(R.layout.fragment_register) {
             userViewModel.registerUser(userName, password)
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            userViewModel.registerState.observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is UiState.Loading -> {}
+                    is UiState.Success -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "Register was successful",
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        val intent = Intent(requireActivity(), HomeActivity::class.java)
+                        startActivity(intent)
+                    }
 
-        userViewModel.registerState.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is Result.Loading -> {}
-                is Result.Success -> {
-                    Toast.makeText(requireContext(), "Register was successful", Toast.LENGTH_SHORT)
-                        .show()
-                    val intent = Intent(requireActivity(), HomeActivity::class.java)
-                    startActivity(intent)
+                    is UiState.Error -> {
+                        Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                    UiState.Idle -> {}
                 }
-
-                is Result.Error -> {
-                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                if (result != UiState.Idle) {
+                    userViewModel.resetRegisterState()
                 }
-
-                null -> {}
             }
         }
+
     }
 
 }

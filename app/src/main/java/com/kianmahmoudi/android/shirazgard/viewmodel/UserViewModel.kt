@@ -5,185 +5,209 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.parse.ParseUser
 import com.kianmahmoudi.android.shirazgard.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.kianmahmoudi.android.shirazgard.data.Result
-import kotlinx.coroutines.delay
+import com.kianmahmoudi.android.shirazgard.data.UiState
+import com.parse.ParseUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _registerState = MutableLiveData<Result<ParseUser>?>()
-    val registerState: MutableLiveData<Result<ParseUser>?> = _registerState
+    private val _registerState = MutableLiveData<UiState<ParseUser>>(UiState.Idle)
+    val registerState: LiveData<UiState<ParseUser>> = _registerState
 
-    private val _loginState = MutableLiveData<Result<ParseUser>?>()
-    val loginState: MutableLiveData<Result<ParseUser>?> = _loginState
+    private val _loginState = MutableLiveData<UiState<ParseUser>>(UiState.Idle)
+    val loginState: LiveData<UiState<ParseUser>> = _loginState
 
-    private val _logoutState = MutableLiveData<Result<Unit>>()
-    val logoutState: LiveData<Result<Unit>> = _logoutState
+    private val _logoutState = MutableLiveData<UiState<Unit>>(UiState.Idle)
+    val logoutState: LiveData<UiState<Unit>> = _logoutState
 
-    private val _deleteAccountState = MutableLiveData<Result<Boolean>>()
-    val deleteAccountState: LiveData<Result<Boolean>> = _deleteAccountState
+    private val _deleteAccountState = MutableLiveData<UiState<Boolean>>(UiState.Idle)
+    val deleteAccountState: LiveData<UiState<Boolean>> = _deleteAccountState
 
-    private val _passwordChangeState = MutableLiveData<Result<Boolean>>()
-    val passwordChangeState: LiveData<Result<Boolean>> = _passwordChangeState
+    private val _passwordChangeState = MutableLiveData<UiState<Boolean>>(UiState.Idle)
+    val passwordChangeState: LiveData<UiState<Boolean>> = _passwordChangeState
 
-    private val _passwordVerificationState = MutableLiveData<Result<Boolean>>()
-    val passwordVerificationState: LiveData<Result<Boolean>> = _passwordVerificationState
+    private val _passwordVerificationState = MutableLiveData<UiState<Boolean>>(UiState.Idle)
+    val passwordVerificationState: LiveData<UiState<Boolean>> = _passwordVerificationState
 
-    private val _profileImageState = MutableLiveData<Result<String>?>()
-    val profileImageState: MutableLiveData<Result<String>?> = _profileImageState
+    private val _profileImageState = MutableLiveData<UiState<String>>(UiState.Idle)
+    val profileImageState: LiveData<UiState<String>> = _profileImageState
 
-    private val _usernameState = MutableLiveData<Result<String>?>()
-    val usernameState: MutableLiveData<Result<String>?> = _usernameState
+    private val _usernameState = MutableLiveData<UiState<String>>(UiState.Idle)
+    val usernameState: LiveData<UiState<String>> = _usernameState
 
-    private val _profileImageDeletionState = MutableLiveData<Result<Boolean>?>()
-    val profileImageDeletionState: MutableLiveData<Result<Boolean>?> = _profileImageDeletionState
-
-    private fun resetLoginAndRegisterState(){
-        _registerState.value = null
-        _loginState.value = null
-    }
+    private val _profileImageDeletionState = MutableLiveData<UiState<Boolean>>(UiState.Idle)
+    val profileImageDeletionState: LiveData<UiState<Boolean>> = _profileImageDeletionState
 
     fun registerUser(username: String, password: String) {
-        viewModelScope.launch {
-            _registerState.value = Result.Loading
-            try {
-                val user = userRepository.registerUser(username, password)
-                _registerState.postValue(Result.Success(user))
-            } catch (e: Exception) {
-                _registerState.postValue(Result.Error(e.parseErrorMessage()))
+        if (_registerState.value is UiState.Loading) return
+        _registerState.postValue(UiState.Loading)
+
+        userRepository.registerUser(username, password) { user, error ->
+            if (error == null) {
+                _registerState.value = UiState.Success(user!!)
+            } else {
+                _registerState.value = UiState.Error(error)
             }
         }
     }
 
     fun loginUser(username: String, password: String) {
-        viewModelScope.launch {
-            _loginState.value = Result.Loading
-            try {
-                val user = userRepository.loginUser(username, password)
-                _loginState.postValue(Result.Success(user))
-            } catch (e: Exception) {
-                _loginState.postValue(Result.Error(e.parseErrorMessage()))
+        if (_loginState.value is UiState.Loading) return
+        _loginState.postValue(UiState.Loading)
+
+        userRepository.loginUser(username, password) { user, error ->
+            if (error == null) {
+                _loginState.postValue(UiState.Success(user!!))
+            } else {
+                _loginState.postValue(UiState.Error(error))
             }
         }
     }
 
     fun logout() {
-        viewModelScope.launch {
-            _logoutState.value = Result.Loading
-            try {
-                userRepository.logout()
-                _logoutState.postValue(Result.Success(Unit))
-                resetLoginAndRegisterState()
-            } catch (e: Exception) {
-                _logoutState.postValue(Result.Error(e.parseErrorMessage()))
-            }
-        }
+        if (_logoutState.value is UiState.Loading) return
+        _logoutState.postValue(UiState.Loading)
+
+        userRepository.logout()
+        _logoutState.postValue(UiState.Success(Unit))
     }
 
-    fun deleteAccount() {
-        viewModelScope.launch {
-            _deleteAccountState.value = Result.Loading
-            try {
-                val success = userRepository.deleteAccount()
-                _deleteAccountState.postValue(Result.Success(success))
-                resetLoginAndRegisterState()
-            } catch (e: Exception) {
-                _deleteAccountState.postValue(Result.Error(e.parseErrorMessage()))
-            }
-        }
-    }
+    fun updateUsername(newUsername: String) {
 
-    fun changePassword(newPassword: String) {
-        viewModelScope.launch {
-            _passwordChangeState.value = Result.Loading
-            try {
-                val success = userRepository.changePassword(newPassword)
-                _passwordChangeState.postValue(Result.Success(success))
-            } catch (e: Exception) {
-                _passwordChangeState.postValue(Result.Error(e.parseErrorMessage()))
-            }
-        }
-    }
+        if (_usernameState.value is UiState.Loading) return
+        _usernameState.postValue(UiState.Loading)
 
-    fun verifyCurrentPassword(password: String) {
-        viewModelScope.launch {
-            _passwordVerificationState.value = Result.Loading
-            try {
-                val isValid = userRepository.isCurrentPasswordCorrect(password)
-                _passwordVerificationState.postValue(Result.Success(isValid))
-            } catch (e: Exception) {
-                _passwordVerificationState.postValue(Result.Error(e.parseErrorMessage()))
+        userRepository.updateUsername(newUsername) { success, error ->
+            if (success) {
+                _usernameState.postValue(UiState.Success(newUsername))
+            } else {
+                _usernameState.postValue(error?.let { UiState.Error(it) })
             }
         }
     }
 
     fun uploadProfileImage(imageUri: Uri) {
-        viewModelScope.launch {
-            _profileImageState.value = Result.Loading
-            try {
-                userRepository.uploadProfileImage(imageUri)
-                val url = userRepository.getProfileImageUrl()
-                _profileImageState.postValue(Result.Success(url))
-            } catch (e: Exception) {
-                _profileImageState.postValue(Result.Error(e.parseErrorMessage()))
-            }
-        }
-    }
+        if (_profileImageState.value is UiState.Loading) return
+        _profileImageState.postValue(UiState.Loading)
 
-    fun updateUsername(newUsername: String) {
-        viewModelScope.launch {
-            _usernameState.value = Result.Loading
-            try {
-                userRepository.updateUsername(newUsername)
-
-                _usernameState.postValue(Result.Success(newUsername))
-                _usernameState.postValue(null)
-
-            } catch (e: Exception) {
-                _usernameState.postValue(Result.Error(e.parseErrorMessage()))
+        userRepository.uploadProfileImage(imageUri) { success, error ->
+            if (error == null && success) {
+                userRepository.getProfileImageUrl() { url ->
+                    if (url != null) {
+                        _profileImageState.postValue(UiState.Success(url))
+                    } else {
+                        _profileImageState.postValue(UiState.Error("Failed to get profile image URL"))
+                    }
+                }
+            } else {
+                _profileImageState.postValue(UiState.Error(error ?: "Image upload error"))
             }
         }
     }
 
     fun deleteProfileImage() {
-        viewModelScope.launch {
-            _profileImageDeletionState.value = Result.Loading
-            try {
-                val success = userRepository.deleteProfileImage()
-                _profileImageDeletionState.postValue(Result.Success(success))
-                _profileImageState.value = null
-            } catch (e: Exception) {
-                _profileImageDeletionState.postValue(Result.Error(e.parseErrorMessage()))
+        if (_profileImageDeletionState.value is UiState.Loading) return
+        _profileImageDeletionState.postValue(UiState.Loading)
+
+        userRepository.deleteProfileImage() { success, error ->
+            if (error == null && success) {
+                _profileImageDeletionState.postValue(UiState.Success(true))
+                _profileImageState.postValue(UiState.Success(""))
+            } else {
+                _profileImageDeletionState.postValue(UiState.Error(error ?: "Error deleting image"))
             }
         }
     }
 
     fun fetchProfileImageUrl() {
-        viewModelScope.launch {
-            _profileImageState.value = Result.Loading
-            try {
-                val url = userRepository.getProfileImageUrl()
-                _profileImageState.postValue(Result.Success(url))
-            } catch (e: Exception) {
-                _profileImageState.postValue(Result.Error(e.parseErrorMessage()))
+        if (_profileImageState.value is UiState.Loading) return
+        _profileImageState.postValue(UiState.Loading)
+
+        userRepository.getProfileImageUrl() { url ->
+            if (url != null) {
+                _profileImageState.postValue(UiState.Success(url))
+            } else {
+                _profileImageState.postValue(UiState.Error("Error fetching profile image URL"))
             }
         }
     }
 
-    private fun Exception.parseErrorMessage(): String {
-        return message?.substringAfterLast(":")?.trim()
-            ?: "خطای ناشناخته رخ داده است"
+    fun changePassword(newPassword: String) {
+        if (_passwordChangeState.value is UiState.Loading) return
+        _passwordChangeState.postValue(UiState.Loading)
+
+        userRepository.changePassword(newPassword) { success, error ->
+            if (error == null && success) {
+                _passwordChangeState.postValue(UiState.Success(true))
+            } else {
+                _passwordChangeState.postValue(UiState.Error(error ?: "Error changing password"))
+            }
+        }
     }
 
-    fun resetProfileImgDeletionState(){
-        _profileImageDeletionState.value = null
+    fun verifyCurrentPassword(password: String) {
+        if (_passwordVerificationState.value is UiState.Loading) return
+        _passwordVerificationState.postValue(UiState.Loading)
+
+        userRepository.isCurrentPasswordCorrect(password) { success, error ->
+            if (error == null && success) {
+                _passwordVerificationState.postValue(UiState.Success(true))
+            } else {
+                _passwordVerificationState.postValue(
+                    UiState.Error(error ?: "Password verification failed")
+                )
+            }
+        }
+    }
+
+    fun deleteAccount() {
+        if (_deleteAccountState.value is UiState.Loading) return
+        _deleteAccountState.postValue(UiState.Loading)
+
+        userRepository.deleteAccount() { success, error ->
+            if (error == null && success) {
+                _deleteAccountState.postValue(UiState.Success(true))
+            } else {
+                _deleteAccountState.postValue(UiState.Error(error ?: "Account deletion failed"))
+            }
+        }
+    }
+
+    fun resetUsernameState() {
+        _usernameState.postValue(UiState.Idle)
+    }
+
+    fun resetRegisterState() {
+        _registerState.postValue(UiState.Idle)
+    }
+
+    fun resetLoginState() {
+        _loginState.postValue(UiState.Idle)
+    }
+
+    fun resetDeleteAccountState() {
+        _deleteAccountState.postValue(UiState.Idle)
+    }
+
+    fun resetPasswordState() {
+        _passwordChangeState.postValue(UiState.Idle)
+        _passwordVerificationState.postValue(UiState.Idle)
+    }
+
+    fun resetProfileImageState() {
+        _profileImageState.postValue(UiState.Idle)
+    }
+
+    fun resetProfileImageDeletionState() {
+        _profileImageDeletionState.postValue(UiState.Idle)
     }
 
 }

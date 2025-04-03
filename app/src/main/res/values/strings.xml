@@ -78,4 +78,8 @@
     <string name="upload_photo">Upload photo</string>
     <string name="delete_photo">delete photo</string>
     <string name="save_changes">Save changes</string>
+    <string name="username_not_found">Username not found</string>
+    <string name="password_is_incorrect">The password is incorrect</string>
+    <string name="password_changed">Password changed</string>
+    <string name="password_dont_changed">Password don\'t changed</string>
 </resources>

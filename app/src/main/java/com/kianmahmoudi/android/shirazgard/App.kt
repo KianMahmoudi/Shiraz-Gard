@@ -7,6 +7,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatDelegate
 import com.kianmahmoudi.android.shirazgard.viewmodel.SettingViewModel
 import com.parse.Parse
+import com.parse.ParseUser
 import com.yariksoffice.lingver.Lingver
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +36,8 @@ class App : Application() {
             Timber.plant(Timber.DebugTree())
         }
         Lingver.init(this, "en")
+
+        Timber.i("User: ${ParseUser.getCurrentUser()}")
 
     }
 }

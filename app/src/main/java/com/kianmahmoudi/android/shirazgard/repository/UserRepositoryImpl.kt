@@ -2,104 +2,158 @@ package com.kianmahmoudi.android.shirazgard.repository
 
 import android.content.Context
 import android.net.Uri
-import com.parse.Parse
+import com.parse.ParseCloud
 import com.parse.ParseFile
 import com.parse.ParseUser
 import com.parse.SaveCallback
 import dagger.hilt.android.qualifiers.ApplicationContext
+import org.json.JSONObject
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : UserRepository {
 
-    override suspend fun registerUser(userName: String, password: String): ParseUser {
-        return ParseUser().apply {
-            username = userName
-            setPassword(password)
-            signUp()
+    override fun registerUser(
+        userName: String,
+        password: String,
+        callback: (ParseUser?, String?) -> Unit
+    ) {
+        val user = ParseUser()
+        user.username = userName
+        user.setPassword(password)
+        user.signUpInBackground { e ->
+            if (e == null) {
+                callback(user, null)
+            } else {
+                callback(null, e?.message)
+            }
         }
     }
 
-    override suspend fun loginUser(userName: String, password: String): ParseUser {
-        return ParseUser.logIn(userName, password)
-    }
-
-    override suspend fun changePassword(newPassword: String): Boolean {
-        ParseUser.getCurrentUser().apply {
-            setPassword(newPassword)
-            save()
+    override fun loginUser(
+        userName: String,
+        password: String,
+        callback: (ParseUser?, String?) -> Unit
+    ) {
+        ParseUser.logInInBackground(userName, password) { user, e ->
+            if (user != null) {
+                callback(user, null)
+            } else {
+                callback(null, e?.message)
+            }
         }
-        return true
     }
 
-    override suspend fun uploadProfileImage(imageUri: Uri): Boolean {
+    override fun changePassword(
+        password: String,
+        callback: (Boolean, String?) -> Unit
+    ) {
         val user = ParseUser.getCurrentUser()
-        val bytes = context.contentResolver.openInputStream(imageUri)?.readBytes()
-            ?: throw Exception("Failed to read image")
-
-        ParseFile("profile_${user.objectId}.jpg", bytes).apply {
-            save()
-            user.put("profileImage", this)
-            user.save()
+        user.setPassword(password)
+        user.saveInBackground { e ->
+            if (e == null) {
+                callback(true, null)
+            } else {
+                callback(false, e.message)
+            }
         }
-        return true
     }
 
-    override suspend fun getProfileImageUrl(): String {
-        return ParseUser.getCurrentUser().getParseFile("profileImage")?.url
-            ?: throw Exception("No profile image found")
-    }
+    override fun uploadProfileImage(imageUri: Uri, callback: (Boolean, String?) -> Unit) {
+        val user = ParseUser.getCurrentUser() ?: run {
+            callback(false, "User not logged in")
+            return
+        }
 
-    override suspend fun updateUsername(newUsername: String): Boolean {
-        return try {
-            val user = ParseUser.getCurrentUser()
-            user.username = newUsername
+        try {
+            val inputStream = context.contentResolver.openInputStream(imageUri)
+            val bytes = inputStream?.readBytes() ?: run {
+                callback(false, "Failed to read image")
+                return
+            }
 
-            // ذخیره تغییرات با callback
-            user.saveInBackground { e ->
-                if (e == null) {
-                    // دریافت داده‌های تازه بعد از ذخیره
-                    user.fetchInBackground<ParseUser>()
+            val file = ParseFile("profile_${user.objectId}.jpg", bytes)
+
+            file.saveInBackground(SaveCallback { e ->
+                if (e != null) {
+                    callback(false, e.message)
+                    return@SaveCallback
                 }
-            }// منتظر پایان عملیات می‌ماند
 
-            true
+                user.put("profileImage", file)
+                user.saveInBackground { saveError ->
+                    callback(saveError == null, saveError?.message)
+                }
+            })
         } catch (e: Exception) {
-            throw Exception("خطا در به‌روزرسانی نام کاربری: ${e.message}")
+            callback(false, e.message)
         }
     }
 
-    override suspend fun deleteProfileImage(): Boolean {
-        ParseUser.getCurrentUser().apply {
-            remove("profileImage")
-            save()
-        }
-        return true
+    override fun getProfileImageUrl(callback: (String?) -> Unit) {
+        val user = ParseUser.getCurrentUser()
+        callback(user?.getParseFile("profileImage")?.url)
     }
+
+
+    override fun updateUsername(newUsername: String, callback: (Boolean, String?) -> Unit) {
+        val user = ParseUser.getCurrentUser()
+        user?.username = newUsername
+        user?.saveInBackground { e ->
+            callback(e == null, e?.message)
+        }
+    }
+
+    override fun deleteProfileImage(callback: (Boolean, String?) -> Unit) {
+        val user = ParseUser.getCurrentUser()
+        user?.remove("profileImage")
+        user?.saveInBackground { e ->
+            callback(e == null, e?.message)
+        }
+    }
+
+
+    override fun deleteAccount(callback: (Boolean, String?) -> Unit) {
+        val user = ParseUser.getCurrentUser()
+        user?.deleteInBackground { e ->
+            if (e == null) {
+                callback(true, null)
+                ParseUser.logOut()
+            } else {
+                callback(false, e.message)
+            }
+        }
+    }
+
 
     override fun logout() {
         ParseUser.logOutInBackground()
     }
 
-    override suspend fun deleteAccount(): Boolean {
-        return try {
-            ParseUser.getCurrentUser().deleteInBackground()
-            logout()
-            true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
+
+    override fun isCurrentPasswordCorrect(
+        password: String,
+        callback: (Boolean, String?) -> Unit
+    ) {
+        val params =
+            hashMapOf("username" to ParseUser.getCurrentUser().username, "password" to password)
+        ParseCloud.callFunctionInBackground<HashMap<String, Any>>(
+            "verifyPassword",
+            params
+        ) { result, e ->
+            if (e == null) {
+                val response = result as HashMap<String, Any>
+                if (response["success"] as Boolean) {
+                    callback(true, null)
+                } else {
+                    callback(false, response["error"] as String?)
+                }
+            } else {
+                callback(false, e.message)
+            }
         }
     }
 
-    override suspend fun isCurrentPasswordCorrect(password: String): Boolean {
-        return try {
-            val user = ParseUser.getCurrentUser()
-            ParseUser.logIn(user.username, password) != null
-        } catch (e: Exception) {
-            throw Exception("رمز عبور فعلی نامعتبر است")
-        }
-    }
 
 }

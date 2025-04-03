@@ -8,15 +8,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.activities.HomeActivity
-import com.kianmahmoudi.android.shirazgard.data.Result
+import com.kianmahmoudi.android.shirazgard.data.UiState
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentLoginBinding
 import com.kianmahmoudi.android.shirazgard.util.isValidPassword
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FragmentLogin : Fragment(R.layout.fragment_login) {
@@ -63,21 +64,26 @@ class FragmentLogin : Fragment(R.layout.fragment_login) {
             userViewModel.loginUser(userName, password)
         }
 
-        userViewModel.loginState.observe(viewLifecycleOwner) { result ->
-            when (result) {
-                is Result.Loading -> {}
-                is Result.Success -> {
-                    Toast.makeText(requireContext(), "Login was successful", Toast.LENGTH_SHORT)
-                        .show()
-                    val intent = Intent(requireActivity(), HomeActivity::class.java)
-                    startActivity(intent)
-                }
+        viewLifecycleOwner.lifecycleScope.launch {
+            userViewModel.loginState.observe(viewLifecycleOwner) { result ->
+                when (result) {
+                    is UiState.Loading -> {}
+                    is UiState.Success -> {
+                        Toast.makeText(requireContext(), "Login was successful", Toast.LENGTH_SHORT)
+                            .show()
+                        val intent = Intent(requireActivity(), HomeActivity::class.java)
+                        startActivity(intent)
+                    }
 
-                is Result.Error -> {
-                    Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
-                }
+                    is UiState.Error -> {
+                        Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                    }
 
-                null -> {}
+                    UiState.Idle -> {}
+                }
+                if (result != UiState.Idle) {
+                    userViewModel.resetLoginState()
+                }
             }
         }
 

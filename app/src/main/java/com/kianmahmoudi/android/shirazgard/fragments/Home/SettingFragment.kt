@@ -1,45 +1,29 @@
 package com.kianmahmoudi.android.shirazgard.fragments.Home
 
-import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
-import android.health.connect.datatypes.units.Length
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kianmahmoudi.android.shirazgard.BuildConfig
 import com.kianmahmoudi.android.shirazgard.R
-import com.kianmahmoudi.android.shirazgard.activities.HomeActivity
 import com.kianmahmoudi.android.shirazgard.activities.LoginRegisterActivity
-import com.kianmahmoudi.android.shirazgard.data.Result
+import com.kianmahmoudi.android.shirazgard.data.UiState
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentSettingBinding
 import com.kianmahmoudi.android.shirazgard.viewmodel.SettingViewModel
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
-import com.parse.ParseObject
 import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.Locale
-import java.util.Timer
 
 @AndroidEntryPoint
 class SettingFragment : Fragment(R.layout.fragment_setting) {
@@ -48,16 +32,16 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
     private val settingViewModel: SettingViewModel by viewModels()
     private val userViewModel: UserViewModel by viewModels()
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.userName.text = ParseUser.getCurrentUser().username
+
+        userViewModel.fetchProfileImageUrl()
+
         binding.btnEditProfile.setOnClickListener {
             findNavController().navigate(SettingFragmentDirections.actionSettingFragmentToEditProfileFragment())
         }
-
-        userViewModel.fetchProfileImageUrl()
 
         lifecycleScope.launch {
             settingViewModel.languageFlow.collect { lang ->
@@ -120,10 +104,10 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
     }
 
     private fun observeUser() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.deleteAccountState.observe(viewLifecycleOwner) { result ->
                 when (result) {
-                    is Result.Success -> {
+                    is UiState.Success -> {
                         Toast.makeText(
                             requireContext(),
                             getString(R.string.account_deleted_successfuly),
@@ -131,20 +115,24 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
                         ).show()
                     }
 
-                    is Result.Error -> {
-                        Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT).show()
+                    is UiState.Error -> {
+                        Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT)
+                            .show()
                     }
 
-                    is Result.Loading -> {}
+                    is UiState.Loading -> {}
+                    is UiState.Idle -> {}
                 }
-
+                if (result != UiState.Idle) {
+                    userViewModel.resetDeleteAccountState()
+                }
             }
 
         }
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             userViewModel.profileImageState.observe(viewLifecycleOwner) { result ->
                 when (result) {
-                    is Result.Success -> {
+                    is UiState.Success -> {
                         Glide.with(requireContext())
                             .load(result.data)
                             .placeholder(R.drawable.person_24px)
@@ -152,15 +140,18 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
                             .into(binding.userImage)
                     }
 
-                    is Result.Error -> {
+                    is UiState.Error -> {
                         binding.userImage.setImageResource(R.drawable.person_24px)
                     }
 
-                    is Result.Loading -> {
+                    is UiState.Loading -> {
 
                     }
 
-                    null -> {}
+                    UiState.Idle -> {}
+                }
+                if (result != UiState.Idle) {
+                    userViewModel.resetProfileImageState()
                 }
             }
         }

@@ -4,14 +4,14 @@ import android.net.Uri
 import com.parse.ParseUser
 
 interface UserRepository {
-    suspend fun registerUser(userName: String, password: String): ParseUser
-    suspend fun loginUser(userName: String, password: String): ParseUser
-    suspend fun changePassword(newPassword: String): Boolean
-    suspend fun uploadProfileImage(imageUri: Uri): Boolean
-    suspend fun getProfileImageUrl(): String
-    suspend fun updateUsername(newUsername: String): Boolean
-    suspend fun deleteProfileImage(): Boolean
-    suspend fun deleteAccount(): Boolean
+    fun registerUser(userName: String, password: String, callback: (ParseUser?, String?) -> Unit)
+    fun loginUser(userName: String, password: String, callback: (ParseUser?, String?) -> Unit)
+    fun changePassword(newPassword: String, callback: (Boolean, String?) -> Unit)
+    fun uploadProfileImage(imageUri: Uri, callback: (Boolean, String?) -> Unit)
+    fun getProfileImageUrl(callback: (String?) -> Unit)
+    fun updateUsername(newUsername: String, callback: (Boolean, String?) -> Unit)
+    fun deleteProfileImage(callback: (Boolean, String?) -> Unit)
+    fun deleteAccount(callback: (Boolean, String?) -> Unit)
     fun logout()
-    suspend fun isCurrentPasswordCorrect(password: String): Boolean
+    fun isCurrentPasswordCorrect(password: String, callback: (Boolean, String?) -> Unit)
 }

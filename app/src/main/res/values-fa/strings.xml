@@ -79,4 +79,8 @@
     <string name="upload_photo">آپلود عکس</string>
     <string name="delete_photo">حذف عکس</string>
     <string name="save_changes">ذخیره تغییرات</string>
+    <string name="username_not_found">نام کاربری یافت نشد</string>
+    <string name="password_is_incorrect">رمز عبور اشتباه است</string>
+    <string name="password_changed">رمزعبور تغیر کرد</string>
+    <string name="password_dont_changed">رمزعبور تغیر نکرد</string>
 </resources>
