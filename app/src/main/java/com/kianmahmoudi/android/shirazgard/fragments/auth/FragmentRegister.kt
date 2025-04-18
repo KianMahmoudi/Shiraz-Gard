@@ -17,6 +17,7 @@ import com.kianmahmoudi.android.shirazgard.util.isValidPassword
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.kianmahmoudi.android.shirazgard.data.UiState
+import com.kianmahmoudi.android.shirazgard.util.NetworkUtils
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -63,7 +64,7 @@ class FragmentRegister : Fragment(R.layout.fragment_register) {
                 Toast.makeText(requireContext(), "Password is not valid", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
+            if (NetworkUtils.isOnline(requireContext()))
             userViewModel.registerUser(userName, password)
         }
 

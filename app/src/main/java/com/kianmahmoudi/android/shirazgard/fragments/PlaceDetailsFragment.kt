@@ -15,7 +15,7 @@ import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentPlaceDetailsBinding
-import com.kianmahmoudi.android.shirazgard.util.observeOnce
+import com.kianmahmoudi.android.shirazgard.util.NetworkUtils
 import com.kianmahmoudi.android.shirazgard.viewmodel.FavoritePlacesViewModel
 import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,6 +55,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         }
 
         lifecycleScope.launch {
+            if (NetworkUtils.isOnline(requireContext()))
             favoritePlacesViewModel.checkIfPlaceIsFavorite(
                 ParseUser.getCurrentUser().objectId,
                 args.objectId
@@ -98,6 +99,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
             val isCurrentlyFavorite = favoritePlacesViewModel.isFavorite.value == true
             if (isCurrentlyFavorite) {
                 lifecycleScope.launch {
+                    if (NetworkUtils.isOnline(requireContext()))
                     favoritePlacesViewModel.removePlace(
                         ParseUser.getCurrentUser().objectId,
                         args.objectId
@@ -106,6 +108,7 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                 }
             } else {
                 lifecycleScope.launch {
+                    if (NetworkUtils.isOnline(requireContext()))
                     favoritePlacesViewModel.addPlace(
                         ParseUser.getCurrentUser().objectId,
                         args.objectId

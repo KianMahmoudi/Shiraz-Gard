@@ -12,6 +12,6 @@ interface UserRepository {
     fun updateUsername(newUsername: String, callback: (Boolean, String?) -> Unit)
     fun deleteProfileImage(callback: (Boolean, String?) -> Unit)
     fun deleteAccount(callback: (Boolean, String?) -> Unit)
-    fun logout()
+    fun logout(callback: (Boolean, String?) -> Unit)
     fun isCurrentPasswordCorrect(password: String, callback: (Boolean, String?) -> Unit)
 }

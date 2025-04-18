@@ -1,5 +1,9 @@
 package com.kianmahmoudi.android.shirazgard.activities
 
+import android.content.Context
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
@@ -7,7 +11,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.room.InvalidationTracker
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.viewmodel.SettingViewModel
 import com.yariksoffice.lingver.Lingver
@@ -23,11 +30,11 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private var currentLanguage: String = Lingver.getInstance().getLanguage()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         observeSettings()
     }
-
 
     private fun observeSettings() {
         lifecycleScope.launch {
@@ -53,4 +60,8 @@ abstract class BaseActivity : AppCompatActivity() {
             "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
     }
+
 }
+
+
+

@@ -19,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.data.UiState
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentEditProfileBinding
+import com.kianmahmoudi.android.shirazgard.util.NetworkUtils
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
@@ -123,6 +124,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         val currentUser = ParseUser.getCurrentUser()
         binding.etUsername.setText(currentUser?.username)
+        if (NetworkUtils.isOnline(requireContext()))
         userViewModel.fetchProfileImageUrl()
 
     }
@@ -135,10 +137,12 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     }
 
     private fun uploadProfileImage(uri: Uri) {
+        if (NetworkUtils.isOnline(requireContext()))
         userViewModel.uploadProfileImage(uri)
     }
 
     private fun deleteProfileImage() {
+        if (NetworkUtils.isOnline(requireContext()))
         userViewModel.deleteProfileImage()
     }
 
@@ -146,6 +150,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val newUsername = binding.etUsername.text.toString().trim()
         if (userViewModel.usernameState.value !is UiState.Loading) {
             if (newUsername.isNotEmpty()) {
+                if (NetworkUtils.isOnline(requireContext()))
                 userViewModel.updateUsername(newUsername)
             } else {
                 showToast("نام کاربری نمی‌تواند خالی باشد")

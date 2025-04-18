@@ -14,6 +14,7 @@ import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.activities.HomeActivity
 import com.kianmahmoudi.android.shirazgard.data.UiState
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentLoginBinding
+import com.kianmahmoudi.android.shirazgard.util.NetworkUtils
 import com.kianmahmoudi.android.shirazgard.util.isValidPassword
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,6 +62,7 @@ class FragmentLogin : Fragment(R.layout.fragment_login) {
                 Toast.makeText(requireContext(), "Password is not valid", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            if (NetworkUtils.isOnline(requireContext()))
             userViewModel.loginUser(userName, password)
         }
 

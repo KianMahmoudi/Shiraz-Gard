@@ -127,8 +127,14 @@ class UserRepositoryImpl @Inject constructor(
     }
 
 
-    override fun logout() {
-        ParseUser.logOutInBackground()
+    override fun logout(callback: (Boolean, String?) -> Unit) {
+        ParseUser.logOutInBackground{e->
+            if (e==null){
+                callback(true,null)
+            }else{
+                callback(false,e.message)
+            }
+        }
     }
 
 

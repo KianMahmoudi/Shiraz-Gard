@@ -19,6 +19,7 @@ import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import com.kianmahmoudi.android.shirazgard.data.UiState
+import com.kianmahmoudi.android.shirazgard.util.NetworkUtils
 import com.yariksoffice.lingver.Lingver
 import kotlinx.coroutines.launch
 
@@ -43,10 +44,12 @@ class FragmentChangePassword : Fragment(R.layout.fragment_change_password) {
 
         binding.btnSubmit.setOnClickListener {
             if (binding.currentPasswordEditText.text?.isNotEmpty() == true) {
+                if (NetworkUtils.isOnline(requireContext()))
                 userViewModel.verifyCurrentPassword(binding.currentPasswordEditText.text.toString())
             }
             if (allFieldsValid()) {
                 if (ParseUser.getCurrentUser() != null) {
+                    if (NetworkUtils.isOnline(requireContext()))
                     userViewModel.changePassword(
                         binding.newPasswordEditText.text.toString()
                     )

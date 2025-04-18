@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoryPlacesAdapter
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentCategoryPlacesBinding
+import com.kianmahmoudi.android.shirazgard.dialog.NoInternetDialog
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
+import com.kianmahmoudi.android.shirazgard.util.NetworkUtils
 import com.kianmahmoudi.android.shirazgard.viewmodel.MainDataViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -23,42 +25,14 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @AndroidEntryPoint
-class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
+class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places), NoInternetDialog.InternetDialogListener {
 
     private lateinit var binding: FragmentCategoryPlacesBinding
     private val mainDataViewModel: MainDataViewModel by viewModels()
     private val args: CategoryPlacesFragmentArgs by navArgs()
-    private val categoryPlacesAdapter: CategoryPlacesAdapter by lazy {
-        CategoryPlacesAdapter { item, images ->
-            CoroutineScope(Dispatchers.IO).launch {
-                if (!images.isNullOrEmpty()) {
-                    val action =
-                        CategoryPlacesFragmentDirections.actionCategoryPlacesFragmentToPlaceDetailsFragment(
-                            faName = item.getString("faName") ?: "",
-                            enName = item.getString("enName") ?: "",
-                            address = item.getString("address") ?: "",
-                            description = item.getString("description") ?: "",
-                            type = item.getString("type") ?: "",
-                            latitude = item.getParseGeoPoint("location")?.latitude?.toFloat()
-                                ?: 0f,
-                            longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
-                                ?: 0f,
-                            objectId = item.objectId,
-                            images = images.toTypedArray()
-                        )
-                    try {
-                        withContext(Dispatchers.Main) {
-                            findNavController().navigate(action)
-                        }
-                    } catch (e: Exception) {
-                        Timber.e(e.message)
-                    }
-                } else {
-                    Timber.tag("CategoryPlacesAdapter").d("No images found for place")
-                }
-            }
-        }
-    }
+    private val categoryPlacesAdapter: CategoryPlacesAdapter by lazy { createPlaceAdapter() }
+
+    private var isNoInternetDialogShown = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,10 +45,12 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupRecyclerView()
         setupSwipeRefresh()
         setupObservers()
         setupToolbar()
+        checkInternetAndLoadData()
     }
 
     private fun setupRecyclerView() {
@@ -92,8 +68,13 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
     }
 
     private fun refreshData() {
-        updateUIState(UIState.LOADING)
-        mainDataViewModel.fetchAllData()
+        if (NetworkUtils.isOnline(requireContext())) {
+            updateUIState(UIState.LOADING)
+            mainDataViewModel.fetchAllData()
+        } else {
+            binding.swipeRefresh.isRefreshing = false
+            showNoInternetDialog()
+        }
     }
 
     private fun setupObservers() {
@@ -163,10 +144,65 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places) {
         }
     }
 
+    private fun checkInternetAndLoadData() {
+        if (NetworkUtils.isOnline(requireContext())) {
+            updateUIState(UIState.LOADING)
+            mainDataViewModel.fetchAllData()
+        } else {
+            showNoInternetDialog()
+        }
+    }
+
+    private fun showNoInternetDialog() {
+        if (!isNoInternetDialogShown) {
+            isNoInternetDialogShown = true
+            NoInternetDialog.newInstance(this).show(childFragmentManager, "NoInternetDialog")
+        }
+    }
+
+    override fun onTryAgain() {
+        isNoInternetDialogShown = false
+        checkInternetAndLoadData()
+    }
+
+    override fun onExit() {
+        isNoInternetDialogShown = false
+        requireActivity().finish()
+    }
+
+    private fun createPlaceAdapter() = CategoryPlacesAdapter { item, images ->
+        CoroutineScope(Dispatchers.IO).launch {
+            if (!images.isNullOrEmpty()) {
+                val action =
+                    CategoryPlacesFragmentDirections.actionCategoryPlacesFragmentToPlaceDetailsFragment(
+                        faName = item.getString("faName") ?: "",
+                        enName = item.getString("enName") ?: "",
+                        address = item.getString("address") ?: "",
+                        description = item.getString("description") ?: "",
+                        type = item.getString("type") ?: "",
+                        latitude = item.getParseGeoPoint("location")?.latitude?.toFloat()
+                            ?: 0f,
+                        longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
+                            ?: 0f,
+                        objectId = item.objectId,
+                        images = images.toTypedArray()
+                    )
+                try {
+                    withContext(Dispatchers.Main) {
+                        findNavController().navigate(action)
+                    }
+                } catch (e: Exception) {
+                    Timber.e(e.message)
+                }
+            } else {
+                Timber.tag("CategoryPlacesAdapter").d("No images found for place")
+            }
+        }
+    }
+
     enum class UIState {
         LOADING,
         LOADED,
         EMPTY
     }
-
 }

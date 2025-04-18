@@ -116,6 +116,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:visibility="gone"
                 android:text="@string/hotels"
                 android:textSize="17sp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -127,6 +128,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:visibility="gone"
                 android:text="@string/see_all"
                 android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView5"
@@ -148,6 +150,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:visibility="gone"
                 android:layout_marginEnd="16dp"
                 android:text="@string/restaurant"
                 android:textSize="17sp"
@@ -161,6 +164,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="@string/see_all"
+                android:visibility="gone"
                 android:textSize="17sp"
                 app:layout_constraintBottom_toBottomOf="@+id/textView6"
                 app:layout_constraintStart_toStartOf="parent"
@@ -189,6 +193,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"
+                android:visibility="gone"
                 app:lottie_rawRes="@raw/anim_loading" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

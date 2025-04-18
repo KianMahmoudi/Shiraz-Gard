@@ -18,6 +18,7 @@ import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.activities.LoginRegisterActivity
 import com.kianmahmoudi.android.shirazgard.data.UiState
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentSettingBinding
+import com.kianmahmoudi.android.shirazgard.util.NetworkUtils
 import com.kianmahmoudi.android.shirazgard.viewmodel.SettingViewModel
 import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import com.parse.ParseUser
@@ -37,6 +38,7 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
 
         binding.userName.text = ParseUser.getCurrentUser().username
 
+        if (NetworkUtils.isOnline(requireContext()))
         userViewModel.fetchProfileImageUrl()
 
         binding.btnEditProfile.setOnClickListener {
@@ -108,11 +110,9 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
             userViewModel.deleteAccountState.observe(viewLifecycleOwner) { result ->
                 when (result) {
                     is UiState.Success -> {
-                        Toast.makeText(
-                            requireContext(),
-                            getString(R.string.account_deleted_successfuly),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        startActivity(
+                            Intent(requireContext(), LoginRegisterActivity()::class.java)
+                        )
                     }
 
                     is UiState.Error -> {
@@ -152,6 +152,30 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
                 }
                 if (result != UiState.Idle) {
                     userViewModel.resetProfileImageState()
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            userViewModel.logoutState.observe(viewLifecycleOwner){result->
+                when(result){
+                    is UiState.Error -> {
+                        Toast.makeText(requireContext(), result.message, Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    UiState.Idle -> {
+
+                    }
+                    UiState.Loading -> {
+
+                    }
+                    is UiState.Success -> {
+                        startActivity(
+                            Intent(requireContext(), LoginRegisterActivity()::class.java)
+                        )
+                    }
+                }
+                if (result != UiState.Idle) {
+                    userViewModel.resetLogoutState()
                 }
             }
         }
@@ -211,11 +235,9 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
             .setTitle(getString(R.string.are_you_sure))
             .setMessage(getString(R.string.are_you_sure_logout))
             .setPositiveButton(getString(R.string.yes)) { dialog, witch ->
+                if (NetworkUtils.isOnline(requireContext()))
                 userViewModel.logout()
                 dialog.dismiss()
-                startActivity(
-                    Intent(requireContext(), LoginRegisterActivity()::class.java)
-                )
             }
             .setNegativeButton(getString(R.string.no)) { dialog, witch ->
                 dialog.dismiss()
@@ -228,11 +250,9 @@ class SettingFragment : Fragment(R.layout.fragment_setting) {
             .setTitle(getString(R.string.are_you_sure))
             .setMessage(getString(R.string.are_you_sure_delete_account))
             .setPositiveButton(getString(R.string.yes)) { dialog, witch ->
+                if (NetworkUtils.isOnline(requireContext()))
                 userViewModel.deleteAccount()
                 dialog.dismiss()
-                startActivity(
-                    Intent(requireContext(), LoginRegisterActivity()::class.java)
-                )
             }
             .setNegativeButton(getString(R.string.no)) { dialog, witch ->
                 dialog.dismiss()

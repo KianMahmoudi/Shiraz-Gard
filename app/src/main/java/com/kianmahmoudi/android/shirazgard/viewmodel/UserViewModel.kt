@@ -76,8 +76,14 @@ class UserViewModel @Inject constructor(
         if (_logoutState.value is UiState.Loading) return
         _logoutState.postValue(UiState.Loading)
 
-        userRepository.logout()
-        _logoutState.postValue(UiState.Success(Unit))
+        userRepository.logout{success,error->
+            if (success){
+                _logoutState.postValue(UiState.Success(Unit))
+            }else{
+                _logoutState.postValue(error?.let { UiState.Error(it) })
+            }
+        }
+
     }
 
     fun updateUsername(newUsername: String) {
@@ -191,6 +197,10 @@ class UserViewModel @Inject constructor(
 
     fun resetLoginState() {
         _loginState.postValue(UiState.Idle)
+    }
+
+    fun resetLogoutState(){
+        _logoutState.postValue(UiState.Idle)
     }
 
     fun resetDeleteAccountState() {

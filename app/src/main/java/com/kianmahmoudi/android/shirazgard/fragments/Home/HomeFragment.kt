@@ -1,6 +1,5 @@
 package com.kianmahmoudi.android.shirazgard.fragments.Home
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +15,9 @@ import com.kianmahmoudi.android.shirazgard.adapters.CategoriesAdapter
 import com.kianmahmoudi.android.shirazgard.adapters.PlacesHomeAdapter
 import com.kianmahmoudi.android.shirazgard.data.Category
 import com.kianmahmoudi.android.shirazgard.databinding.FragmentHomeBinding
+import com.kianmahmoudi.android.shirazgard.dialog.NoInternetDialog
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
+import com.kianmahmoudi.android.shirazgard.util.NetworkUtils
 import com.kianmahmoudi.android.shirazgard.util.checkIcon
 import com.kianmahmoudi.android.shirazgard.viewmodel.MainDataViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,19 +28,106 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.InternetDialogListener {
 
-    private lateinit var binding: FragmentHomeBinding
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
     private val mainDataViewModel: MainDataViewModel by viewModels()
     private val hotelsHomeAdapter: PlacesHomeAdapter by lazy { createPlaceAdapter() }
     private val restaurantsHomeAdapter: PlacesHomeAdapter by lazy { createPlaceAdapter() }
     private val categoriesAdapter: CategoriesAdapter by lazy {
         CategoriesAdapter(findNavController(), "home")
     }
+
+    private var isNoInternetDialogShown = false
     private var isWeatherLoaded = false
     private var areHotelsLoaded = false
     private var areRestaurantsLoaded = false
     private var areImagesLoaded = false
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerViews()
+        loadCategories()
+        setupSwipeRefresh()
+        setupClickListeners()
+        observeData()
+        observeError()
+        checkInternetAndLoadData()
+    }
+
+    private fun setupRecyclerViews() {
+        binding.rvCategoriesHome.apply {
+            layoutManager = GridLayoutManager(context, 3)
+            adapter = categoriesAdapter
+            addItemDecoration(EqualSpacingItemDecoration(4))
+        }
+
+        binding.rvHotelsHome.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = hotelsHomeAdapter
+            addItemDecoration(EqualSpacingItemDecoration(4))
+        }
+
+        binding.rvRestaurantsHome.apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            adapter = restaurantsHomeAdapter
+            addItemDecoration(EqualSpacingItemDecoration(4))
+        }
+    }
+
+    private fun loadCategories() {
+        categoriesAdapter.submitData(
+            listOf(
+                Category(getString(R.string.atms), "atm", R.drawable.local_atm_24px, 0),
+                Category(getString(R.string.hotels), "hotel", R.drawable.hotel_24px, 1),
+                Category(getString(R.string.hospitals), "hospital", R.drawable.home_health_24px, 2),
+                Category(getString(R.string.restaurant), "restaurant", R.drawable.restaurant_24px, 3),
+                Category(getString(R.string.wcs), "wc", R.drawable.wc_24px, 4),
+                Category(getString(R.string.parkings), "parking", R.drawable.local_parking_24px, 5)
+            )
+        )
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            refreshAllData()
+        }
+    }
+
+    private fun setupClickListeners() {
+        binding.btnSeeAllCategories.setOnClickListener {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCategoriesFragment())
+        }
+
+        binding.btnSeeAllHotels.setOnClickListener {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment(
+                    "Hotels",
+                    "hotel"
+                )
+            )
+        }
+
+        binding.btnSeeAllRestaurants.setOnClickListener {
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment(
+                    "Restaurants",
+                    "restaurant"
+                )
+            )
+        }
+    }
 
     private fun createPlaceAdapter() = PlacesHomeAdapter { item, images ->
         CoroutineScope(Dispatchers.IO).launch {
@@ -66,96 +154,67 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentHomeBinding.inflate(inflater)
-        return binding.root
+    private fun checkInternetAndLoadData() {
+        if (NetworkUtils.isOnline(requireContext())) {
+            loadData()
+        } else {
+            showNoInternetDialog()
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        setupRecyclerViews()
-        loadCategories()
-        setupSwipeRefresh()
-        observeData()
+    private fun loadData() {
         updateUIState(UIState.LOADING)
-
-        binding.btnSeeAllCategories.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCategoriesFragment())
-        }
-
-        binding.btnSeeAllHotels.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment("Hotels","hotel"))
-        }
-
-        binding.btnSeeAllRestaurants.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment("Restaurants","restaurant"))
-        }
-
-    }
-
-    private fun setupRecyclerViews() {
-        // Categories RecyclerView
-        binding.rvCategoriesHome.apply {
-            layoutManager = GridLayoutManager(context, 3)
-            adapter = categoriesAdapter
-            addItemDecoration(EqualSpacingItemDecoration(4))
-        }
-
-        // Hotels RecyclerView
-        binding.rvHotelsHome.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = hotelsHomeAdapter
-            addItemDecoration(EqualSpacingItemDecoration(4))
-        }
-
-        // Restaurants RecyclerView
-        binding.rvRestaurantsHome.apply {
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            adapter = restaurantsHomeAdapter
-            addItemDecoration(EqualSpacingItemDecoration(4))
-        }
-    }
-
-    private fun loadCategories() {
-        categoriesAdapter.submitData(
-            mutableListOf(
-                Category(getString(R.string.atms), "atm", R.drawable.local_atm_24px, 0),
-                Category(getString(R.string.hotels), "hotel", R.drawable.hotel_24px, 1),
-                Category(getString(R.string.hospitals), "hospital", R.drawable.home_health_24px, 2),
-                Category(
-                    getString(R.string.restaurant),
-                    "restaurant",
-                    R.drawable.restaurant_24px,
-                    3
-                ),
-                Category(getString(R.string.wcs), "wc", R.drawable.wc_24px, 4),
-                Category(getString(R.string.parkings), "parking", R.drawable.local_parking_24px, 5)
-            )
-        )
-    }
-
-    private fun setupSwipeRefresh() {
-        binding.swipeRefresh.setOnRefreshListener {
-            refreshAllData()
-        }
-    }
-
-    private fun refreshAllData() {
-        updateUIState(UIState.LOADING)
+        if (NetworkUtils.isOnline(requireContext()))
         mainDataViewModel.fetchAllData()
     }
 
-    private fun observeData() {
-        isWeatherLoaded = false
-        areHotelsLoaded = false
-        areRestaurantsLoaded = false
-        areImagesLoaded = false
+    private fun refreshAllData() {
+        if (NetworkUtils.isOnline(requireContext())) {
+            loadData()
+        } else {
+            binding.swipeRefresh.isRefreshing = false
+            showNoInternetDialog()
+        }
+    }
 
+    private fun showNoInternetDialog() {
+        if (!isNoInternetDialogShown) {
+            isNoInternetDialogShown = true
+            NoInternetDialog.newInstance(this).show(childFragmentManager, "NoInternetDialog")
+        }
+    }
+
+    override fun onTryAgain() {
+        isNoInternetDialogShown = false
+        checkInternetAndLoadData()
+    }
+
+    override fun onExit() {
+        isNoInternetDialogShown = false
+        requireActivity().finish()
+    }
+
+
+    private fun observeError() {
+        mainDataViewModel.dataLoadingError.observe(viewLifecycleOwner) { errorMessage ->
+            if (!errorMessage.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                binding.swipeRefresh.isRefreshing = false
+                updateUIState(UIState.LOADED)
+            }
+        }
+
+        mainDataViewModel.weatherError.observe(viewLifecycleOwner) { errorMessage ->
+            if (!errorMessage.isNullOrEmpty()) {
+                Toast.makeText(requireContext(), "Weather Load Error: $errorMessage", Toast.LENGTH_SHORT).show()
+                binding.swipeRefresh.isRefreshing = false
+                updateUIState(UIState.LOADED)
+            }
+        }
+    }
+
+    private fun observeData() {
+        resetLoadedStates()
         mainDataViewModel.apply {
             weatherData.observe(viewLifecycleOwner) { weather ->
                 binding.apply {
@@ -164,12 +223,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     icWeatherHome.setImageResource(checkIcon(weather.icon))
                 }
                 isWeatherLoaded = true
-                checkState()
+                checkAllDataLoaded()
             }
 
             weatherError.observe(viewLifecycleOwner) {
                 isWeatherLoaded = true
-                checkState()
+                checkAllDataLoaded()
                 Toast.makeText(requireContext(), "Weather Load Error", Toast.LENGTH_SHORT).show()
             }
 
@@ -177,7 +236,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 restaurantsHomeAdapter.addImages(images)
                 hotelsHomeAdapter.addImages(images)
                 areImagesLoaded = true
-                checkState()
+                checkAllDataLoaded()
             }
 
             places.observe(viewLifecycleOwner) { places ->
@@ -187,13 +246,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 restaurantsHomeAdapter.addPlaces(restaurants)
                 areRestaurantsLoaded = true
                 areHotelsLoaded = true
-                checkState()
+                checkAllDataLoaded()
             }
-
         }
     }
 
-    private fun checkState() {
+    private fun resetLoadedStates() {
+        isWeatherLoaded = false
+        areHotelsLoaded = false
+        areRestaurantsLoaded = false
+        areImagesLoaded = false
+    }
+
+    private fun checkAllDataLoaded() {
         if (isWeatherLoaded && areHotelsLoaded && areRestaurantsLoaded && areImagesLoaded) {
             updateUIState(UIState.LOADED)
             binding.swipeRefresh.isRefreshing = false
@@ -222,8 +287,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     enum class UIState {
-        LOADING,
-        LOADED
+        LOADING, LOADED
     }
 }

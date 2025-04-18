@@ -82,4 +82,7 @@
     <string name="password_is_incorrect">The password is incorrect</string>
     <string name="password_changed">Password changed</string>
     <string name="password_dont_changed">Password don\'t changed</string>
+    <string name="no_internet">No Internet</string>
+    <string name="check_internet">Please check your internet status and try again</string>
+    <string name="try_again">Try again</string>
 </resources>

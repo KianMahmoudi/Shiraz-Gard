@@ -24,21 +24,21 @@ class FavoritePlacesViewModel @Inject constructor(
     val isFavorite: LiveData<Boolean> get() = _isFavorite
 
     fun loadFavoritePlaces() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val places = favoritePlacesRepository.getAllFavoritePlaces()
             _favoritePlaces.postValue(places)
         }
     }
 
     fun checkIfPlaceIsFavorite(userId: String, placeId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val favorite = favoritePlacesRepository.isPlaceFavorite(userId, placeId)
             _isFavorite.postValue(favorite)
         }
     }
 
     fun addPlace(userId: String, placeId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             favoritePlacesRepository.addFavoritePlace(userId, placeId)
             loadFavoritePlaces()
             _isFavorite.postValue(true)
@@ -46,7 +46,7 @@ class FavoritePlacesViewModel @Inject constructor(
     }
 
     fun removePlace(userId: String, placeId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch{
             favoritePlacesRepository.removeFavoritePlace(userId, placeId)
             loadFavoritePlaces()
             _isFavorite.postValue(false)

@@ -83,4 +83,7 @@
     <string name="password_is_incorrect">رمز عبور اشتباه است</string>
     <string name="password_changed">رمزعبور تغیر کرد</string>
     <string name="password_dont_changed">رمزعبور تغیر نکرد</string>
+    <string name="no_internet">فاقد اینترنت</string>
+    <string name="check_internet">لطفاً وضعیت اینترنت خود را بررسی کنید و دوباره امتحان کنید</string>
+    <string name="try_again">تلاش مجدد</string>
 </resources>
