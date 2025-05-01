@@ -86,4 +86,11 @@
     <string name="no_internet">فاقد اینترنت</string>
     <string name="check_internet">لطفاً وضعیت اینترنت خود را بررسی کنید و دوباره امتحان کنید</string>
     <string name="try_again">تلاش مجدد</string>
+    <string name="add_new_comment">افزودن نظر جدید</string>
+    <string name="comments">نظرات</string>
+    <string name="add_comment">افزودن نظر</string>
+    <string name="enter_your_comment">نظر خود را وارد کنید</string>
+    <string name="rating">امتیاز: </string>
+    <string name="cancel">لغو</string>
+    <string name="submit">ثبت</string>
 </resources>

@@ -4,10 +4,12 @@ import android.content.Context
 import android.net.Uri
 import com.parse.ParseCloud
 import com.parse.ParseFile
+import com.parse.ParseQuery
 import com.parse.ParseUser
 import com.parse.SaveCallback
 import dagger.hilt.android.qualifiers.ApplicationContext
 import org.json.JSONObject
+import timber.log.Timber
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -26,7 +28,7 @@ class UserRepositoryImpl @Inject constructor(
             if (e == null) {
                 callback(user, null)
             } else {
-                callback(null, e?.message)
+                callback(null, e.message)
             }
         }
     }
@@ -128,11 +130,11 @@ class UserRepositoryImpl @Inject constructor(
 
 
     override fun logout(callback: (Boolean, String?) -> Unit) {
-        ParseUser.logOutInBackground{e->
-            if (e==null){
-                callback(true,null)
-            }else{
-                callback(false,e.message)
+        ParseUser.logOutInBackground { e ->
+            if (e == null) {
+                callback(true, null)
+            } else {
+                callback(false, e.message)
             }
         }
     }
@@ -161,5 +163,17 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getProfileImage(userId: String, callback: (String?) -> Unit) {
+        val params = hashMapOf<String, Any>("userId" to userId)
+        ParseCloud.callFunctionInBackground<Map<String, Any>>("getProfileImage", params) { result, e ->
+            if (e == null && result != null) {
+                val imageUrl = result["imageUrl"] as? String
+                callback(imageUrl)
+            } else {
+                Timber.e(e, "Error calling getProfileImage for user $userId")
+                callback(null)
+            }
+        }
+    }
 
 }

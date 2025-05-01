@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="?attr/colorSurfaceContainerLowest"
+    app:cardCornerRadius="12dp"
+    app:strokeColor="?attr/colorOutline"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- تصویر پروفایل -->
+        <ImageView
+            android:id="@+id/profileImageComment"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:src="@drawable/person_24px"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+         />
+
+        <!-- نام کاربری و زمان در یک LinearLayout عمودی -->
+        <LinearLayout
+            android:id="@+id/userInfoLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@id/tvRating"
+            app:layout_constraintStart_toEndOf="@id/profileImageComment"
+            app:layout_constraintTop_toTopOf="@id/profileImageComment">
+
+            <TextView
+                android:id="@+id/tvUserId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold"
+                tools:text="کیان" />
+
+            <TextView
+                android:id="@+id/tvTimestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceLabelSmall"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                tools:text="2 ساعت پیش" />
+        </LinearLayout>
+
+        <!-- نمره در سمت راست (چپ در RTL) -->
+        <TextView
+            android:id="@+id/tvRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rating_background"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textColor="?attr/colorOnPrimary"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/profileImageComment"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/profileImageComment"
+            tools:text="4.5" />
+
+        <!-- متن کامنت -->
+        <TextView
+            android:id="@+id/tvComment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="?attr/colorOnSurface"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/profileImageComment"
+            app:layout_constraintTop_toBottomOf="@id/profileImageComment"
+            tools:text="این یک کامنت نمونه است که میتواند چند خطی باشد و توضیحات کاربر را نمایش میدهد." />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

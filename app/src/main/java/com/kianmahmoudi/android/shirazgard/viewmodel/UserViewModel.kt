@@ -19,6 +19,7 @@ class UserViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
+
     private val _registerState = MutableLiveData<UiState<ParseUser>>(UiState.Idle)
     val registerState: LiveData<UiState<ParseUser>> = _registerState
 
@@ -45,6 +46,9 @@ class UserViewModel @Inject constructor(
 
     private val _profileImageDeletionState = MutableLiveData<UiState<Boolean>>(UiState.Idle)
     val profileImageDeletionState: LiveData<UiState<Boolean>> = _profileImageDeletionState
+
+    private val _usersProfileImages = MutableLiveData<UiState<Map<String, String?>>>(UiState.Idle)
+    val usersProfileImages: LiveData<UiState<Map<String, String?>>> = _usersProfileImages
 
     fun registerUser(username: String, password: String) {
         if (_registerState.value is UiState.Loading) return
@@ -76,10 +80,10 @@ class UserViewModel @Inject constructor(
         if (_logoutState.value is UiState.Loading) return
         _logoutState.postValue(UiState.Loading)
 
-        userRepository.logout{success,error->
-            if (success){
+        userRepository.logout { success, error ->
+            if (success) {
                 _logoutState.postValue(UiState.Success(Unit))
-            }else{
+            } else {
                 _logoutState.postValue(error?.let { UiState.Error(it) })
             }
         }
@@ -187,6 +191,18 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    fun getProfileImage(userId: String) {
+        userRepository.getProfileImage(userId) { url ->
+            val currentMap = (_usersProfileImages.value as? UiState.Success)?.data?.toMutableMap() ?: mutableMapOf()
+            currentMap[userId] = url
+            val previousState = _usersProfileImages.value
+            if (previousState !is UiState.Success || previousState.data[userId] != url) {
+                _usersProfileImages.postValue(UiState.Success(currentMap))
+            }
+
+        }
+    }
+
     fun resetUsernameState() {
         _usernameState.postValue(UiState.Idle)
     }
@@ -199,7 +215,7 @@ class UserViewModel @Inject constructor(
         _loginState.postValue(UiState.Idle)
     }
 
-    fun resetLogoutState(){
+    fun resetLogoutState() {
         _logoutState.postValue(UiState.Idle)
     }
 

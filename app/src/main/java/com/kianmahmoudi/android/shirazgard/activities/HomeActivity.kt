@@ -1,5 +1,6 @@
 package com.kianmahmoudi.android.shirazgard.activities
 
+import android.app.ProgressDialog.show
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -14,8 +15,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.snackbar.Snackbar
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.databinding.ActivityMainBinding
+import com.kianmahmoudi.android.shirazgard.dialog.CommentBottomSheet
 import com.kianmahmoudi.android.shirazgard.viewmodel.SettingViewModel
 import com.parse.ParseUser
 import com.yariksoffice.lingver.Lingver
@@ -74,12 +77,17 @@ class HomeActivity : BaseActivity() {
             val tvTitle: TextView = actionBar.findViewById(R.id.tvTitle)
             val icSearch: ImageView = actionBar.findViewById(R.id.icSearch)
             val icBack: ImageView = actionBar.findViewById(R.id.icBack)
+            val icAdd: ImageView = actionBar.findViewById(R.id.icAdd)
 
             icBack.setOnClickListener {
                 navController.navigateUp()
             }
             icSearch.setOnClickListener {
                 navController.navigate(R.id.searchFragment)
+            }
+
+            icAdd.setOnClickListener {
+              handleAddCommentClick()
             }
 
             navController.addOnDestinationChangedListener { _, destination, arguments ->
@@ -96,12 +104,14 @@ class HomeActivity : BaseActivity() {
                         }
                         tvTitle.text = title
                         supportActionBar?.show()
+                        icAdd.visibility = View.INVISIBLE
                     }
 
                     R.id.categoryPlacesFragment -> {
                         binding.bottomNavHome.visibility = View.INVISIBLE
                         icSearch.visibility = View.INVISIBLE
                         icBack.visibility = View.VISIBLE
+                        icAdd.visibility = View.INVISIBLE
                         tvTitle.text = getString(R.string.app_name)
                         supportActionBar?.show()
                     }
@@ -109,6 +119,7 @@ class HomeActivity : BaseActivity() {
                     R.id.searchFragment -> {
                         supportActionBar?.hide()
                         binding.bottomNavHome.visibility = View.INVISIBLE
+                        icAdd.visibility = View.INVISIBLE
                     }
 
                     R.id.fragmentChangePassword -> {
@@ -116,6 +127,7 @@ class HomeActivity : BaseActivity() {
                         icSearch.visibility = View.INVISIBLE
                         icBack.visibility = View.VISIBLE
                         tvTitle.text = getString(R.string.app_name)
+                        icAdd.visibility = View.INVISIBLE
                         supportActionBar?.show()
                     }
 
@@ -124,6 +136,16 @@ class HomeActivity : BaseActivity() {
                         icSearch.visibility = View.INVISIBLE
                         icBack.visibility = View.VISIBLE
                         tvTitle.text = getString(R.string.app_name)
+                        icAdd.visibility = View.INVISIBLE
+                        supportActionBar?.show()
+                    }
+
+                    R.id.commentsFragment -> {
+                        binding.bottomNavHome.visibility = View.INVISIBLE
+                        icSearch.visibility = View.INVISIBLE
+                        icAdd.visibility = View.VISIBLE
+                        icBack.visibility = View.VISIBLE
+                        tvTitle.text = getString(R.string.comments)
                         supportActionBar?.show()
                     }
 
@@ -131,6 +153,7 @@ class HomeActivity : BaseActivity() {
                         binding.bottomNavHome.visibility = View.VISIBLE
                         icBack.visibility = View.GONE
                         icSearch.visibility = View.VISIBLE
+                        icAdd.visibility = View.INVISIBLE
                         tvTitle.text = getString(R.string.app_name)
                         supportActionBar?.show()
                     }
@@ -174,6 +197,31 @@ class HomeActivity : BaseActivity() {
             "light" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
             "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
         }
+    }
+
+    private fun handleAddCommentClick() {
+        when (navController.currentDestination?.id) {
+            R.id.commentsFragment -> {
+                val placeId = navController.currentBackStackEntry?.arguments?.getString("placeId")
+                if (!placeId.isNullOrEmpty()) {
+                    showCommentBottomSheet(placeId)
+                } else {
+                    showPlaceIdError()
+                }
+            }
+            else -> Timber.d("Add button clicked in unrelated fragment")
+        }
+    }
+
+    private fun showCommentBottomSheet(placeId: String) {
+        CommentBottomSheet.newInstance(placeId).apply {
+            show(supportFragmentManager, CommentBottomSheet.TAG)
+        }
+    }
+
+    private fun showPlaceIdError() {
+        Timber.e("placeId is null or empty, cannot show CommentBottomSheet")
+        Snackbar.make(binding.root, "Error: Place not found", Snackbar.LENGTH_SHORT).show()
     }
 
 }

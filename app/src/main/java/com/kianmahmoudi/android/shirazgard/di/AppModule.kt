@@ -5,6 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.kianmahmoudi.android.shirazgard.api.WeatherApi
+import com.kianmahmoudi.android.shirazgard.repository.CommentRepository
+import com.kianmahmoudi.android.shirazgard.repository.CommentRepositoryImpl
 import com.kianmahmoudi.android.shirazgard.repository.FavoritePlacesRepository
 import com.kianmahmoudi.android.shirazgard.repository.FavoritePlacesRepositoryImpl
 import com.kianmahmoudi.android.shirazgard.repository.MainDataRepository
@@ -81,6 +83,12 @@ class AppModule {
     @Singleton
     fun provideFavoritePlacesRepository():FavoritePlacesRepository{
         return FavoritePlacesRepositoryImpl()
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommentRepository():CommentRepository{
+        return CommentRepositoryImpl()
     }
 
 }

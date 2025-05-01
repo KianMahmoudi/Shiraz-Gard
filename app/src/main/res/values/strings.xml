@@ -85,4 +85,11 @@
     <string name="no_internet">No Internet</string>
     <string name="check_internet">Please check your internet status and try again</string>
     <string name="try_again">Try again</string>
+    <string name="add_new_comment">Add new comment</string>
+    <string name="comments">Comments</string>
+    <string name="add_comment">Add Comment</string>
+    <string name="enter_your_comment">Enter your comment</string>
+    <string name="rating">Rating</string>
+    <string name="cancel">Cancel</string>
+    <string name="submit">Submit</string>
 </resources>
