@@ -15,7 +15,7 @@
         android:padding="8dp"
         app:tint="@color/md_theme_onSecondaryContainer" />
 
-    <TextView
+    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
         android:id="@+id/item_category_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

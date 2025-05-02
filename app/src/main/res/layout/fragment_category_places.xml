@@ -11,7 +11,7 @@
         android:layout_height="match_parent">
 
         <!-- TextView for Category Name -->
-        <TextView
+        <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
             android:id="@+id/categoryName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

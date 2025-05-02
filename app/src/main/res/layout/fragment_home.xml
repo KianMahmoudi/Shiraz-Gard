@@ -53,22 +53,20 @@
                         app:layout_constraintStart_toEndOf="@+id/icWeatherHome"
                         app:layout_constraintTop_toTopOf="parent">
 
-                        <TextView
+                        <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                             android:id="@+id/tvTemperatureHome"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/font_regular"
                             android:textSize="24sp"
                             android:textStyle="bold"
                             tools:text="44°" />
 
-                        <TextView
+                        <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                             android:id="@+id/tvDescriptionHome"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:ellipsize="end"
-                            android:fontFamily="@font/font_regular"
                             android:maxLines="1"
                             android:textSize="16sp"
                             tools:text="Rainy with a chance of thunderstorms" />
@@ -77,7 +75,7 @@
             </com.google.android.material.card.MaterialCardView>
 
 
-            <TextView
+            <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                 android:id="@+id/textView3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,7 +108,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/btnSeeAllCategories" />
 
-            <TextView
+            <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                 android:id="@+id/textView5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -145,7 +143,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
-            <TextView
+            <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -42,7 +42,7 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <TextView
+            <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                 android:id="@+id/placeName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                 android:textStyle="bold"
                 tools:text="hello" />
 
-            <TextView
+            <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                 android:id="@+id/placeType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:paddingBottom="140dp">
 
-            <TextView
+            <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                 android:id="@+id/placeTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -68,7 +68,47 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <LinearLayout
+                android:id="@+id/ratingContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/placeTitle">
+
+                <RatingBar
+                    android:id="@+id/ratingBarAverage"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:rating="4.2"
+                    android:stepSize="0.1" />
+
+                <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
+                    android:id="@+id/ratingValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="4.2" />
+
+                <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
+                    android:id="@+id/ratingCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    tools:text="(27)" />
+            </LinearLayout>
+
+
+            <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                 android:id="@+id/placeDescription"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -80,7 +120,7 @@
                 android:textAppearance="?attr/textAppearanceBody2"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/placeTitle" />
+                app:layout_constraintTop_toBottomOf="@id/ratingContainer" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardViewLocation"
@@ -110,7 +150,7 @@
                         app:srcCompat="@drawable/location"
                         app:tint="?attr/colorPrimary" />
 
-                    <TextView
+                    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                         android:id="@+id/placeAddress"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -140,7 +180,7 @@
                     android:layout_height="match_parent"
                     android:padding="8dp">
 
-                    <TextView
+                    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                         android:id="@+id/commentSectionTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -151,7 +191,7 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
+                    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                         android:id="@+id/viewAllComments"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -175,16 +215,15 @@
                 android:id="@+id/animNoComments"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                app:layout_constraintEnd_toEndOf="@id/commentsRv"
-                app:lottie_loop="true"
-                android:visibility="gone"
                 android:layout_marginTop="32dp"
-                app:lottie_rawRes="@raw/anim_no_comments"
-                app:layout_constraintTop_toBottomOf="@id/commentsHeader"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/commentsRv"
                 app:layout_constraintEnd_toStartOf="parent"
-                />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/commentsHeader"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/anim_no_comments" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/commentsRv"

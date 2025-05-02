@@ -113,6 +113,19 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
                             binding.animNoComments.visibility = View.VISIBLE
                             binding.animNoComments.playAnimation()
                         }
+                        val ratings = it.data.mapNotNull { it.getNumber("ratingValue")?.toDouble() }
+                        if (ratings.isNotEmpty()) {
+                            val average = ratings.average()
+                            val count = ratings.size
+
+                            binding.ratingBarAverage.rating = average.toFloat()
+                            binding.ratingValue.text = String.format("%.1f", average)
+                            binding.ratingCount.text = "($count)"
+                            binding.ratingContainer.visibility = View.VISIBLE
+                        } else {
+                            binding.ratingContainer.visibility = View.GONE
+                        }
+
                     }
                 }
             }

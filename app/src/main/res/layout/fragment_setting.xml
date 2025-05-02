@@ -41,7 +41,7 @@
                         android:src="@drawable/person_24px"
                       />
 
-                    <TextView
+                    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                         android:id="@+id/userName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profileCardView" />
 
-        <TextView
+        <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
             android:id="@+id/general"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -120,7 +120,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/llGeneral" />
 
-        <TextView
+        <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
             android:id="@+id/account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -168,7 +168,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/llAccount" />
 
-        <TextView
+        <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
             android:id="@+id/about_us"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

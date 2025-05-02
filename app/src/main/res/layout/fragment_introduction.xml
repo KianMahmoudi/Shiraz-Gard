@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <TextView
+    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.332" />
 
-    <TextView
+    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
         android:id="@+id/welcome_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo" />
 
-    <TextView
+    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
         android:id="@+id/textView2"
         style="@style/AppTheme"
         android:layout_width="wrap_content"

@@ -7,7 +7,7 @@
     android:padding="24dp">
 
     <!-- Title with elevation -->
-    <com.google.android.material.textview.MaterialTextView
+    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

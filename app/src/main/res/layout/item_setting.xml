@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/_03d" />
 
-    <TextView
+    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

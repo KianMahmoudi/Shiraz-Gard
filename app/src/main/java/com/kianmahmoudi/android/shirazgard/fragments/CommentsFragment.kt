@@ -69,7 +69,6 @@ class CommentsFragment : Fragment(R.layout.fragment_comments) {
                         binding.animNoComments.visibility = View.VISIBLE
                         binding.animNoComments.playAnimation()
                     }
-
                     is UiState.Success -> {
                         commentsAdapter.submitComments(it.data)
                         binding.rvComments.smoothScrollToPosition(0)
@@ -82,7 +81,6 @@ class CommentsFragment : Fragment(R.layout.fragment_comments) {
                             binding.animNoComments.playAnimation()
                         }
                     }
-
                     else -> {}
                 }
             }

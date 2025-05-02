@@ -6,9 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardBackgroundColor="?attr/colorSurfaceContainerLowest"
+    app:cardBackgroundColor="@color/md_theme_background"
     app:cardCornerRadius="12dp"
-    app:strokeColor="?attr/colorOutline"
     app:strokeWidth="1dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,7 +36,7 @@
             app:layout_constraintStart_toEndOf="@id/profileImageComment"
             app:layout_constraintTop_toTopOf="@id/profileImageComment">
 
-            <TextView
+            <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                 android:id="@+id/tvUserId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,7 +45,7 @@
                 android:textStyle="bold"
                 tools:text="کیان" />
 
-            <TextView
+            <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
                 android:id="@+id/tvTimestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -57,7 +56,7 @@
         </LinearLayout>
 
         <!-- نمره در سمت راست (چپ در RTL) -->
-        <TextView
+        <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
             android:id="@+id/tvRating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -73,7 +72,7 @@
             tools:text="4.5" />
 
         <!-- متن کامنت -->
-        <TextView
+        <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
             android:id="@+id/tvComment"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

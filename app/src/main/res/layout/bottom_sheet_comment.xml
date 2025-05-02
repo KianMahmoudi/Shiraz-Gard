@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:padding="24dp">
 
-    <TextView
+    <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
@@ -40,7 +40,7 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <TextView
+        <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -76,17 +76,18 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/submitButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/submit" />
 
             <ProgressBar
                 android:id="@+id/loadingProgress"
+                style="?android:attr/progressBarStyleSmall"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
-                android:visibility="gone"
-                style="?android:attr/progressBarStyleSmall" />
+                android:visibility="gone" />
         </FrameLayout>
 
     </LinearLayout>
