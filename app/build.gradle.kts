@@ -73,11 +73,7 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.concurrent.futures.ktx)
-    val nav_version = "2.8.1"
-    val room_version = "2.6.1"
-
     implementation(libs.annotations)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
@@ -86,6 +82,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.constraintlayout)
     implementation(libs.google.maps)
+    implementation(libs.androidx.preference.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -106,6 +103,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.lingver)
     implementation(libs.process.phoenix)
+    implementation(libs.osmdroid.android)
     ksp(libs.hilt.android.compiler)
     ksp(libs.androidx.room.compiler)
 }

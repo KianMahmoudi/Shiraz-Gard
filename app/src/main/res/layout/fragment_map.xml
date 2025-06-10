@@ -4,15 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/map_fragment"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <org.osmdroid.views.MapView
+        android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_navigation"
@@ -21,6 +20,7 @@
         android:layout_marginBottom="24dp"
         android:gravity="center_vertical"
         android:text="@string/open_in_map"
+        android:visibility="gone"
         app:icon="@drawable/navigation_24px"
         app:iconGravity="textStart"
         app:layout_constraintBottom_toBottomOf="parent"

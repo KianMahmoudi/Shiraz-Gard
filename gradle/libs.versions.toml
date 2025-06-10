@@ -21,6 +21,7 @@ material = "1.12.0"
 constraintlayout = "2.1.4"
 googleMaps = "19.0.0"
 navigationFragment = "2.8.1"
+osmdroidAndroid = "6.1.20"
 parse = "1.26.0"
 processPhoenix = "3.0.0"
 retrofit = "2.11.0"
@@ -28,6 +29,7 @@ roomCompiler = "2.6.1"
 swiperefreshlayout = "1.2.0-alpha01"
 timber = "5.0.1"
 concurrentFuturesKtx = "1.2.0-alpha01"
+preferenceKtx = "1.2.1"
 
 [libraries]
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -56,11 +58,13 @@ lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 google-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "googleMaps" }
+osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidAndroid" }
 parse = { module = "com.github.parse-community.Parse-SDK-Android:parse", version.ref = "parse" }
 process-phoenix = { module = "com.jakewharton:process-phoenix", version.ref = "processPhoenix" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 androidx-concurrent-futures-ktx = { group = "androidx.concurrent", name = "concurrent-futures-ktx", version.ref = "concurrentFuturesKtx" }
+androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
