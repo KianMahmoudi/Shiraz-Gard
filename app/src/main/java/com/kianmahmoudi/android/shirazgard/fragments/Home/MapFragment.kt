@@ -1,6 +1,7 @@
 package com.kianmahmoudi.android.shirazgard.fragments.Home
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -57,7 +58,7 @@ class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
 
         extractLocationFromArguments()
 
-        binding.goToMap.setOnClickListener {
+        binding.btnNavigation.setOnClickListener {
             shareLocationWithApps()
         }
 
@@ -93,7 +94,7 @@ class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
                         .title("موقعیت مورد نظر")
                 )
             }
-            binding.goToMap.visibility = View.VISIBLE
+            binding.btnNavigation.visibility = View.VISIBLE
         } catch (e: Exception) {
             Log.e(TAG, "Error showing location: ${e.message}")
             showDefaultLocation()
@@ -129,7 +130,7 @@ class MapFragment : Fragment(R.layout.fragment_map), OnMapReadyCallback {
         val shareIntent = Intent(Intent.ACTION_VIEW, locationUri)
         val chooserIntent = Intent.createChooser(
             shareIntent,
-            "باز کردن در نقشه با:"
+            "${getString(R.string.open_in_map)}:"
         )
         startActivity(chooserIntent)
     }

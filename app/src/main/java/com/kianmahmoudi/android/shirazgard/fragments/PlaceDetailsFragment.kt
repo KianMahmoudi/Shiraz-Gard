@@ -69,8 +69,17 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
         }
 
         when (Locale.getDefault().language) {
-            "en" -> binding.placeTitle.text = args.enName
-            "fa" -> binding.placeTitle.text = args.faName
+            "en" -> {
+                binding.placeTitle.text = args.enName
+                binding.placeAddress.text = args.enAddress
+                binding.placeDescription.text = args.enDescription
+            }
+
+            "fa" -> {
+                binding.placeTitle.text = args.faName
+                binding.placeAddress.text = args.faAddress
+                binding.placeDescription.text = args.faDescription
+            }
         }
 
         commentViewModel.getComments(args.objectId)
@@ -151,18 +160,18 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
             }
         }
 
-        binding.placeAddress.text = args.address
-        binding.placeDescription.text = args.description
 
         val imageUrls = args.images
 
-        for (url in imageUrls) {
-            imageList.add(SlideModel(url, ScaleTypes.FIT))
+        if (imageUrls != null) {
+            for (url in imageUrls) {
+                imageList.add(SlideModel(url, ScaleTypes.FIT))
+            }
         }
 
         binding.imageSlider.setImageList(imageList)
 
-        binding.fabShowOnMap.setOnClickListener {
+        binding.showOnMap.setOnClickListener {
             findNavController().let {
                 try {
                     val action =

@@ -41,13 +41,15 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite), NoInternetDialog.
                     val action = FavoriteFragmentDirections.actionFavoriteFragmentToPlaceDetailsFragment(
                         faName = item.getString("faName") ?: "",
                         enName = item.getString("enName") ?: "",
-                        address = item.getString("address") ?: "",
-                        description = item.getString("description") ?: "",
+                        faAddress = item.getString("faAddress") ?: "",
+                        enAddress = item.getString("enAddress") ?: "",
+                        faDescription = item.getString("faDescription") ?: "",
+                        enDescription = item.getString("enDescription") ?: "",
                         type = item.getString("type") ?: "",
                         latitude = item.getParseGeoPoint("location")?.latitude?.toFloat() ?: 0f,
                         longitude = item.getParseGeoPoint("location")?.longitude?.toFloat() ?: 0f,
-                        images = images.toTypedArray(),
-                        objectId = item.objectId
+                        objectId = item.objectId,
+                        images = images.toTypedArray()
                     )
                     try {
                         withContext(Dispatchers.Main) {

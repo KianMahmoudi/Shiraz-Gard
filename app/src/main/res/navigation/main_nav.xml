@@ -133,10 +133,10 @@
             android:name="faName"
             app:argType="string" />
         <argument
-            android:name="address"
+            android:name="faAddress"
             app:argType="string" />
         <argument
-            android:name="description"
+            android:name="enDescription"
             app:argType="string" />
         <argument
             android:name="type"
@@ -149,7 +149,8 @@
             app:argType="float" />
         <argument
             android:name="images"
-            app:argType="string[]" />
+            app:argType="string[]"
+            app:nullable="true" />
         <action
             android:id="@+id/action_placeDetailsFragment_to_homeActivity"
             app:destination="@id/homeActivity"
@@ -167,6 +168,12 @@
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
             app:popExitAnim="@anim/slide_out_down"/>
+        <argument
+            android:name="enAddress"
+            app:argType="string" />
+        <argument
+            android:name="faDescription"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"

@@ -32,8 +32,8 @@ class MainDataRepositoryImpl : MainDataRepository {
 
     override suspend fun getWeather(): WeatherResult? {
         val response = RetrofitInstance.api.getWeather(
-            "شیراز",
-            com.kianmahmoudi.android.shirazgard.BuildConfig.WEATHER_KEY
+            com.kianmahmoudi.android.shirazgard.BuildConfig.WEATHER_KEY,
+            "Shiraz"
         )
 
         if (response.isSuccessful) {
@@ -41,21 +41,18 @@ class MainDataRepositoryImpl : MainDataRepository {
                 try {
                     val jsonObject = JSONObject(it.string())
 
-                    if (jsonObject.has("result")) {
-                        val result = jsonObject.getJSONObject("result")
+                    val current = jsonObject.getJSONObject("current")
+                    val temperature = current.getDouble("temp_c")
 
-                        val main = result.getJSONObject("main")
-                        val temperature = main.getDouble("temp")
+                    val condition = current.getJSONObject("condition")
+                    val weatherDescription = condition.getString("text")
+                    val weatherIcUrl = condition.getString("icon")
 
-                        val weatherArray = result.getJSONArray("weather")
-                        val weatherDescription =
-                            weatherArray.getJSONObject(0).getString("description")
-                        val weatherIc = weatherArray.getJSONObject(0).getString("icon")
-
-                        return WeatherResult(temperature, weatherDescription, weatherIc)
-                    } else {
-                        Timber.tag("WeatherRepository").e("No 'result' field in JSON")
-                    }
+                    return WeatherResult(
+                        temperature,
+                        weatherDescription,
+                        weatherIcUrl
+                    )
                 } catch (e: Exception) {
                     Timber.tag("WeatherRepository").e("Error parsing JSON: %s", e.message)
                     return null
@@ -67,6 +64,7 @@ class MainDataRepositoryImpl : MainDataRepository {
 
         return null
     }
+
 
     override suspend fun getPlaces(): List<ParseObject> {
         val query = ParseQuery.getQuery<ParseObject>("Place")

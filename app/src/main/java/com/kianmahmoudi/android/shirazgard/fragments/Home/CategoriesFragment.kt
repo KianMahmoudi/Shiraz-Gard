@@ -45,7 +45,7 @@ class CategoriesFragment : Fragment(R.layout.fragment_categories) {
                 Category(getString(R.string.wcs), "wc", R.drawable.wc_24px, 4),
                 Category(getString(R.string.parkings), "parking", R.drawable.local_parking_24px, 5),
                 Category(getString(R.string.cultural_sites), "cultural_sites", R.drawable.museum_24px, 6),
-                Category(getString(R.string.historical_sites), "historical_sites", R.drawable.temple_buddhist_24px, 7),
+                Category(getString(R.string.historical_sites), "history", R.drawable.temple_buddhist_24px, 7),
                 Category(
                     getString(R.string.gas_stations),
                     "gas_station",

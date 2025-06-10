@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoriesAdapter
 import com.kianmahmoudi.android.shirazgard.adapters.PlacesHomeAdapter
@@ -18,7 +19,6 @@ import com.kianmahmoudi.android.shirazgard.databinding.FragmentHomeBinding
 import com.kianmahmoudi.android.shirazgard.dialog.NoInternetDialog
 import com.kianmahmoudi.android.shirazgard.util.EqualSpacingItemDecoration
 import com.kianmahmoudi.android.shirazgard.util.NetworkUtils
-import com.kianmahmoudi.android.shirazgard.util.checkIcon
 import com.kianmahmoudi.android.shirazgard.viewmodel.MainDataViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -131,17 +131,18 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
 
     private fun createPlaceAdapter() = PlacesHomeAdapter { item, images ->
         CoroutineScope(Dispatchers.IO).launch {
-            if (!images.isNullOrEmpty()) {
                 val action = HomeFragmentDirections.actionHomeFragmentToPlaceDetailsFragment(
                     faName = item.getString("faName") ?: "",
                     enName = item.getString("enName") ?: "",
-                    address = item.getString("address") ?: "",
-                    description = item.getString("description") ?: "",
+                    faAddress = item.getString("faAddress") ?: "",
+                    enAddress = item.getString("enAddress") ?: "",
+                    faDescription = item.getString("faDescription") ?: "",
+                    enDescription = item.getString("enDescription") ?: "",
                     type = item.getString("type") ?: "",
                     latitude = item.getParseGeoPoint("location")?.latitude?.toFloat() ?: 0f,
                     longitude = item.getParseGeoPoint("location")?.longitude?.toFloat() ?: 0f,
                     objectId = item.objectId,
-                    images = images.toTypedArray()
+                    images = images?.toTypedArray()
                 )
                 try {
                     withContext(Dispatchers.Main) {
@@ -150,7 +151,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
                 } catch (e: Exception) {
                     Timber.e(e.message)
                 }
-            }
         }
     }
 
@@ -220,7 +220,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
                 binding.apply {
                     tvTemperatureHome.text = weather.temperature.toString()
                     tvDescriptionHome.text = weather.description
-                    icWeatherHome.setImageResource(checkIcon(weather.icon))
+                    Glide.with(requireContext()).load("https:" + weather.icon).into(icWeatherHome)
                 }
                 isWeatherLoaded = true
                 checkAllDataLoaded()

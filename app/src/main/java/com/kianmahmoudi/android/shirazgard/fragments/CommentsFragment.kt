@@ -63,24 +63,25 @@ class CommentsFragment : Fragment(R.layout.fragment_comments) {
         }
 
         lifecycleScope.launch {
-            commentViewModel.comments.observe(viewLifecycleOwner) {
-                when (it) {
+            commentViewModel.comments.observe(viewLifecycleOwner) { state ->
+                when (state) {
                     is UiState.Error -> {
-                        binding.animNoComments.visibility = View.VISIBLE
-                        binding.animNoComments.playAnimation()
+                        showEmptyState(true)
+                        Toast.makeText(requireContext(), "خطا در دریافت نظرات", Toast.LENGTH_SHORT)
+                            .show()
                     }
+
                     is UiState.Success -> {
-                        commentsAdapter.submitComments(it.data)
+                        commentsAdapter.submitComments(state.data)
                         binding.rvComments.smoothScrollToPosition(0)
-                        val usersId = it.data.mapNotNull { it.getString("userId") }.toSet()
+
+                        val usersId = state.data.mapNotNull { it.getString("userId") }.toSet()
                         usersId.forEach { userId ->
                             userViewModel.getProfileImage(userId)
                         }
-                        if (it.data.isEmpty()) {
-                            binding.animNoComments.visibility = View.VISIBLE
-                            binding.animNoComments.playAnimation()
-                        }
+                        showEmptyState(state.data.isEmpty())
                     }
+
                     else -> {}
                 }
             }
@@ -98,4 +99,17 @@ class CommentsFragment : Fragment(R.layout.fragment_comments) {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun showEmptyState(show: Boolean) {
+        if (show) {
+            binding.animNoComments.visibility = View.VISIBLE
+            binding.rvComments.visibility = View.GONE
+            binding.animNoComments.playAnimation()
+        } else {
+            binding.animNoComments.visibility = View.GONE
+            binding.rvComments.visibility = View.VISIBLE
+            binding.animNoComments.cancelAnimation()
+        }
+    }
+
 }

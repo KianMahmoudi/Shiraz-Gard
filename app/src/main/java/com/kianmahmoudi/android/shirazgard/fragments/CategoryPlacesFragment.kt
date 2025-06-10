@@ -172,20 +172,19 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places), NoIn
 
     private fun createPlaceAdapter() = CategoryPlacesAdapter { item, images ->
         CoroutineScope(Dispatchers.IO).launch {
-            if (!images.isNullOrEmpty()) {
                 val action =
                     CategoryPlacesFragmentDirections.actionCategoryPlacesFragmentToPlaceDetailsFragment(
                         faName = item.getString("faName") ?: "",
                         enName = item.getString("enName") ?: "",
-                        address = item.getString("address") ?: "",
-                        description = item.getString("description") ?: "",
+                        faAddress = item.getString("faAddress") ?: "",
+                        enAddress = item.getString("enAddress") ?: "",
+                        faDescription = item.getString("faDescription") ?: "",
+                        enDescription = item.getString("enDescription") ?: "",
                         type = item.getString("type") ?: "",
-                        latitude = item.getParseGeoPoint("location")?.latitude?.toFloat()
-                            ?: 0f,
-                        longitude = item.getParseGeoPoint("location")?.longitude?.toFloat()
-                            ?: 0f,
+                        latitude = item.getParseGeoPoint("location")?.latitude?.toFloat() ?: 0f,
+                        longitude = item.getParseGeoPoint("location")?.longitude?.toFloat() ?: 0f,
                         objectId = item.objectId,
-                        images = images.toTypedArray()
+                        images = images?.toTypedArray()
                     )
                 try {
                     withContext(Dispatchers.Main) {
@@ -194,9 +193,6 @@ class CategoryPlacesFragment : Fragment(R.layout.fragment_category_places), NoIn
                 } catch (e: Exception) {
                     Timber.e(e.message)
                 }
-            } else {
-                Timber.tag("CategoryPlacesAdapter").d("No images found for place")
-            }
         }
     }
 
