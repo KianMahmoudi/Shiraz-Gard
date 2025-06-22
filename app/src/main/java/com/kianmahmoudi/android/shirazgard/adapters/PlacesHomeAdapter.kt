@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.databinding.ItemPlaceBinding
 import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragmentDirections
 import com.parse.ParseObject
@@ -49,7 +50,7 @@ class PlacesHomeAdapter(
                     .load(images.firstOrNull())
                     .into(binding.imagePlace)
             } else {
-                binding.imagePlace.setImageResource(ImageSliderR.drawable.default_placeholder)
+                binding.imagePlace.setImageResource(R.drawable.image_place_holder)
             }
             itemView.setOnClickListener {
                 onItemClick(item, images)

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.databinding.ItemCategoryPlacesBinding
 import com.parse.ParseObject
 import timber.log.Timber
@@ -44,7 +45,7 @@ class CategoryPlacesAdapter(private val onItemClick: (ParseObject, List<String>?
                     .load(images.firstOrNull())
                     .into(binding.placeImage)
             } else {
-                binding.placeImage.setImageResource(com.denzcoskun.imageslider.R.drawable.default_placeholder)
+                binding.placeImage.setImageResource(R.drawable.image_place_holder)
             }
             itemView.setOnClickListener {
                 onItemClick(item,images)

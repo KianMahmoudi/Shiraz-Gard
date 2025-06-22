@@ -94,4 +94,5 @@
     <string name="cancel">لغو</string>
     <string name="submit">ثبت</string>
     <string name="open_in_map">باز کردن در مسیریاب</string>
+    <string name="no_description">توضیحاتی وجود ندارد.</string>
 </resources>

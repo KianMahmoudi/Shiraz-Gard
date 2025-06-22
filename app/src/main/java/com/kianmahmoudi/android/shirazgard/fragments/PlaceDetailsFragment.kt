@@ -58,8 +58,6 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val imageList = ArrayList<SlideModel>()
-
         binding.viewAllComments.setOnClickListener {
             findNavController().navigate(
                 PlaceDetailsFragmentDirections.actionPlaceDetailsFragmentToCommentsFragment(
@@ -72,13 +70,21 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
             "en" -> {
                 binding.placeTitle.text = args.enName
                 binding.placeAddress.text = args.enAddress
-                binding.placeDescription.text = args.enDescription
+                if (args.enDescription.isEmpty()){
+                    binding.placeDescription.text = getString(R.string.no_description)
+                }else{
+                    binding.placeDescription.text = args.enDescription
+                }
             }
 
             "fa" -> {
                 binding.placeTitle.text = args.faName
                 binding.placeAddress.text = args.faAddress
-                binding.placeDescription.text = args.faDescription
+                if (args.faDescription.isEmpty()){
+                    binding.placeDescription.text = getString(R.string.no_description)
+                }else{
+                    binding.placeDescription.text = args.faDescription
+                }
             }
         }
 
@@ -163,13 +169,20 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
 
         val imageUrls = args.images
 
-        if (imageUrls != null) {
-            for (url in imageUrls) {
+        if (!imageUrls.isNullOrEmpty()) {
+            binding.imageSlider.visibility = View.VISIBLE
+            binding.placeholderImage.visibility = View.GONE
+
+            val imageList = ArrayList<SlideModel>()
+            imageUrls.forEach { url ->
                 imageList.add(SlideModel(url, ScaleTypes.FIT))
             }
+            binding.imageSlider.setImageList(imageList)
+        } else {
+            binding.imageSlider.visibility = View.GONE
+            binding.placeholderImage.visibility = View.VISIBLE
         }
 
-        binding.imageSlider.setImageList(imageList)
 
         binding.showOnMap.setOnClickListener {
             findNavController().let {
