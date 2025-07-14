@@ -1,4 +1,4 @@
-package com.kianmahmoudi.android.shirazgard.fragments.Home
+package com.kianmahmoudi.android.shirazgard.fragments.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -89,11 +89,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
     private fun loadCategories() {
         categoriesAdapter.submitData(
             listOf(
-                Category(getString(R.string.atms), "atm", R.drawable.local_atm_24px, 0),
+                Category(getString(R.string.banks), "bank", R.drawable.local_atm_24px, 0),
                 Category(getString(R.string.hotels), "hotel", R.drawable.hotel_24px, 1),
                 Category(getString(R.string.hospitals), "hospital", R.drawable.home_health_24px, 2),
                 Category(getString(R.string.restaurant), "restaurant", R.drawable.restaurant_24px, 3),
-                Category(getString(R.string.wcs), "wc", R.drawable.wc_24px, 4),
+                Category(getString(R.string.wcs), "toilets", R.drawable.wc_24px, 4),
                 Category(getString(R.string.parkings), "parking", R.drawable.local_parking_24px, 5)
             )
         )

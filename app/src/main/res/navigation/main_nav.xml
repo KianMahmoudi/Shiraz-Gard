@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragment"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.home.HomeFragment"
         android:label="HomeFragment">
         <action
             android:id="@+id/action_homeFragment_to_categoryPlacesFragment"
@@ -52,7 +52,7 @@
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
-        android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.FavoriteFragment"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.home.FavoriteFragment"
         android:label="FavoriteFragment">
         <action
             android:id="@+id/action_favoriteFragment_to_placeDetailsFragment"
@@ -64,7 +64,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.MapFragment"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.home.MapFragment"
         android:label="MapFragment" />
     <fragment
         android:id="@+id/categoriesFragment"
@@ -80,7 +80,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingFragment"
-        android:name="com.kianmahmoudi.android.shirazgard.fragments.Home.SettingFragment"
+        android:name="com.kianmahmoudi.android.shirazgard.fragments.home.SettingFragment"
         android:label="SettingFragment">
         <action
             android:id="@+id/action_settingFragment_to_fragmentChangePassword"

@@ -94,4 +94,7 @@
     <string name="submit">Submit</string>
     <string name="open_in_map">Open in navigator</string>
     <string name="no_description">There are no description.</string>
+    <string name="banks">Banks</string>
+    <string name="search_prompt">Search for places in Shiraz</string>
+    <string name="no_results_found">No results found for your search</string>
 </resources>

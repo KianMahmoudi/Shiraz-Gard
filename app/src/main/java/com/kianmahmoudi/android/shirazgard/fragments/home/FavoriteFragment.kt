@@ -1,4 +1,4 @@
-package com.kianmahmoudi.android.shirazgard.fragments.Home
+package com.kianmahmoudi.android.shirazgard.fragments.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kianmahmoudi.android.shirazgard.R
@@ -19,13 +18,15 @@ import com.kianmahmoudi.android.shirazgard.viewmodel.FavoritePlacesViewModel
 import com.kianmahmoudi.android.shirazgard.viewmodel.MainDataViewModel
 import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @AndroidEntryPoint
-class FavoriteFragment : Fragment(R.layout.fragment_favorite), NoInternetDialog.InternetDialogListener {
+class FavoriteFragment : Fragment(R.layout.fragment_favorite),
+    NoInternetDialog.InternetDialogListener {
 
     private var _binding: FragmentFavoriteBinding? = null
     private val binding get() = _binding!!
@@ -34,36 +35,7 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite), NoInternetDialog.
 
     private var isNoInternetDialogShown = false
 
-    private val adapter: CategoryPlacesAdapter by lazy {
-        CategoryPlacesAdapter { item, images ->
-            lifecycleScope.launch(Dispatchers.IO) {
-                if (!images.isNullOrEmpty()) {
-                    val action = FavoriteFragmentDirections.actionFavoriteFragmentToPlaceDetailsFragment(
-                        faName = item.getString("faName") ?: "",
-                        enName = item.getString("enName") ?: "",
-                        faAddress = item.getString("faAddress") ?: "",
-                        enAddress = item.getString("enAddress") ?: "",
-                        faDescription = item.getString("faDescription") ?: "",
-                        enDescription = item.getString("enDescription") ?: "",
-                        type = item.getString("type") ?: "",
-                        latitude = item.getParseGeoPoint("location")?.latitude?.toFloat() ?: 0f,
-                        longitude = item.getParseGeoPoint("location")?.longitude?.toFloat() ?: 0f,
-                        objectId = item.objectId,
-                        images = images.toTypedArray()
-                    )
-                    try {
-                        withContext(Dispatchers.Main) {
-                            findNavController().navigate(action)
-                        }
-                    } catch (e: Exception) {
-                        Timber.e(e.message)
-                    }
-                } else {
-                    Timber.tag("FavoriteAdapter").d("No images found for place")
-                }
-            }
-        }
-    }
+    private val adapter: CategoryPlacesAdapter by lazy {createPlaceAdapter()}
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,7 +65,8 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite), NoInternetDialog.
     private fun setupObservers() {
         favoritePlacesViewModel.favoritePlaces.observe(viewLifecycleOwner) { places ->
 
-            val usersFavoritePlaces = places.filter { it.getString("userId") == ParseUser.getCurrentUser().objectId }
+            val usersFavoritePlaces =
+                places.filter { it.getString("userId") == ParseUser.getCurrentUser().objectId }
 
             val favoritePlaceIds = usersFavoritePlaces.map { it.getString("placeId") }
 
@@ -161,6 +134,7 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite), NoInternetDialog.
                     }
                     DontForgotToVisit.visibility = View.GONE
                 }
+
                 UIState.LOADED -> {
                     progressBarFavoritePlaces.apply {
                         visibility = View.GONE
@@ -173,6 +147,7 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite), NoInternetDialog.
                         cancelAnimation()
                     }
                 }
+
                 UIState.EMPTY -> {
                     progressBarFavoritePlaces.apply {
                         visibility = View.GONE
@@ -185,6 +160,31 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite), NoInternetDialog.
                         playAnimation()
                     }
                 }
+            }
+        }
+    }
+
+    private fun createPlaceAdapter() = CategoryPlacesAdapter { item, images ->
+        CoroutineScope(Dispatchers.IO).launch {
+            val action = FavoriteFragmentDirections.actionFavoriteFragmentToPlaceDetailsFragment(
+                faName = item.getString("faName") ?: "",
+                enName = item.getString("enName") ?: "",
+                faAddress = item.getString("faAddress") ?: "",
+                enAddress = item.getString("enAddress") ?: "",
+                faDescription = item.getString("faDescription") ?: "",
+                enDescription = item.getString("enDescription") ?: "",
+                type = item.getString("type") ?: "",
+                latitude = item.getParseGeoPoint("location")?.latitude?.toFloat() ?: 0f,
+                longitude = item.getParseGeoPoint("location")?.longitude?.toFloat() ?: 0f,
+                objectId = item.objectId,
+                images = images?.toTypedArray()
+            )
+            try {
+                withContext(Dispatchers.Main) {
+                    findNavController().navigate(action)
+                }
+            } catch (e: Exception) {
+                Timber.e(e.message)
             }
         }
     }

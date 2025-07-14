@@ -95,4 +95,7 @@
     <string name="submit">ثبت</string>
     <string name="open_in_map">باز کردن در مسیریاب</string>
     <string name="no_description">توضیحاتی وجود ندارد.</string>
+    <string name="banks">بانک ها</string>
+    <string name="search_prompt">مکان مورد نظر خود را جستجو کنید</string>
+    <string name="no_results_found">نتیجه‌ای برای جستجوی شما یافت نشد</string>
 </resources>

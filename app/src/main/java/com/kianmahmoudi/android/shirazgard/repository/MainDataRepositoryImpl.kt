@@ -15,6 +15,7 @@ import kotlin.coroutines.resumeWithException
 class MainDataRepositoryImpl : MainDataRepository {
     override suspend fun getPlaceImages(): List<ParseObject> {
         val query = ParseQuery.getQuery<ParseObject>("photos")
+        query.limit = 1000
         return withContext(Dispatchers.IO) {
             suspendCancellableCoroutine { continuation ->
                 query.findInBackground { photoObjects, e ->
@@ -68,6 +69,7 @@ class MainDataRepositoryImpl : MainDataRepository {
 
     override suspend fun getPlaces(): List<ParseObject> {
         val query = ParseQuery.getQuery<ParseObject>("Place")
+        query.limit = 1000
         return withContext(Dispatchers.IO) {
             suspendCancellableCoroutine { continuation ->
                 query.findInBackground { objects, e ->

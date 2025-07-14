@@ -2,22 +2,14 @@ package com.kianmahmoudi.android.shirazgard.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.databinding.ItemPlaceBinding
-import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragmentDirections
 import com.parse.ParseObject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.util.Locale
-import com.denzcoskun.imageslider.R as ImageSliderR
 
 class PlacesHomeAdapter(
     private val onItemClick: (ParseObject, List<String>?) -> Unit

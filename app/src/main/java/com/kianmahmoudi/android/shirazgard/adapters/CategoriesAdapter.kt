@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kianmahmoudi.android.shirazgard.data.Category
 import com.kianmahmoudi.android.shirazgard.databinding.ItemCategoryBinding
 import com.kianmahmoudi.android.shirazgard.fragments.CategoriesFragmentDirections
-import com.kianmahmoudi.android.shirazgard.fragments.Home.HomeFragmentDirections
+import com.kianmahmoudi.android.shirazgard.fragments.home.HomeFragmentDirections
 
 class CategoriesAdapter(private val navController: NavController, private val fragment: String) :
     RecyclerView.Adapter<CategoriesAdapter.ViewHolder>() {

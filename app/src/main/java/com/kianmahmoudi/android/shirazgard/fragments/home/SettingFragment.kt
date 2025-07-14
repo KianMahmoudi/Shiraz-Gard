@@ -1,4 +1,4 @@
-package com.kianmahmoudi.android.shirazgard.fragments.Home
+package com.kianmahmoudi.android.shirazgard.fragments.home
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,7 +23,6 @@ import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import com.parse.ParseUser
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 class SettingFragment : Fragment(R.layout.fragment_setting) {

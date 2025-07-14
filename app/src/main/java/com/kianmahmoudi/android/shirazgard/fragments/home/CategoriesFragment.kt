@@ -33,7 +33,7 @@ class CategoriesFragment : Fragment(R.layout.fragment_categories) {
     private fun loadCategories() {
         categoriesAdapter.submitData(
             mutableListOf(
-                Category(getString(R.string.atms), "atm", R.drawable.local_atm_24px, 0),
+                Category(getString(R.string.banks), "bank", R.drawable.local_atm_24px, 0),
                 Category(getString(R.string.hotels), "hotel", R.drawable.hotel_24px, 1),
                 Category(getString(R.string.hospitals), "hospital", R.drawable.home_health_24px, 2),
                 Category(
@@ -42,13 +42,13 @@ class CategoriesFragment : Fragment(R.layout.fragment_categories) {
                     R.drawable.restaurant_24px,
                     3
                 ),
-                Category(getString(R.string.wcs), "wc", R.drawable.wc_24px, 4),
+                Category(getString(R.string.wcs), "toilets", R.drawable.wc_24px, 4),
                 Category(getString(R.string.parkings), "parking", R.drawable.local_parking_24px, 5),
-                Category(getString(R.string.cultural_sites), "cultural_sites", R.drawable.museum_24px, 6),
+                Category(getString(R.string.cultural_sites), "culture", R.drawable.museum_24px, 6),
                 Category(getString(R.string.historical_sites), "history", R.drawable.temple_buddhist_24px, 7),
                 Category(
                     getString(R.string.gas_stations),
-                    "gas_station",
+                    "fuel",
                     R.drawable.local_gas_station_24px,
                     8
                 ),

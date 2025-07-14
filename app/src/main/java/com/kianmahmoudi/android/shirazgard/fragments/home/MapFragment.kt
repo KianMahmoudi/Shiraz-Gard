@@ -1,4 +1,4 @@
-package com.kianmahmoudi.android.shirazgard.fragments.Home
+package com.kianmahmoudi.android.shirazgard.fragments.home
 
 import android.content.Intent
 import android.net.Uri
