@@ -134,6 +134,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                         binding.tvNoResults.visibility = View.VISIBLE
                     } else {
                         categoryPlacesAdapter.addPlaces(filteredPlaces)
+                        categoryPlacesAdapter.addImages(filteredImages)
                         binding.tvEmptySearch.visibility = View.GONE
                         binding.tvNoResults.visibility = View.GONE
                     }
