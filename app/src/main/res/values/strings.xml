@@ -97,4 +97,9 @@
     <string name="banks">Banks</string>
     <string name="search_prompt">Search for places in Shiraz</string>
     <string name="no_results_found">No results found for your search</string>
+    <string name="app_version">Version 1.0</string>
+    <string name="connection_problem">Connection problem</string>
+    <string name="need_vpn">You may need to enable a VPN to access weather information.</string>
+    <string name="vpn_setting">VPN setting</string>
+    <string name="retry">Retry</string>
 </resources>

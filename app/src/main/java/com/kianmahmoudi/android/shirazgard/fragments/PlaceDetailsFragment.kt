@@ -185,17 +185,22 @@ class PlaceDetailsFragment : Fragment(R.layout.fragment_place_details) {
 
 
         binding.showOnMap.setOnClickListener {
-            findNavController().let {
+            findNavController().let { navController ->
                 try {
-                    val action =
-                        PlaceDetailsFragmentDirections.actionPlaceDetailsFragmentToHomeActivity(
-                            destination = "mapFragment",
+                    val action = PlaceDetailsFragmentDirections
+                        .actionPlaceDetailsFragmentToMapFragment(
                             latitude = args.latitude,
-                            longitude = args.longitude
+                            longitude = args.longitude,
+                            placeName = args.faName ?: args.enName
                         )
-                    it.navigate(action)
+                    navController.navigate(action)
                 } catch (e: Exception) {
-                    Timber.tag("detailsActivity").e(e.message.toString())
+                    Timber.tag("PlaceDetailsFragment").e("Navigation error: ${e.message}")
+                    try {
+                        navController.navigate(R.id.mapFragment)
+                    } catch (fallbackException: Exception) {
+                        Timber.tag("PlaceDetailsFragment").e("Fallback navigation failed: ${fallbackException.message}")
+                    }
                 }
             }
         }

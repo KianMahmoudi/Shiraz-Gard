@@ -5,6 +5,13 @@
     android:id="@+id/main_nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <action
+        android:id="@+id/action_global_mapFragment"
+        app:destination="@id/mapFragment"
+        app:popUpTo="@id/homeFragment"
+        app:popUpToInclusive="false"
+        app:launchSingleTop="true" />
+
     <activity
         android:id="@+id/homeActivity"
         android:name="com.kianmahmoudi.android.shirazgard.activities.HomeActivity"
@@ -19,7 +26,6 @@
             android:name="longitude"
             app:argType="float" />
     </activity>
-
 
     <fragment
         android:id="@+id/homeFragment"
@@ -45,11 +51,43 @@
             app:enterAnim="@anim/slide_in_down"
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
-            app:popExitAnim="@anim/slide_out_down"
+            app:popExitAnim="@anim/slide_out_down" />
+        <action
+            android:id="@+id/action_homeFragment_to_favoriteFragment"
+            app:destination="@id/favoriteFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
             app:popUpTo="@id/homeFragment"
-            app:popUpToSaveState="true"
-            app:restoreState="true" />
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_mapFragment"
+            app:destination="@id/mapFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_homeFragment_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
     </fragment>
+
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.home.FavoriteFragment"
@@ -61,11 +99,104 @@
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
             app:popExitAnim="@anim/slide_out_down" />
+        <action
+            android:id="@+id/action_favoriteFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_favoriteFragment_to_mapFragment"
+            app:destination="@id/mapFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_favoriteFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_favoriteFragment_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
     </fragment>
+
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.home.MapFragment"
-        android:label="MapFragment" />
+        android:label="MapFragment">
+
+        <argument
+            android:name="latitude"
+            app:argType="float"
+            android:defaultValue="0.0" />
+        <argument
+            android:name="longitude"
+            app:argType="float"
+            android:defaultValue="0.0" />
+        <argument
+            android:name="placeName"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
+        <action
+            android:id="@+id/action_mapFragment_to_placeDetailsFragment"
+            app:destination="@id/placeDetailsFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
+        <action
+            android:id="@+id/action_mapFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_mapFragment_to_favoriteFragment"
+            app:destination="@id/favoriteFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_mapFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_mapFragment_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down" />
+    </fragment>
+
     <fragment
         android:id="@+id/categoriesFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.CategoriesFragment"
@@ -78,6 +209,7 @@
             app:popEnterAnim="@anim/slide_in_up"
             app:popExitAnim="@anim/slide_out_down" />
     </fragment>
+
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.home.SettingFragment"
@@ -102,8 +234,36 @@
             app:enterAnim="@anim/slide_in_down"
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
-            app:popExitAnim="@anim/slide_out_down"/>
+            app:popExitAnim="@anim/slide_out_down" />
+        <action
+            android:id="@+id/action_settingFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_settingFragment_to_favoriteFragment"
+            app:destination="@id/favoriteFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_settingFragment_to_mapFragment"
+            app:destination="@id/mapFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false" />
     </fragment>
+
     <fragment
         android:id="@+id/categoryPlacesFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.CategoryPlacesFragment"
@@ -122,6 +282,7 @@
             app:popEnterAnim="@anim/slide_in_up"
             app:popExitAnim="@anim/slide_out_down" />
     </fragment>
+
     <fragment
         android:id="@+id/placeDetailsFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.PlaceDetailsFragment"
@@ -136,7 +297,13 @@
             android:name="faAddress"
             app:argType="string" />
         <argument
+            android:name="enAddress"
+            app:argType="string" />
+        <argument
             android:name="enDescription"
+            app:argType="string" />
+        <argument
+            android:name="faDescription"
             app:argType="string" />
         <argument
             android:name="type"
@@ -151,13 +318,6 @@
             android:name="images"
             app:argType="string[]"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_placeDetailsFragment_to_homeActivity"
-            app:destination="@id/homeActivity"
-            app:enterAnim="@anim/slide_in_down"
-            app:exitAnim="@anim/slide_out_up"
-            app:popEnterAnim="@anim/slide_in_up"
-            app:popExitAnim="@anim/slide_out_down" />
         <argument
             android:name="objectId"
             app:argType="string" />
@@ -167,14 +327,19 @@
             app:enterAnim="@anim/slide_in_down"
             app:exitAnim="@anim/slide_out_up"
             app:popEnterAnim="@anim/slide_in_up"
-            app:popExitAnim="@anim/slide_out_down"/>
-        <argument
-            android:name="enAddress"
-            app:argType="string" />
-        <argument
-            android:name="faDescription"
-            app:argType="string" />
+            app:popExitAnim="@anim/slide_out_down" />
+        <action
+            android:id="@+id/action_placeDetailsFragment_to_mapFragment"
+            app:destination="@id/mapFragment"
+            app:enterAnim="@anim/slide_in_down"
+            app:exitAnim="@anim/slide_out_up"
+            app:popEnterAnim="@anim/slide_in_up"
+            app:popExitAnim="@anim/slide_out_down"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="false"
+            app:launchSingleTop="true" />
     </fragment>
+
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.SearchFragment"
@@ -187,23 +352,28 @@
             app:popEnterAnim="@anim/slide_in_up"
             app:popExitAnim="@anim/slide_out_down" />
     </fragment>
+
     <fragment
         android:id="@+id/fragmentChangePassword"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.auth.FragmentChangePassword"
         android:label="FragmentChangePassword" />
+
     <fragment
         android:id="@+id/fragmentIntroduction2"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.start.FragmentIntroduction"
         android:label="FragmentIntroduction" />
+
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.EditProfileFragment"
         android:label="EditProfileFragment" />
+
     <fragment
         android:id="@+id/commentsFragment"
         android:name="com.kianmahmoudi.android.shirazgard.fragments.CommentsFragment"
-        android:label="CommentsFragment" >
-        <argument android:name="placeId"
+        android:label="CommentsFragment">
+        <argument
+            android:name="placeId"
             app:argType="string" />
     </fragment>
 

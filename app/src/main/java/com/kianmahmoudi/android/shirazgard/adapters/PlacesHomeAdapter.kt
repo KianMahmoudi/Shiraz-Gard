@@ -69,7 +69,7 @@ class PlacesHomeAdapter(
         )
     }
 
-    override fun getItemCount(): Int = places.currentList.size
+    override fun getItemCount(): Int = 3
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = places.currentList[position]

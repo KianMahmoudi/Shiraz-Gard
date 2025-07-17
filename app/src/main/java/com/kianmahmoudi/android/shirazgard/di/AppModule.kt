@@ -3,7 +3,6 @@ package com.kianmahmoudi.android.shirazgard.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.kianmahmoudi.android.shirazgard.api.WeatherApi
 import com.kianmahmoudi.android.shirazgard.repository.CommentRepository
 import com.kianmahmoudi.android.shirazgard.repository.CommentRepositoryImpl
@@ -13,8 +12,6 @@ import com.kianmahmoudi.android.shirazgard.repository.MainDataRepository
 import com.kianmahmoudi.android.shirazgard.repository.MainDataRepositoryImpl
 import com.kianmahmoudi.android.shirazgard.repository.UserRepository
 import com.kianmahmoudi.android.shirazgard.repository.UserRepositoryImpl
-import com.kianmahmoudi.android.shirazgard.viewmodel.SettingViewModel
-import com.kianmahmoudi.android.shirazgard.viewmodel.UserViewModel
 import com.kianmahmoudi.android.shirazgard.viewmodel.dataStore
 import dagger.Module
 import dagger.Provides
@@ -23,7 +20,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Singleton
 
 @Module
@@ -34,7 +30,7 @@ class AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("https://haji-api.ir/")
+            .baseUrl("https://api.weatherapi.com/v1/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -47,8 +43,8 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideMainDataRepository(): MainDataRepository {
-        return MainDataRepositoryImpl()
+    fun provideMainDataRepository(weatherApi: WeatherApi): MainDataRepository {
+        return MainDataRepositoryImpl(weatherApi)
     }
 
     @Provides
@@ -65,30 +61,13 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideSettingViewModel(
-        dataStore: DataStore<Preferences>
-    ): SettingViewModel {
-        return SettingViewModel(dataStore)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserViewModel(
-        userRepository: UserRepository
-    ): UserViewModel {
-        return UserViewModel(userRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideFavoritePlacesRepository():FavoritePlacesRepository{
+    fun provideFavoritePlacesRepository(): FavoritePlacesRepository {
         return FavoritePlacesRepositoryImpl()
     }
 
     @Provides
     @Singleton
-    fun provideCommentRepository():CommentRepository{
+    fun provideCommentRepository(): CommentRepository {
         return CommentRepositoryImpl()
     }
-
 }

@@ -53,11 +53,12 @@
                 tools:text="hello" />
 
             <com.kianmahmoudi.android.shirazgard.util.AutoFontTextView
-                android:id="@+id/placeType"
+                android:id="@+id/placeAddressItemCategoryPlaces"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:textSize="14sp"
+                android:maxLines="1"
                 tools:text="Subtitle" />
 
         </LinearLayout>

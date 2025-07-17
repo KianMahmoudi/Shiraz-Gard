@@ -7,7 +7,8 @@ plugins {
     alias(libs.plugins.maps.secret)
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
-    id("androidx.navigation.safeargs.kotlin") }
+    id("androidx.navigation.safeargs.kotlin")
+}
 
 android {
     namespace = "com.kianmahmoudi.android.shirazgard"
@@ -28,14 +29,17 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders["MAPS_KEY"] = (project.properties["MAPS_KEY"] as? String ?: "")
-        manifestPlaceholders["BACK4APP_SERVER_URL"] = (project.properties["BACK4APP_SERVER_URL"] as? String ?: "")
-        manifestPlaceholders["BACK4APP_APP_ID"] = (project.properties["BACK4APP_APP_ID"] as? String ?: "")
-        manifestPlaceholders["BACK4APP_CLIENT_KEY"] = (project.properties["BACK4APP_CLIENT_KEY"] as? String ?: "")
+        manifestPlaceholders["BACK4APP_SERVER_URL"] =
+            (project.properties["BACK4APP_SERVER_URL"] as? String ?: "")
+        manifestPlaceholders["BACK4APP_APP_ID"] =
+            (project.properties["BACK4APP_APP_ID"] as? String ?: "")
+        manifestPlaceholders["BACK4APP_CLIENT_KEY"] =
+            (project.properties["BACK4APP_CLIENT_KEY"] as? String ?: "")
         buildConfigField(
-        "String",
-        "MAPS_KEY",
-        "\"${project.findProperty("MAPS_KEY")}\""
-    )
+            "String",
+            "MAPS_KEY",
+            "\"${project.findProperty("MAPS_KEY")}\""
+        )
         buildConfigField("String", "WEATHER_KEY", "\"${project.findProperty("WEATHER_KEY")}\"")
         buildConfigField(
             "String",
@@ -56,11 +60,16 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isDebuggable = false
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            isDebuggable = true
         }
     }
     compileOptions {

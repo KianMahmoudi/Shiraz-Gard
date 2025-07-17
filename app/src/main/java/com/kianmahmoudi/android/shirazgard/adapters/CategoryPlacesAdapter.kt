@@ -38,7 +38,11 @@ class CategoryPlacesAdapter(private val onItemClick: (ParseObject, List<String>?
                 "fa" -> item.getString("faName")
                 else -> item.getString("enName")
             }
-            binding.placeType.text = item.getString("type")
+            binding.placeAddressItemCategoryPlaces.text = when (Locale.getDefault().language) {
+                "en" -> item.getString("enAddress")
+                "fa" -> item.getString("faAddress")
+                else -> item.getString("enAddress")
+            }
             Timber.i(images.toString())
             if (!images.isNullOrEmpty()) {
                 Glide.with(binding.root.context)

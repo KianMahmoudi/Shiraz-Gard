@@ -38,7 +38,7 @@ class FragmentRegister : Fragment(R.layout.fragment_register) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.doYouHaveAccountRegister.setOnClickListener {
+        binding.loginLink.setOnClickListener {
             findNavController().navigate(R.id.action_fragmentRegister_to_fragmentLogin)
         }
 

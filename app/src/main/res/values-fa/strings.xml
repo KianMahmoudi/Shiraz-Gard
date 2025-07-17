@@ -9,7 +9,7 @@
     <string name="email">ایمیل</string>
     <string name="password">رمزعبور</string>
     <string name="forget_password">فراموشی رمزعبور</string>
-    <string name="do_you_have_account_register">حساب کابربری دارید؟ وارد شوید</string>
+    <string name="do_you_have_account_register">حساب کاربری دارید؟ وارد شوید</string>
     <string name="firstName">نام\n</string>
     <string name="lastName">نام خانوادگی</string>
     <string name="fullname">نام و نام خانوادگی</string>
@@ -98,4 +98,9 @@
     <string name="banks">بانک ها</string>
     <string name="search_prompt">مکان مورد نظر خود را جستجو کنید</string>
     <string name="no_results_found">نتیجه‌ای برای جستجوی شما یافت نشد</string>
+    <string name="app_version">"نسخه ۱.۰"</string>
+    <string name="connection_problem">مشکل اتصال</string>
+    <string name="need_vpn">برای دسترسی به اطلاعات آب و هوا ممکن است نیاز به فعال‌سازی VPN داشته باشید</string>
+    <string name="vpn_setting">تنظیمات VPN</string>
+    <string name="retry">تلاش دوباره</string>
 </resources>

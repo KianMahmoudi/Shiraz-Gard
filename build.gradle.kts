@@ -6,7 +6,7 @@ plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.maps.secret)
-    id("androidx.navigation.safeargs.kotlin") version "2.7.6" apply false
+    id("androidx.navigation.safeargs.kotlin") version "2.8.7" apply false
     id("com.google.dagger.hilt.android") version "2.55" apply false
     id("com.google.devtools.ksp") version "2.1.10-1.0.30" apply false
 }

@@ -34,6 +34,7 @@ class LoginRegisterActivity : BaseActivity() {
         if (actionBar != null) {
             actionBar.findViewById<ImageView>(R.id.icSearch).visibility = View.INVISIBLE
             actionBar.findViewById<ImageView>(R.id.icBack).visibility = View.INVISIBLE
+            actionBar.findViewById<ImageView>(R.id.icAdd).visibility = View.INVISIBLE
         }
 
     }

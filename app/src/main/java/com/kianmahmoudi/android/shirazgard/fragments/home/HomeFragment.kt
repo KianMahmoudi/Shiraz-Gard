@@ -1,5 +1,6 @@
 package com.kianmahmoudi.android.shirazgard.fragments.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,10 +8,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.kianmahmoudi.android.shirazgard.R
 import com.kianmahmoudi.android.shirazgard.adapters.CategoriesAdapter
 import com.kianmahmoudi.android.shirazgard.adapters.PlacesHomeAdapter
@@ -23,6 +26,7 @@ import com.kianmahmoudi.android.shirazgard.viewmodel.MainDataViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -32,7 +36,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
     private val mainDataViewModel: MainDataViewModel by viewModels()
+
     private val hotelsHomeAdapter: PlacesHomeAdapter by lazy { createPlaceAdapter() }
     private val restaurantsHomeAdapter: PlacesHomeAdapter by lazy { createPlaceAdapter() }
     private val categoriesAdapter: CategoriesAdapter by lazy {
@@ -62,7 +68,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
         setupSwipeRefresh()
         setupClickListeners()
         observeData()
-        observeError()
+        observeWeatherState()
+        observeLoadingState()
         checkInternetAndLoadData()
     }
 
@@ -107,14 +114,15 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
 
     private fun setupClickListeners() {
         binding.btnSeeAllCategories.setOnClickListener {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToCategoriesFragment())
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToCategoriesFragment()
+            )
         }
 
         binding.btnSeeAllHotels.setOnClickListener {
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment(
-                    "Hotels",
-                    "hotel"
+                    "Hotels", "hotel"
                 )
             )
         }
@@ -122,8 +130,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
         binding.btnSeeAllRestaurants.setOnClickListener {
             findNavController().navigate(
                 HomeFragmentDirections.actionHomeFragmentToCategoryPlacesFragment(
-                    "Restaurants",
-                    "restaurant"
+                    "Restaurants", "restaurant"
                 )
             )
         }
@@ -131,6 +138,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
 
     private fun createPlaceAdapter() = PlacesHomeAdapter { item, images ->
         CoroutineScope(Dispatchers.IO).launch {
+            try {
                 val action = HomeFragmentDirections.actionHomeFragmentToPlaceDetailsFragment(
                     faName = item.getString("faName") ?: "",
                     enName = item.getString("enName") ?: "",
@@ -144,13 +152,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
                     objectId = item.objectId,
                     images = images?.toTypedArray()
                 )
-                try {
-                    withContext(Dispatchers.Main) {
-                        findNavController().navigate(action)
-                    }
-                } catch (e: Exception) {
-                    Timber.e(e.message)
+
+                withContext(Dispatchers.Main) {
+                    findNavController().navigate(action)
                 }
+            } catch (e: Exception) {
+                Timber.e(e, "Navigation error")
+            }
         }
     }
 
@@ -163,8 +171,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
     }
 
     private fun loadData() {
+        resetLoadedStates()
         updateUIState(UIState.LOADING)
-        if (NetworkUtils.isOnline(requireContext()))
         mainDataViewModel.fetchAllData()
     }
 
@@ -184,6 +192,32 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
         }
     }
 
+    private fun showVpnSuggestionDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.connection_problem))
+            .setMessage(getString(R.string.need_vpn))
+            .setPositiveButton(getString(R.string.vpn_setting)) { _, _ ->
+                openVpnSettings()
+            }
+            .setNegativeButton(getString(R.string.cancel), null)
+            .setNeutralButton(getString(R.string.retry)) { _, _ ->
+                mainDataViewModel.retryWeather()
+            }
+            .show()
+    }
+
+    private fun openVpnSettings() {
+        try {
+            startActivity(Intent("android.net.vpn.SETTINGS"))
+        } catch (e: Exception) {
+            Toast.makeText(
+                requireContext(),
+                "لطفاً VPN را از تنظیمات دستگاه فعال کنید",
+                Toast.LENGTH_LONG
+            ).show()
+        }
+    }
+
     override fun onTryAgain() {
         isNoInternetDialogShown = false
         checkInternetAndLoadData()
@@ -194,44 +228,57 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
         requireActivity().finish()
     }
 
-
-    private fun observeError() {
-        mainDataViewModel.dataLoadingError.observe(viewLifecycleOwner) { errorMessage ->
-            if (!errorMessage.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
-                binding.swipeRefresh.isRefreshing = false
-                updateUIState(UIState.LOADED)
-            }
-        }
-
-        mainDataViewModel.weatherError.observe(viewLifecycleOwner) { errorMessage ->
-            if (!errorMessage.isNullOrEmpty()) {
-                Toast.makeText(requireContext(), "Weather Load Error: $errorMessage", Toast.LENGTH_SHORT).show()
-                binding.swipeRefresh.isRefreshing = false
-                updateUIState(UIState.LOADED)
+    private fun observeLoadingState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainDataViewModel.isLoading.collect { isLoading ->
+                if (!isLoading) {
+                    binding.swipeRefresh.isRefreshing = false
+                }
             }
         }
     }
 
-    private fun observeData() {
-        resetLoadedStates()
-        mainDataViewModel.apply {
-            weatherData.observe(viewLifecycleOwner) { weather ->
-                binding.apply {
-                    tvTemperatureHome.text = weather.temperature.toString()
-                    tvDescriptionHome.text = weather.description
-                    Glide.with(requireContext()).load("https:" + weather.icon).into(icWeatherHome)
+    private fun observeWeatherState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            mainDataViewModel.weatherState.collect { state ->
+                when (state) {
+                    is MainDataViewModel.WeatherState.Loading -> {
+                        // نمایش بارگذاری آب و هوا
+                    }
+                    is MainDataViewModel.WeatherState.Success -> {
+                        showWeather(state.data)
+                        isWeatherLoaded = true
+                        checkAllDataLoaded()
+                    }
+                    is MainDataViewModel.WeatherState.Error -> {
+                        isWeatherLoaded = true
+                        checkAllDataLoaded()
+
+                        if (state.message.contains("VPN", ignoreCase = true) ||
+                            state.message.contains("سرور", ignoreCase = true)) {
+                            showVpnSuggestionDialog()
+                        } else {
+                            Toast.makeText(requireContext(), state.message, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    MainDataViewModel.WeatherState.Idle -> {}
                 }
-                isWeatherLoaded = true
-                checkAllDataLoaded()
             }
+        }
+    }
 
-            weatherError.observe(viewLifecycleOwner) {
-                isWeatherLoaded = true
-                checkAllDataLoaded()
-                Toast.makeText(requireContext(), "Weather Load Error", Toast.LENGTH_SHORT).show()
-            }
+    private fun showWeather(weather: com.kianmahmoudi.android.shirazgard.data.WeatherResult) {
+        binding.apply {
+            tvTemperatureHome.text = "${weather.temperature.toInt()}°C"
+            tvDescriptionHome.text = weather.description
+            Glide.with(requireContext())
+                .load("https:${weather.icon}")
+                .into(icWeatherHome)
+        }
+    }
 
+    private fun observeData() {
+        mainDataViewModel.apply {
             images.observe(viewLifecycleOwner) { images ->
                 restaurantsHomeAdapter.addImages(images)
                 hotelsHomeAdapter.addImages(images)
@@ -247,6 +294,14 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
                 areRestaurantsLoaded = true
                 areHotelsLoaded = true
                 checkAllDataLoaded()
+            }
+
+            dataLoadingError.observe(viewLifecycleOwner) { errorMessage ->
+                if (!errorMessage.isNullOrEmpty()) {
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                    binding.swipeRefresh.isRefreshing = false
+                    updateUIState(UIState.LOADED)
+                }
             }
         }
     }
@@ -272,18 +327,14 @@ class HomeFragment : Fragment(R.layout.fragment_home), NoInternetDialog.Internet
                 if (isLoading) playAnimation() else cancelAnimation()
                 visibility = if (isLoading) View.VISIBLE else View.GONE
             }
+
             listOf(
-                rvCategoriesHome,
-                rvHotelsHome,
-                rvRestaurantsHome,
-                cardView,
-                textView3,
-                btnSeeAllHotels,
-                btnSeeAllCategories,
-                btnSeeAllRestaurants,
-                textView5,
-                textView6
-            ).forEach { it.visibility = if (isLoading) View.GONE else View.VISIBLE }
+                rvCategoriesHome, rvHotelsHome, rvRestaurantsHome,
+                cardView, textView3, btnSeeAllHotels, btnSeeAllCategories,
+                btnSeeAllRestaurants, textView5, textView6
+            ).forEach {
+                it.visibility = if (isLoading) View.GONE else View.VISIBLE
+            }
         }
     }
 

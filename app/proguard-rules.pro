@@ -1,4 +1,8 @@
-# Add project specific ProGuard rules here.
+-keepclassmembers class * extends com.parse.ParseObject {
+    <init>();
+}
+# Uncomment for DexGuard only
+#-keepresourcexmlelements manifest/application/meta-data@value=GlideModule# Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.
 #
