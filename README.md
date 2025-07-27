@@ -13,7 +13,7 @@ Discover the magic of Persia's cultural capital with this all-in-one tourism ass
 | Features | [✨ Key Features](#-key-features) |  
 | Screenshots | [📱 Screenshots](#-screenshots) |
 | Tech Stack | [🛠 Technology Stack](#-technology-stack) |  
-| Database | [🗃 Database Schema](#-database-schema) |  
+| Database | [🗃 Database Schema](#database-schema) |  
 | Sample Data | [📊 Sample Data](#-sample-data) |
 | Setup | [🔐 API Key Setup](#-api-key-setup) |  
 | Build | [🚀 Build & Run](#-build--run) |  
