@@ -16,7 +16,7 @@ Discover the magic of Persia's cultural capital with this all-in-one tourism ass
 | Database | [🗃 Database Schema](#database-schema) |  
 | Sample Data | [📊 Sample Data](#-sample-data) |
 | Setup | [🔐 API Key Setup](#-api-key-setup) |  
-| Build | [🚀 Build & Run](#-build--run) |  
+| Build | [🚀 Build & Run](#-build) |  
 | Contact | [📞 Contact](#-contact) |
 | License | [📜 License](#-license)
 
