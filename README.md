@@ -23,7 +23,7 @@ Discover the magic of Persia's cultural capital with this all-in-one tourism ass
 ## ✨ Key Features
 
 ### 🌍 Comprehensive POI Database
-**10+ essential categories** including:
+**8 essential categories** including:
 - 🏛 Historical sites & 🎭 Cultural centers  
 - 🍽 Restaurants & 🏨 Hotels  
 - ⛽ Gas stations & 🅿️ Parking  
