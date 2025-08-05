@@ -7,6 +7,10 @@ Discover the magic of Persia's cultural capital with this all-in-one tourism ass
 [![License](https://img.shields.io/badge/License-Apache-green)](LICENSE)
 [![Back4App](https://img.shields.io/badge/Backend-Back4App-ff69b4?logo=parse)](https://back4app.com)
 
+<a href="https://myket.ir/app/com.kianmahmoudi.android.shirazgard">
+  <img src="https://myket.ir/core/images/logo/get-en.png" width="160"/>
+</a>
+
 ## 🧭 Table of Contents
 | Section | Quick Links |  
 |---------|-------------|  
